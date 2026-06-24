@@ -25,7 +25,14 @@ Active reference material the harness loads to do the work. The deliverable of
 The program docs (`program/`) are distilled from the official AAIF Ambassador
 Handbook + social sharing guide + aaif.io. **The source PDFs are held privately
 (in the gitignored `.local/`), not republished here** — we share our distilled
-notes, not AAIF's documents verbatim. The project briefs (`projects/`) were researched 2026-06-24
+notes, not AAIF's documents verbatim.
+
+> 📎 **`.local/` is the private half of this archive.** It's gitignored (never
+> committed/published) but it's still **reference material — read it like `refs/`**:
+> the authoritative source PDFs live in `.local/program-pdfs/`, and the Asana
+> planning-hub IDs + private notes in `.local/private-notes.md`. Consult it for
+> grounding; never copy its contents into tracked files. (Harness rule in
+> `../CLAUDE.md`.) The project briefs (`projects/`) were researched 2026-06-24
 against the live repos via web fetch + the GitHub API; each carries its own
 sources + accuracy flags. **Re-verify before publishing** — these projects move
 fast.

@@ -94,6 +94,7 @@ guards the floor.
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Understanding AAIF the org | `refs/aaif-overview.md` |
+| Needing the authoritative source / private context | **`.local/`** — read it like `refs/` (handbook PDFs, Asana hub IDs); never commit or quote its contents |
 
 ## Beads
 
@@ -127,7 +128,9 @@ aaif/
 │   ├── projects/         ← per-project contribution-surface briefs
 │   ├── brand/            ← badge kit + Credly badge + header
 │   └── research/         ← deeper research as it accrues
-└── submissions/          ← one folder per contribution: <YYYY-MM>-<slug>/
+├── submissions/          ← one folder per contribution: <YYYY-MM>-<slug>/
+└── .local/               ← PRIVATE reference (gitignored): source PDFs, Asana hub
+                              IDs, notes — read like refs/, never published
 ```
 
 ## Conventions (inherited from the explore umbrella + global)
@@ -139,11 +142,18 @@ aaif/
 - Reference material lives in `refs/` at root (not `.claude/refs/`).
 - This is a **submodule of `~/explore`** (remote `azigler/aaif`, public) but a
   standalone repo with its own life.
-- **Private/local state** (Asana planning-hub IDs, any secrets/tokens, local-only
-  notes) lives in the **gitignored `.local/` directory — NEVER committed**. The
-  repo is public; nothing private goes in tracked files, bead descriptions, or
-  commit messages. See `.local/private-notes.md` for the Asana hub + logging
-  convention.
+- **`.local/` is a private reference folder — READ it like `refs/`, never publish
+  from it.** It is gitignored (never committed) yet **first-class context**: it
+  holds the **authoritative source docs** (the AAIF Ambassador Handbook + social
+  guide PDFs in `.local/program-pdfs/`), the **Asana planning-hub IDs**, and
+  private notes (`.local/private-notes.md`). The two-way rule:
+  - **Read inward** — always consult `.local/` for grounding (it's where the
+    source-of-truth docs and private context live). Don't let "gitignored" read
+    as "ignore it"; that's the blindspot to avoid. When grounding a claim, the
+    distilled `refs/` come first, but `.local/` holds the originals behind them.
+  - **Never leak outward** — nothing from `.local/` (IDs, secrets, verbatim PDFs)
+    ever lands in tracked files, bead descriptions, commit messages, or published
+    artifacts. The repo is public; `.local/` is the private half of the same brain.
 
 ## Learning in the open
 

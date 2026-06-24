@@ -24,8 +24,12 @@ verify gate.
 
 - Read `refs/program/strategy-top-ambassador.md` (selection) and the relevant
   `refs/projects/<project>.md` (grounding) before building.
+- **Also consult `.local/`** — it's a private (gitignored) reference folder
+  holding the authoritative source docs + the Asana planning-hub IDs. Read it for
+  grounding; never republish or quote its contents. (See CLAUDE.md "`.local/` is
+  a private reference folder.")
 - Know the AAIF submissions-repo URL + the "Ambassador Contribution Submission"
-  issue template (from onboarding / Ambassador Discord). Andrew's handle: `azigler`.
+  issue template (from onboarding / Ambassador Discord). GitHub handle: `azigler`.
 
 ## The eight steps
 
