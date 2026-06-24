@@ -1,0 +1,19 @@
+# Secrets / env
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Scratch
+scratch/
+*.tmp
+
+# beads local db (the JSONL is the source of truth, committed; the SQLite is derived)
+.beads/*.db
+.beads/*.db-shm
+.beads/*.db-wal
