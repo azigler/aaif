@@ -1,8 +1,8 @@
 # AAIF Ambassador Program — authoritative mechanics
 
-> Distilled from the **AAIF Ambassador Handbook** (17pp, `aaif-ambassador-handbook.pdf`
-> in this folder — the source of truth) + the announcement posts. This markdown
-> is the greppable copy the harness reads. Last verified 2026-06-24.
+> Distilled from the **AAIF Ambassador Handbook** (17pp — held privately in the
+> gitignored `.local/`, NOT republished) + the announcement posts. This markdown
+> is the shareable, greppable copy the harness reads. Last verified 2026-06-24.
 >
 > Andrew is an **inaugural (2026 cohort) AAIF Ambassador** — 1 of 138 across 41
 > countries. GitHub handle: **azigler**.

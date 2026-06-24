@@ -1,3 +1,6 @@
+# Private / local-only harness state (Asana IDs, secrets, notes) — NEVER committed
+.local/
+
 # Secrets / env
 .env
 .env.*

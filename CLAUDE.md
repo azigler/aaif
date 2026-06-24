@@ -64,8 +64,10 @@ bead = one folder under `submissions/`.
    using the "Ambassador Contribution Submission" template: GitHub handle
    `azigler` · contribution URL · related AAIF project(s) · notes. (Submit early
    in the month — monthly leaderboards aren't recalculated for late entries.)
-7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index) and close
-   the bead. Capture the scorecard/points when AAIF approves it.
+7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), **and log
+   it onto the current month's recurring task in the Asana planning hub** (private
+   scheduler/collector — IDs + convention in `.local/private-notes.md`). Close the
+   bead. Capture the scorecard/points when AAIF approves it.
 8. **Amplify** — announce per `refs/program/brand-and-social.md` (tag
    **@AgenticAIFdn**, **#AAIFAmbassador**, badge). A useful thread is itself a
    5-pt contribution.
@@ -121,7 +123,7 @@ aaif/
 │   └── skills/submission ← the end-to-end submission pipeline skill
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
-│   ├── program/          ← handbook, social guide, program mechanics, strategy
+│   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)
 │   ├── projects/         ← per-project contribution-surface briefs
 │   ├── brand/            ← badge kit + Credly badge + header
 │   └── research/         ← deeper research as it accrues
@@ -137,6 +139,11 @@ aaif/
 - Reference material lives in `refs/` at root (not `.claude/refs/`).
 - This is a **submodule of `~/explore`** (remote `azigler/aaif`, public) but a
   standalone repo with its own life.
+- **Private/local state** (Asana planning-hub IDs, any secrets/tokens, local-only
+  notes) lives in the **gitignored `.local/` directory — NEVER committed**. The
+  repo is public; nothing private goes in tracked files, bead descriptions, or
+  commit messages. See `.local/private-notes.md` for the Asana hub + logging
+  convention.
 
 ## Learning in the open
 

@@ -12,8 +12,6 @@ Active reference material the harness loads to do the work. The deliverable of
 | [`program/ambassador-program.md`](program/ambassador-program.md) | **Authoritative mechanics** — commitment, contribution types, the submission workflow, the points table, scorecards, perks, renewal. Distilled from the handbook. |
 | [`program/strategy-top-ambassador.md`](program/strategy-top-ambassador.md) | The playbook — what "top ambassador" means, Andrew's leverage, the cadence engine, selection heuristics, opening moves. |
 | [`program/brand-and-social.md`](program/brand-and-social.md) | Badge kit, bio language, tagging/handles, year-round post formats. |
-| [`program/aaif-ambassador-handbook.pdf`](program/aaif-ambassador-handbook.pdf) | The original 17-page handbook (source of truth). |
-| [`program/aaif-ambassador-social-sharing-guide.pdf`](program/aaif-ambassador-social-sharing-guide.pdf) | The original social sharing guide. |
 | **`projects/`** | Per-project contribution-surface briefs (where to contribute, current state, 6 tailored ideas each). |
 | [`projects/agents-md-and-public-agents.md`](projects/agents-md-and-public-agents.md) | AGENTS.md + public-agents — **Andrew's strongest lane.** |
 | [`projects/goose.md`](projects/goose.md) | goose — local-first agent framework. |
@@ -24,8 +22,10 @@ Active reference material the harness loads to do the work. The deliverable of
 
 ## Provenance
 
-The program docs (`program/`) are distilled from the official handbook + social
-guide + aaif.io. The project briefs (`projects/`) were researched 2026-06-24
+The program docs (`program/`) are distilled from the official AAIF Ambassador
+Handbook + social sharing guide + aaif.io. **The source PDFs are held privately
+(in the gitignored `.local/`), not republished here** — we share our distilled
+notes, not AAIF's documents verbatim. The project briefs (`projects/`) were researched 2026-06-24
 against the live repos via web fetch + the GitHub API; each carries its own
 sources + accuracy flags. **Re-verify before publishing** — these projects move
 fast.

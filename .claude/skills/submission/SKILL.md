@@ -76,9 +76,12 @@ recalculated for late entries. Respond in-thread if the review agent asks for
 more info.
 
 ### 7. Log
-Add a row to `SUBMISSIONS.md` (title, format, project, URL, status). Capture the
-scorecard/points when AAIF approves. Close the bead (`/commit` with the bead
-trailer; one bead = one commit). Update running totals.
+Add a row to `SUBMISSIONS.md` (title, format, project, URL, status). **Also log
+it onto the current month's recurring task in the Asana planning hub** — the
+private scheduler/collector (IDs + write convention in `.local/private-notes.md`;
+that file is gitignored, so never echo its IDs into tracked files or commits).
+Capture the scorecard/points when AAIF approves. Close the bead (`/commit` with
+the bead trailer; one bead = one commit). Update running totals.
 
 ### 8. Amplify
 Announce per `refs/program/brand-and-social.md`: tag **@AgenticAIFdn**, use

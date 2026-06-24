@@ -1,7 +1,8 @@
 # Brand & social playbook
 
-> From the **AAIF Ambassador Announcement Social Sharing** guide (3pp,
-> `aaif-ambassador-social-sharing-guide.pdf`) + the brand kit in `refs/brand/`.
+> From the **AAIF Ambassador Announcement Social Sharing** guide (3pp — held
+> privately in the gitignored `.local/`, NOT republished) + the brand kit in
+> `refs/brand/`.
 > Every published contribution should be announced socially and tagged so the
 > cohort + AAIF can amplify it. Last verified 2026-06-24.
 

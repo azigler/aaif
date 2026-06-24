@@ -109,4 +109,4 @@ high-quality, credible ambassador contributions — see
 - https://aaif.io/blog/were-building-a-squad-of-agentic-ai-advocates-join-the-aaif-ambassador-program/
 - https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation
 - https://github.com/aaif · https://github.com/orgs/aaif/repositories
-- AAIF Ambassador Handbook (`refs/program/aaif-ambassador-handbook.pdf`)
+- AAIF Ambassador Handbook (held privately in `.local/`; distilled into `refs/program/`)
