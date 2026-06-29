@@ -154,6 +154,21 @@ aaif/
   - **Never leak outward** — nothing from `.local/` (IDs, secrets, verbatim PDFs)
     ever lands in tracked files, bead descriptions, commit messages, or published
     artifacts. The repo is public; `.local/` is the private half of the same brain.
+- **The two-tier knowledge rule (Zig, 2026-06-29):**
+  1. **Source documents from AAIF / Angie** (PDFs, the opportunities doc, any
+     not-yet-public campaign material — incl. the 5 white-paper titles + the
+     opportunity menu) are **private → `.local/`**, never committed.
+  2. **Your own distilled / secondhand research** (public MCP-spec analysis,
+     agentgateway / goose / AGENTS.md / working-group findings) is **working
+     knowledge → `refs/` → committed + public.** Keep sensitive specifics OUT of
+     it: **no verbatim private-doc content** and **no attributing things to AAIF's
+     unannounced campaign** (the white-paper titles + opportunity menu live in
+     `.local/`). **Generalize Zig's private infra out of public refs** — say "a
+     self-hosted gateway" / "a local-model box" / "a private mesh", never
+     "a self-hosted gateway" / "a local-model box" / "a private mesh" — and prefer framing the local-model story on
+     **goose** (an AAIF project he can openly champion) over a private gateway.
+     Named infra + genuine secrets (keys, tailnet IPs, Asana IDs) live only in
+     `.local/`. When a detail is borderline, ask before pushing.
 
 ## Learning in the open
 

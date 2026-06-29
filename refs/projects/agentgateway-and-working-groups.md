@@ -68,34 +68,86 @@ in Google Docs; recordings on LFX). Repos hold `charter/`, `meeting-notes/`,
 deliverables — **artifacts are public on GitHub even though live calls are
 member-gated.** Chair terms: 2026-03-01 → 2027-01-31.
 
-| WG (repo) | Charter (one line) | Chair / Co-chair | Activity |
-|---|---|---|---|
-| **wg-observability-and-traceability** | Observable/explainable/traceable agent behavior — tracing, correlation, audit, standardized metrics | Pavan Sudheendra (Cisco) / Matthew Lee (Datadog) | early-stage (~10 commits) |
-| **wg-security-and-privacy** | Threat models, taxonomies, design patterns, adversarial testing, security-by-design | Alex Frazer (Runlayer) / Junjie Bu (Google) | **most active** (~29 commits) |
-| **wg-accuracy-and-reliability** | Reliability/accuracy/consistency for autonomous systems | Jordan Augé (Cisco) / Casper Nielsen (Diagrid) | active |
-| **wg-workflows-and-process-integration** | Agents as roles in multi-step business processes — handoff protocols, state guarantees | Yaron Schneider (Diagrid) / Adam Seligman (Workato) | — |
-| **wg-agentic-commerce** | Discovery, negotiation, payment authorization for agents | Ilya Grigorik (Shopify) / Rahul Bansal (OpenAI) | — |
-| **wg-identity-and-trust** | Portable identity + dynamic trust — delegation, cross-domain identity | Grant Miller (IBM) / Alper Dedeoğlu (SAP) | — |
-| **wg-governance-risk-and-regulatory** | Risk classification, regulatory mapping (EU AI Act) | Ryan Hagemann (IBM) / Deborah Eng (JPMorgan) | — |
+> 🔑 **The two-layer access model (deepened 2026-06-29 — this is the key
+> contribution finding).** There is a real tension between the WG *charters* and
+> the WG *repo READMEs / TC policy*:
+> - **Charters (open):** every WG charter says verbatim *"Participation is open
+>   to all individuals and organizations consistent with foundation policies"*
+>   and defines a **Participant → Contributor → Maintainer/Approver → Chair**
+>   ladder where a **Contributor** = *"anyone making substantive contributions
+>   through issues, pull requests, documentation, or reviews,"* gated only by a
+>   **DCO sign-off** (docs CC-BY-4.0, code Apache-2.0/MIT). Merge needs 1
+>   Maintainer (chair) approval; decisions by rough consensus.
+> - **Repo READMEs + `technical-committee` repo (gated):** *"Working Group
+>   Meetings are only open to AAIF members at this time. Participants must be
+>   invited to join."* Zoom links, LFX recordings, Discord, private mailing list
+>   sit behind a member-org-email Google Form. **Two READMEs (Accuracy,
+>   Governance) go further** and state *"Non-members cannot directly contribute
+>   via PR or attend meetings"* — which **contradicts their own charters.**
+> - **Net for an ambassador (individual, not necessarily member-org):** the
+>   *async GitHub deliverable layer* (issues/PRs under DCO) is charter-open; the
+>   *synchronous layer* (meetings/recordings/Discord) is member-gated. A WG
+>   deliverable PR is exactly the kind of public, project-tied artifact the
+>   monthly ambassador requirement wants. **First action: get a chair or
+>   `support@aaif.io` to rule on whether async PR co-authorship is open to a
+>   non-member ambassador, leading with the charter language.** (The
+>   charter-vs-README contradiction on Accuracy/Governance is the single thing to
+>   make them resolve. Also unconfirmed: whether a WG PR explicitly *counts*
+>   toward the monthly ambassador floor — the ambassador pages list
+>   tutorials/talks/blogs/videos/courses, not WG deliverables.)
+> - **Associate membership escape hatch:** the `aaif/foundation` charter lists an
+>   **Associate tier that is free for nonprofits / academia / government** — a
+>   possible route to a qualifying business email if the member-gate proves hard.
 
-> As an inaugural Ambassador the membership gate is likely satisfied/waivable —
-> confirm with `support@aaif.io`. To volunteer, email the chairs/co-chairs.
+| WG (repo) | Cadence (PT) | Chair / Co-chair | Deliverables in flight | Activity (2026-06-29) |
+|---|---|---|---|---|
+| **wg-security-and-privacy** | biweekly **Tue 10:00** | Alex Frazer (Runlayer) / **Junjie Bu (Google)** ⚠️ | **5 workstreams**: taxonomy, threat-modeling, design-patterns, best-practices, review-checklist. Flagship = *Agentic AI Threat Modeling: Gap Analysis & Framework Design* (leads **Alon Mazor / Fernando Lucktemberg**), vs CSA MAESTRO/OWASP/NIST AI RMF | 29 commits, 1 issue; most-structured |
+| **wg-accuracy-and-reliability** | biweekly **Tue 09:00** | Jordan Augé (Cisco) / Casper Nielsen (Diagrid, `CasperGN`) | 3-phase: taxonomy → *Agent Output Quality Standard* + best-practices → conformance suite + benchmark leaderboard + reference impl (most spec/benchmark/code-heavy charter) | **~44 commits** ⚠️ (freshest repo); 1 PR |
+| **wg-observability-and-traceability** | biweekly **Wed 10:00** | Pavan Sudheendra (Cisco) / Matthew Lee (Datadog, `mr-lee`) | **7 dated deliverables** incl. taxonomy v1, use-case inventory, *Agent Behavior Trace Model* (Oct '26), **"Agentic Observability Best Practices" white paper (Jan '27)** | ~11 commits but **6 issues / 4 live PRs, several `help wanted`** — highest open-collab surface |
+| **wg-governance-risk-and-regulatory** | biweekly **Thu 10:00** (charter says weekly ⚠️) | Ryan Hagemann (IBM) / Deborah Eng (JPMorgan) | 3 phases: landscape → gap analysis → risk-classification schema + **"AI Agent Bill of Materials" (AI-BOM)**; EU AI Act / NIST mapping. **No in-repo drafts yet** (Google Doc stage) | 20 commits, 0 issues; thinnest/slowest |
+| **wg-workflows-and-process-integration** | — | Yaron Schneider (Diagrid) / Adam Seligman (Workato) | handoff protocols, state guarantees | — |
+| **wg-agentic-commerce** | — | Ilya Grigorik (Shopify) / Rahul Bansal (OpenAI) | discovery/negotiation/payment authz | — |
+| **wg-identity-and-trust** | — | Grant Miller (IBM) / Alper Dedeoğlu (SAP) | portable identity, delegation, cross-domain trust | — |
 
-### Best-fit shortlist (ranked for Andrew)
+> ⚠️ **Conflicts to verify:** two research passes disagreed on the security
+> co-chair (**Junjie Bu/Google** vs **Jonathan Bregler/SAP**) and the accuracy
+> commit count (~10 vs ~44). Governance cadence: README says biweekly Thu, charter
+> says weekly. Treat these as unconfirmed; check the live charters before relying.
 
-1. **wg-observability-and-traceability — strongest fit.** He *already built* an
-   observability layer for an agent fleet (tmux lexicon, pulse heartbeats,
-   hooks, beads). Exactly this WG's subject, and it's **early-stage** — a
-   practitioner with a working, opinionated tracing practice can shape the
-   foundational taxonomy, not just review it. Highest leverage-to-effort.
-2. **wg-security-and-privacy — second, most active.** Maps to his
-   egress-allowlist + sandboxing hardening on a self-hosted gateway + browser-automation
-   security work. Producing threat models/patterns *now* → real artifact work.
-3. **wg-accuracy-and-reliability — credible third.** His pulse + bead-tracked,
-   verification-gated harness is a reliability discipline for autonomous agents.
+> **Cross-WG target — `ws-taxonomy-landscape`** (NOT one of the 7 WGs; a
+> cross-cutting workstream): the busiest repo in the org (~83 commits, has a real
+> `CONTRIBUTING.md`, all 7 WGs participate). Security's taxonomy moved here
+> 2026-06-22. Builds an interactive taxonomy dashboard + the ecosystem landscape.
+> Chairs **Junjie Bu (Google) / Gala Malbasic (Bloomberg)**. One PR target that
+> touches every WG at once — strong if you want maximal cross-cutting credit.
 
-(Commerce/identity/workflows/governance are weaker fits; identity-and-trust is
-the only adjacent one via auth/RBAC, but enterprise-IAM-flavored.)
+### Best-fit shortlist (ranked for THIS ambassador — academic/security/governance lean)
+
+1. **wg-security-and-privacy — strongest fit + most mature.** Maps directly to his
+   MCP tool-poisoning, egress-allowlist, self-hosted-gateway hardening, and supply-chain /
+   tools-manifest-verification depth. The threat-modeling workstream is a live
+   gap-analysis against CSA MAESTRO/OWASP/NIST — exactly his lane, with named
+   workstream leads to join (not just chairs). Design Patterns Catalog + Best
+   Practices Guide both due Oct '26 → real co-authorship windows. **Highest
+   credibility-to-effort.**
+2. **wg-observability-and-traceability — strongest *fast-visible* co-authorship.**
+   He built fleet observability (tmux lexicon, pulse, beads, OTel-shaped traces).
+   This WG has the most open-collaboration surface *right now* (4 draft PRs, 6
+   issues, `help wanted` tags) and a **white paper deliverable (Jan '27)** — a
+   genuine co-authorship target, not just a spec. Pick up an issue (#8/#9/#10) or
+   comment on a live doc PR. Early enough to shape the foundational trace model.
+3. **wg-governance-risk-and-regulatory — ground-floor.** His governance practice
+   (verification gates, audit trails, the AI-BOM idea ≈ his MCP server-provenance
+   work). Nothing drafted in-repo yet → author foundational AI-BOM / risk-class
+   content from scratch. Slowest-moving, but the most open canvas.
+4. **wg-accuracy-and-reliability — credible.** His pulse + bead-tracked,
+   verification-gated harness is a reliability discipline; the *Agent Output
+   Quality Standard* + conformance suite map to his `/scrutinize` gate. Freshest
+   repo, most spec/benchmark-heavy charter, most explicit "non-members may PR"
+   clause.
+
+(Commerce/identity/workflows are weaker fits; identity-and-trust is the only
+adjacent one via auth/RBAC, but enterprise-IAM-flavored.)
 
 ## aaif-landscape
 
@@ -111,11 +163,11 @@ category + inclusion bar (~1,000+ stars, OSS, fits a category). Contact
 1. **"agentgateway in front of your laptop's brain: routing Claude *and*
    qwen3-coder through one OpenAI-compatible endpoint"** — blog + tutorial repo.
    Local-model provider + virtual models + cloud→local failover with budget
-   caps on a real Mac Studio. Rare hybrid frontier+local recipe. Edge: a local-model box +
+   caps on a real local-model box. Rare hybrid frontier+local recipe. Edge: local models +
    Ollama + qwen3-coder-30b.
 2. **"Hardening an agent gateway on a VPS: egress allowlists, RBAC/CEL,
    tool-poisoning defenses"** — blog/tutorial + **wg-security-and-privacy**
-   deliverable. Maps agentgateway RBAC/CEL + MCP tool-poisoning onto his a self-hosted gateway
+   deliverable. Maps agentgateway RBAC/CEL + MCP tool-poisoning onto a self-hosted gateway's
    egress work. Doubles as a WG design-pattern contribution.
 3. **"Observability for an agent fleet: from OpenTelemetry traces to a
    glanceable status lexicon"** — talk/video + **wg-observability-and-traceability**.
