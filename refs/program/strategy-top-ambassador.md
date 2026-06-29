@@ -30,7 +30,7 @@ The reason "top ambassador" is realistic, not aspirational:
 
 1. **He already runs the system AAIF is standardizing.** His harness is a working
    instance of every AAIF project at once: AGENTS.md/CLAUDE.md (the standard),
-   MCP servers (built several), an agent gateway (a self-hosted gateway ≈ agentgateway),
+   MCP servers (built several), a self-hosted agent gateway (≈ agentgateway),
    multi-agent orchestration (worktree subagents ≈ goose subagents), fleet
    observability (≈ the observability WG). **Every piece of his existing
    practice is latent, credible ambassador content** — "here's how I actually run
@@ -51,7 +51,7 @@ The reason "top ambassador" is realistic, not aspirational:
    shields"). His content is verified-before-shipped by construction.
 5. **Two working groups fit his rare expertise.** Observability-and-Traceability
    (he built fleet observability — tmux lexicon, pulse, beads) and
-   Security-and-Privacy (a self-hosted gateway hardening, egress allowlists). WG participation
+   Security-and-Privacy (self-hosted-gateway hardening, egress allowlists). WG participation
    is a leadership-tier path beyond content.
 
 ## The cadence engine (portfolio, not heroics)

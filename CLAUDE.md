@@ -163,10 +163,10 @@ aaif/
      knowledge → `refs/` → committed + public.** Keep sensitive specifics OUT of
      it: **no verbatim private-doc content** and **no attributing things to AAIF's
      unannounced campaign** (the white-paper titles + opportunity menu live in
-     `.local/`). **Generalize Zig's private infra out of public refs** — say "a
-     self-hosted gateway" / "a local-model box" / "a private mesh", never
-     "a self-hosted gateway" / "a local-model box" / "a private mesh" — and prefer framing the local-model story on
-     **goose** (an AAIF project he can openly champion) over a private gateway.
+     `.local/`). **Generalize Zig's private infra out of public refs** — refer to
+     a self-hosted gateway / a local-model box / a private mesh in generic terms
+     rather than by their private machine names — and prefer framing the
+     local-model story on **goose** (an AAIF project he can openly champion).
      Named infra + genuine secrets (keys, tailnet IPs, Asana IDs) live only in
      `.local/`. When a detail is borderline, ask before pushing.
 

@@ -37,7 +37,7 @@ as Zig, byline stays Andrew Zigler). Repo is live, public, and a submodule of
    local-first secondary** (most unique; best fit with AAIF's anti-slop ethos).
    Alt: local-first/sovereign primary. This decides the first anchor:
    harness-operator → the tighter **"What AGENTS.md gives agents that READMEs
-   don't"** explainer; local-first → the **goose-on-a local-model box** tutorial. Suggested
+   don't"** explainer; local-first → the **goose local-inference** tutorial. Suggested
    arc: explainer → robot-fleet flagship (bead .6) → goose tutorial (bead .8).
 2. **Venues (Zig confirmed):** canonical submit-URL = **his own blog/site** or a
    **LinkedIn article**; **Dev Interrupted is amplify-only, never the submit

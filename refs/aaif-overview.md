@@ -97,7 +97,7 @@ and **seven working groups**:
 
 AAIF is the standards body for exactly the substrate Andrew already lives in:
 agent-guidance files (AGENTS.md / CLAUDE.md), MCP servers, agent frameworks,
-and agent gateways (his a self-hosted gateway VPS). His harness *is* a working instance of the
+and agent gateways (his own self-hosted gateway). His harness *is* a working instance of the
 patterns AAIF is trying to standardize and teach. That overlap is the engine of
 high-quality, credible ambassador contributions — see
 `refs/program/strategy-top-ambassador.md`.
