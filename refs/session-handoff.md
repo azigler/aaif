@@ -93,11 +93,12 @@ order by prose (br deps don't cross repos): **`explore-if4y` → `aaif-5ad` → 
    sprung once (`tutorial-draft.md` was tagged `camp-note`; now marked SUPERSEDED).
    `aaif-715` cannot complete "publish" until this mechanism is settled (likely
    Zig-side, on metis).
-2. **Identity-model fork — resolved in docs, confirm with Zig.** DESIGN §1 (virtual API
-   keys) contradicted `per-agent-identity.md` (per-agent tsnet Tailscale identity as "a
-   stronger AAIF piece"). Resolution written into both files + DESIGN's status note:
-   **virtual keys is the adopted model; tsnet per-agent identity is parked
-   (verified-but-niche).** Confirm Zig agrees.
+2. **Identity-model fork — RESOLVED + CONFIRMED by Zig (2026-07-01).** DESIGN §1 (virtual
+   API keys) had contradicted `per-agent-identity.md` (per-agent tsnet Tailscale identity
+   as "a stronger AAIF piece"). **Decision (Zig-confirmed): agentgateway virtual API keys
+   is the adopted identity model; tsnet per-agent-Tailscale identity is parked
+   (verified-but-niche).** Written into both files + DESIGN's status note. Not an open
+   question anymore — build on virtual keys.
 
 **Other gaps folded:**
 - **macOS port untested** — everything verified ran on Linux (socket
