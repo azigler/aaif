@@ -133,6 +133,8 @@ guards the floor.
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
+| Auditing an agentgateway fleet's traffic | `/gateway-audit` (`.claude/skills/gateway-audit/`) — what the fleet did, from the gateway's own logs + metrics (read-only) |
+| Deriving least-privilege gateway policy | `/gateway-harden` (`.claude/skills/gateway-harden/`) — observed behavior → proposed CEL allowlist (human-gated, never applies) |
 | Understanding AAIF the org | `refs/aaif-overview.md` |
 | Needing the authoritative source / private context | **`.local/`** — read it like `refs/` (handbook PDFs, Asana hub IDs); never commit or quote its contents |
 
@@ -162,8 +164,10 @@ aaif/
 ├── .claude/
 │   ├── practices.md      ← the ambassador practice spec
 │   └── skills/
-│       ├── submission    ← the end-to-end submission pipeline
-│       └── aaif-review   ← score-check + conformance gate (type/points/checklist/issue drafter)
+│       ├── submission     ← the end-to-end submission pipeline
+│       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
+│       ├── gateway-audit  ← "what did my fleet do" from an agentgateway's own logs+metrics
+│       └── gateway-harden ← observed behavior → proposed least-privilege CEL (human-gated)
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
 │   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)
