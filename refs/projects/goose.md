@@ -74,7 +74,7 @@ https://github.com/aaif-goose/goose/blob/main/CONTRIBUTING.md · GOVERNANCE
 2. **"Driving a 30B local coder with goose on a Mac Studio: the tool-calling reality check"**
    — tutorial + video [20+15]. Ollama/LM Studio config, qwen3-coder-30b, the
    4096-context trap, which local models survive goose's tool-call demands.
-   Serves the #1 roadmap theme; almost nobody else can write it authentically.
+   Serves the #1 roadmap theme; a genuinely under-served, first-hand angle.
 3. **"A recipe that orchestrates a fleet: parallel subagents for repo-wide refactors"**
    — recipe-PR + writeup [5–50 + 15]. `sub_recipes`, `summon`, the limits,
    parameters + structured `response`. Ships a useful artifact, may earn the

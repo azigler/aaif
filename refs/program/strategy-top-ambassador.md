@@ -83,7 +83,7 @@ collapsing to "always another MCP blog"):
 - **Project balance** — rotate across MCP / goose / AGENTS.md / agentgateway so
   coverage is broad (helps AAIF's reporting/promotion). But *lean into* the two
   standout lanes: **AGENTS.md + public-agents** (his sweet spot) and the
-  **local-model + gateway** angle (his unique infra — almost nobody can write it).
+  **local-model + gateway** angle (his unique infra — rare, first-hand material).
 - **Format balance** — don't only blog. Each quarter must include ≥1 tentpole
   (talk/workshop/livestream/course). Each month should mix at least one
   build-something (PR/recipe/tool) with the writing.

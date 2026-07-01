@@ -482,7 +482,7 @@ stateless+`ttlMs`-caching server vs the old session-rescan path; report the
 harness). *Why him:* his harness **is** the `O(subagents×servers)` pathology
 SEP-2567 cites as the motivating case — he can produce the empirical curve the
 SEP only asserts. His EASE method (controlled, reproducible, "the writeup is the
-deliverable") is exactly the credibility differentiator vs dev-rel hot-takes.
+deliverable") is exactly what makes it credible — measured, reproducible, verifiable.
 *Effort:* **M–L** (needs a clean benchmark rig, but he has the orchestrator).
 *This is the flagship — most defensible, most on-brand.*
 
@@ -543,17 +543,17 @@ fresh sample, validate the "90% unaffected / 4% must-migrate" claim, and frame
 the stateless turn as a case study in **protocol evolution under ecosystem
 constraints** (cardinality, undefined lifetime, uncacheable lists — the design
 forces). *Deliverable:* **white-paper / conference-talk** (his EASE/empirical-SE
-home turf; a potential paper or workshop submission). *Why him:* the one
-ambassador with a **peer-reviewed empirical-SE publication** — this is the angle
-no dev-rel ambassador can credibly take, and it directly serves AAIF's
-governance/strategy track. *Effort:* **L** (real measurement + writing) —
+home turf; a potential paper or workshop submission). *Why him:* he brings a
+**peer-reviewed empirical-SE publication** to it — grounded, measured work that
+directly serves the governance/strategy theme. *Effort:* **L** (real measurement
++ writing) —
 *reserve max-effort; it's the differentiator.*
 
 **Portfolio shape:** #2 (Track-A urgency, ships first) → #1 + #4 (the
 harness/local-model empirical demos, the durable repos) → #3/#6 (security +
 deprecations writeups) → #7 (the tentpole academic piece) → #5 (the CI
 infrastructure contribution). Mix hits all three themes, leans every asset
-in his profile, and avoids the dev-rel lane entirely.
+in his profile, and stays in the academic + engineering lanes.
 
 ---
 

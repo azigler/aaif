@@ -72,7 +72,10 @@ Push the public artifact and capture its URL (blog post, GitHub PR, YouTube,
 talk page, slide deck, tutorial repo…).
 
 ### 6. Submit
-Open an issue in the **AAIF Ambassador submissions repository** with the
+⛔ **GATE — never open the submission issue without alerting Zig and reviewing it
+together first** (hard rule: no accidental spam of AAIF, no premature spotlight;
+never assume prior approval carries over). Only after his explicit go-ahead:
+open an issue in the **AAIF Ambassador submissions repository** with the
 "Ambassador Contribution Submission" template: handle `azigler` · contribution
 URL · related AAIF project(s) · notes (context for the review agent — *"help the
 agent help you"*). **Submit early in the month** — monthly leaderboards aren't

@@ -34,6 +34,40 @@ The gate is `/scrutinize` (adversarial "disprove done") for substantial pieces,
 `/handoff` for the final check. Slop is the one failure mode that actively hurts
 standing — it can't ship.
 
+## ⛔ Hard rule: never touch AAIF in public without Zig
+
+**NEVER draft-and-submit or open a PR, issue, comment, review, or form submission
+to ANY AAIF surface on Zig's behalf without first alerting Zig and reviewing it
+together.** This covers: the Ambassador submissions repo, any AAIF project repo
+(MCP, goose, AGENTS.md, agentgateway, public-agents, the working groups), the
+AAIF blog intake form, and the Ambassador Discord.
+
+- **Building / drafting locally is fine** — encouraged, even.
+- **Anything that lands in AAIF's spotlight** (public or ambassador-visible) is
+  gated on Zig's **explicit go-ahead**, every time.
+- When a piece is ready to submit: **STOP, surface it, and wait for the green
+  light.** Never assume prior approval carries to the next submission.
+
+Reason: no accidental spam of AAIF, no premature moves in the spotlight. This is
+non-negotiable and overrides any "always push / autonomous" habit for AAIF-facing
+actions.
+
+## ⛔ Hard rule: no gossip or competitiveness about other ambassadors — ever in committed content
+
+**Never write about, name, rank, or hypothesize about other program participants
+or their content in anything checked into this repo** — no committed refs, beads,
+commit messages, or published artifacts. No "better than X", no rival/leaderboard
+framing, no sizing-up peers on display.
+
+- Landscape/awareness that references specific people or their submissions goes in
+  **`.local/`** (or memory) — never in tracked content.
+- In committed/public content, frame everything around **the opportunity and the
+  developer value**, not around out-competing anyone. "Top ambassador" is a
+  personal quality bar, not a scoreboard over peers.
+
+Reason: no gossip, no poor sportsmanship on display. Ambassadors are a community,
+not rivals — keep the tone generous and about the work.
+
 ## What AAIF is (one paragraph)
 
 The **Agentic AI Foundation** (Linux Foundation) — neutral open home for the
@@ -60,10 +94,13 @@ bead = one folder under `submissions/`.
 4. **Verify (the anti-slop gate)** — run/test it; `/scrutinize` substantial work;
    confirm the prime-directive checklist. Andrew signs off.
 5. **Publish** — push the public artifact (blog URL, PR, video, talk page…).
-6. **Submit** — open an issue in the **AAIF Ambassador submissions repository**
-   using the "Ambassador Contribution Submission" template: GitHub handle
-   `azigler` · contribution URL · related AAIF project(s) · notes. (Submit early
-   in the month — monthly leaderboards aren't recalculated for late entries.)
+6. **Submit** — ⛔ **STOP: never submit without alerting Zig and reviewing it
+   together first** (see the Hard rule above — no accidental spam / premature
+   spotlight). *After his explicit go-ahead,* open an issue in the **AAIF
+   Ambassador submissions repository** using the "Ambassador Contribution
+   Submission" template: GitHub handle `azigler` · contribution URL · related
+   AAIF project(s) · notes. (Submit early in the month — monthly leaderboards
+   aren't recalculated for late entries.)
 7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), **and log
    it onto the current month's recurring task in the Asana planning hub** (private
    scheduler/collector — IDs + convention in `.local/private-notes.md`). Close the

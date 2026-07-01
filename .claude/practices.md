@@ -45,7 +45,7 @@ quick-reference harness; this is the fuller "how we work" doc. Short version:
 9. **Capture what you learn.** New facts about a project go back into
    `refs/projects/*`; decisions and gotchas become `research:`/`note` beads. The
    research archive is a deliverable, not scaffolding — future contributions
-   (and other ambassadors) draw on it.
+   draw on it.
 
 ## The unit of work
 
