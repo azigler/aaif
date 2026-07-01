@@ -1,60 +1,71 @@
-# Session handoff — aaif bootstrap (2026-06-24)
+# Session handoff — 2026-07-01 (AAIF ambassador: research → review-system pivot)
 
-Bootstrapped the AAIF Ambassador harness for **Zig** (Andrew Zigler; address him
-as Zig, byline stays Andrew Zigler). Repo is live, public, and a submodule of
-`~/explore`.
+## ▶ Next session's dedicated focus (start here)
 
-## What's built (all committed + pushed)
+**Bead `aaif-ambassador-program-18o.26` (P1)** — build the **AAIF submission +
+score-checking pipeline**: a hardened conformance skill + a pipeline so our
+submissions pass AAIF's *automated* reviewer at the highest legitimate score,
+first time (and possibly stage candidates from LinearB / Dev Interrupted work
+where it ties to an AAIF project, vendor-neutral).
 
-- **Public repo** `azigler/aaif` (github.com/azigler/aaif), wired as an
-  `~/explore` submodule. `main` is clean.
-- **Harness** `CLAUDE.md` — mission (top-ambassador = points × quality ×
-  usefulness, monthly), anti-slop prime directive, 8-step `/submission` pipeline,
-  cadence model (pulse → anchor → tentpole → opportunistic), routing, beads
-  taxonomy. `/submission` skill + `.claude/practices.md`.
-- **`refs/`** — program mechanics (distilled from the handbook), top-ambassador
-  strategy, brand/social playbook, 4 project briefs (MCP, goose,
-  AGENTS.md+public-agents, agentgateway+working-groups), brand kit.
-- **Beads** (prefix `aaif`): epic `aaif-ambassador-program-18o` + 24 open
-  (6 opening-move submissions, 13-idea backlog, WG/cadence/setup). `br ready`.
-- **`.local/`** (gitignored, PRIVATE, read-like-refs): source PDFs in
-  `program-pdfs/`, Asana hub IDs + logging convention in `private-notes.md`.
+1. **Read `.local/research/aaif-review-system.md` FIRST.** It has the
+   reverse-engineered review mechanics, the full **scorecard JSON schema**, the
+   **rubric / optimization levers**, 5 worked examples, and a concrete TODO list.
+   (It's private — it references other ambassadors' scorecards, which by hard
+   rule never go in committed content.) The scorecard-file list is at
+   `.local/research/scorecard-list.txt` (36 scorecards).
+2. **The one-line finding:** AAIF's reviewer (goose, posting via the program
+   account) scores **type-baseline-driven** (blog 15, tutorial 20, talk 30, small
+   merged PR 5; observed `total == base`, no bonuses). It writes a scorecard JSON
+   and verifies type / project / publish-date / authorship / dev-value / timing
+   (artifact must be dated after the 2026-06-23 start). So the pipeline optimizes
+   **type classification + verifiability + timing**.
+3. **The build (per bead .26):** tabulate all 36 scorecards → confirm the
+   type→points map + find any bonus/human-review/rejection cases; grab the exact
+   `[Submission]` issue template; build the skill in `aaif/.claude/skills/`
+   (schema + rubric + pre-submit checklist + issue-body drafter — **stopping at
+   the submit gate**); design the candidate→classify→shape→review→submit→track
+   pipeline; add the LinearB/DI staging lane.
 
-## Privacy posture (important)
+## Hard rules now in force (CLAUDE.md — do NOT violate)
 
-- Source PDFs were briefly committed at bootstrap, then **scrubbed from git
-  history (filter-repo) + force-pushed**; Zig accepted the tiny residual-blob
-  risk (fresh repo, GitHub GCs unreferenced objects). **Never republish the
-  PDFs.** Distilled notes only.
-- `.local/` is the private half of the brain: **read it for grounding, never
-  leak its contents** (IDs/secrets/verbatim PDFs) into tracked files, beads,
-  commits, or published artifacts.
+1. **Never draft-and-submit or open a PR/issue/comment/form to ANY AAIF surface
+   without alerting Zig and reviewing together first.** Building locally is fine;
+   anything in AAIF's spotlight waits for his explicit go-ahead, every time.
+2. **Never write about / rank / hypothesize about other program participants or
+   their content in committed files** — that goes in `.local/` only. Committed
+   content stays about the work and the developer value.
+3. **Two-tier knowledge:** AAIF/Angie source docs + not-yet-public campaign
+   material + anything from the private `aaif/ambassadors` repo → `.local/`
+   (never committed). Distilled secondhand research → `refs/` (public), scrubbed.
+   **Generalize private infra** — refer to a self-hosted gateway / a local-model
+   box / a private mesh generically (never by their private machine names);
+   prefer **goose** for the local-model story.
 
-## OPEN — pick up here
+## Repo state
 
-1. **Strategic fork not yet decided (Zig: "wrap up here" — deferred):** the
-   ambassador **signature**. My recommendation: **harness-operator primary +
-   local-first secondary** (most unique; best fit with AAIF's anti-slop ethos).
-   Alt: local-first/sovereign primary. This decides the first anchor:
-   harness-operator → the tighter **"What AGENTS.md gives agents that READMEs
-   don't"** explainer; local-first → the **goose local-inference** tutorial. Suggested
-   arc: explainer → robot-fleet flagship (bead .6) → goose tutorial (bead .8).
-2. **Venues (Zig confirmed):** canonical submit-URL = **his own blog/site** or a
-   **LinkedIn article**; **Dev Interrupted is amplify-only, never the submit
-   URL** (avoids the "promotional" non-qualify trap). Vendor-neutral framing;
-   LinearB tie = one closing link. A substantive, project-tied Dev Interrupted
-   piece *can* count, but submit the neutral canonical URL.
-3. **Human action items (Zig):** bead `.2` — get added to the AAIF submissions
-   repo + confirm the issue template + Discord invite + badge-kit link (blocks
-   *submitting* anything). Bead `.3` — confirm hashtag (#AAIFAmbassador vs
-   #AAAmbassador) with ambassadors@aaif.io.
-4. **Asana write-path TODO:** no connector for Zig's personal Asana org in the
-   bootstrap session — monthly logging to the planning hub is **manual** for now
-   (harness drafts the update text). IDs/convention in `.local/private-notes.md`.
+- Public repo `azigler/aaif` (submodule of `~/explore`), clean; all pushed.
+- **Committed research:** MCP 7-28 deep brief (`refs/projects/mcp.md`), WG
+  research, goose/AGENTS.md briefs, voice exemplars. **Private (`.local/`):** the
+  campaign white-paper paths, agentgateway deep-dive, hands-on projects, both
+  onboarding docs, the review-system notes, the Asana hub IDs, the source PDFs.
+- **Skills installed globally:** `aaif-blog-guidelines`, `aaif-brand-guidelines`.
+- History was scrubbed of private infra names (filter-repo) — HEAD/history/DB all clean.
 
-## Recommended next action
+## Still-open strategic threads (Zig's call, whenever)
 
-Settle the signature (item 1), then run `/submission` on the first anchor — you
-can **build + publish** now; you can't **submit** until bead `.2` is done.
-Strongest lane remains **AGENTS.md + public-agents** (empty foundation repo,
-Zig's exact `SKILL.md` format).
+- **Read the two onboarding gists** (MCP + agentgateway — links in
+  `.local/private-notes.md`) → pick the **signature + first move** (the decision
+  that unblocks the content plan; my rec: harness-operator primary + local-first
+  secondary).
+- **Toronto MCP Dev Summit CFP (~July 14)** — the one time-boxed item (via
+  `/cfp` → `/talk`). Verify it's still open on Sessionize.
+- Submissions repo confirmed: **we're in `aaif/ambassadors`** (bead `.2` closed).
+  The MCP 7-28 campaign interest form was submitted. Blog-on-aaif.io = an Asana
+  form; contribution *scoring* = a `[Submission]` issue in the submissions repo.
+
+## Beads
+
+Master epic `aaif-ambassador-program-18o`. `.26` (P1) is the next-session focus.
+`br ready` for the rest (6 opening-move submissions, the idea backlog, WG,
+cadence). The monthly-floor cadence guard is `.4`.
