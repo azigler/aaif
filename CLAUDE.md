@@ -92,14 +92,16 @@ bead = one folder under `submissions/`.
      Agent-Skills format (matches Andrew's existing skills — copy-adapt)
    - any web/UI deliverable → `/impeccable`
 4. **Verify (the anti-slop gate)** — run/test it; `/scrutinize` substantial work;
-   confirm the prime-directive checklist. Andrew signs off.
+   run **`/aaif-review`** to score-check (highest legitimate type + verifiability →
+   clean automated approval); confirm the prime-directive checklist. Andrew signs off.
 5. **Publish** — push the public artifact (blog URL, PR, video, talk page…).
 6. **Submit** — ⛔ **STOP: never submit without alerting Zig and reviewing it
    together first** (see the Hard rule above — no accidental spam / premature
    spotlight). *After his explicit go-ahead,* open an issue in the **AAIF
    Ambassador submissions repository** using the "Ambassador Contribution
    Submission" template: GitHub handle `azigler` · contribution URL · related
-   AAIF project(s) · notes. (Submit early in the month — monthly leaderboards
+   AAIF project(s) · notes. (**`/aaif-review`** drafts the exact issue body and
+   stops here at the gate.) (Submit early in the month — monthly leaderboards
    aren't recalculated for late entries.)
 7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), **and log
    it onto the current month's recurring task in the Asana planning hub** (private
@@ -130,6 +132,7 @@ guards the floor.
 | Researching a project's contribution surface | `refs/projects/<project>.md` |
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
+| Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
 | Understanding AAIF the org | `refs/aaif-overview.md` |
 | Needing the authoritative source / private context | **`.local/`** — read it like `refs/` (handbook PDFs, Asana hub IDs); never commit or quote its contents |
 
@@ -158,7 +161,9 @@ aaif/
 ├── .beads/               ← task tracking (prefix aaif)
 ├── .claude/
 │   ├── practices.md      ← the ambassador practice spec
-│   └── skills/submission ← the end-to-end submission pipeline skill
+│   └── skills/
+│       ├── submission    ← the end-to-end submission pipeline
+│       └── aaif-review   ← score-check + conformance gate (type/points/checklist/issue drafter)
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
 │   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)

@@ -64,6 +64,11 @@ Create `submissions/<YYYY-MM>-<slug>/` and produce the artifact:
 - Facts + project names correct (cross-check `refs/projects/*`).
 - Reflects Andrew's real understanding/usage; generated text reviewed & edited.
 - It genuinely helps a developer.
+- **Run `/aaif-review`** to score-check *before publishing* (while the artifact is
+  still editable): confirm the highest legitimate type + predicted points, and shape
+  it for verifiability — visible publish date, authorship = `azigler`, one specific
+  AAIF-project anchor — so the automated reviewer lands `confidence: high` with no
+  human review.
 - `/scrutinize` substantial pieces (adversarial "disprove done"); `/handoff` as
   the final check. **Andrew signs off.** If it can't pass, it isn't done.
 
@@ -78,7 +83,8 @@ never assume prior approval carries over). Only after his explicit go-ahead:
 open an issue in the **AAIF Ambassador submissions repository** with the
 "Ambassador Contribution Submission" template: handle `azigler` · contribution
 URL · related AAIF project(s) · notes (context for the review agent — *"help the
-agent help you"*). **Submit early in the month** — monthly leaderboards aren't
+agent help you"*). Use **`/aaif-review`** to draft the exact issue body — it fills
+the template and stops here at the gate. **Submit early in the month** — monthly leaderboards aren't
 recalculated for late entries. Respond in-thread if the review agent asks for
 more info.
 
