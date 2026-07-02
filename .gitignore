@@ -23,3 +23,6 @@ scratch/
 
 # bv (beads viewer) local config and caches
 .bv/
+
+# working submission drafts are premature — stage via private gists for review, never commit until shipped
+submissions/
