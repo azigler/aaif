@@ -77,6 +77,35 @@ From `/gateway-audit`, for each identity collect the sets it actually exercised:
 Emit the rules as a **diff against the current route config**, not a whole new file —
 so the reviewer sees exactly what tightens.
 
+## Identity is the prerequisite (verified 2026-07-03)
+
+A tool allowlist is meaningless until the gateway can tell agents apart. On a shared box,
+`src.addr` is the same for every agent — so per-agent scoping needs a real identity:
+
+1. **Give each agent a virtual key** — an `apiKey` policy on the route:
+   ```yaml
+   apiKey:
+     mode: strict          # 401 without a valid key
+     keys:
+     - { key: sk-goose-…, metadata: { name: goose } }
+     - { key: sk-cc-…,    metadata: { name: cc } }
+   ```
+   The key (Bearer header) authenticates; its metadata surfaces to CEL as
+   **`apiKey.name` / `apiKey.owner` / `apiKey.group`**.
+2. **Key the `mcpAuthorization` rules on the identity** (this is what "per-agent least
+   privilege" actually is):
+   ```yaml
+   - allow: 'apiKey.name == "cc"'                                                    # cc: all
+   - allow: 'apiKey.name == "goose" && mcp.tool.name in ["echo","sequentialthinking"]'  # goose: two
+   ```
+3. **Make it visible** — the log omits identity by default; add
+   `frontendPolicies: accessLog: add: { agent: apiKey.name }` so every line carries `agent=…`.
+
+**⚠️ The gotcha that will bite you:** at the authz layer `mcp.tool.name` is the
+**underlying** tool name (`echo`), NOT the federation-namespaced name (`everything_echo`)
+that `tools/list` shows. A rule against the namespaced name matches nothing and the agent
+silently gets **zero** tools. Derive rules from the underlying names.
+
 ## The gate — validate → shadow → apply (the human walks this)
 
 Never apply. Produce this runbook with the proposal:
