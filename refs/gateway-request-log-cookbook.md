@@ -51,13 +51,23 @@ agentgateway commonly runs on a separate box (a home machine reached over a priv
 mesh) while you analyze from your dev box. Snapshot **remotely**, copy the single file:
 
 ```bash
-ssh <gateway-host> "sqlite3 ~/.local/share/agentgateway/requests.db 'VACUUM INTO /tmp/reqsnap.db'"
-scp <gateway-host>:/tmp/reqsnap.db "$SNAP" && ssh <gateway-host> 'rm -f /tmp/reqsnap.db'
+ssh <gateway-host> "sqlite3 ~/.local/share/agentgateway/requests.db 'VACUUM INTO /tmp/reqsnap.db' \
+  && sqlite3 /tmp/reqsnap.db 'PRAGMA integrity_check' && gzip -f /tmp/reqsnap.db"   # verify + compress on the far side
+scp <gateway-host>:/tmp/reqsnap.db.gz "$SNAP.gz" && ssh <gateway-host> 'rm -f /tmp/reqsnap.db.gz'
+gunzip -f "$SNAP.gz" && sqlite3 "$SNAP" 'PRAGMA integrity_check'                    # must print "ok" before you trust it
 ```
 
 `VACUUM INTO` matters: the live DB runs in WAL mode with a `-wal` sidecar holding
 uncommitted pages. Copying `requests.db` alone loses them; `VACUUM INTO` produces one
 consistent, self-contained file (no `-wal`/`-shm` needed) — verified portable.
+
+**Gzip the transfer, and integrity-check both ends** (learned the hard way, live). With
+prompt/completion capture on, the DB grows fast — a busy fleet's `requests.db` reached
+**77 MB in ~2.5 h**, and a plain `scp` (worse, one under a short timeout) can **truncate
+it silently** → DuckDB then fails with `database disk image is malformed`. Compressing
+on the far side (77 MB → ~29 MB here) makes the copy both faster and far less likely to
+truncate; `PRAGMA integrity_check` returning `ok` on the local file is the gate that
+tells you the snapshot is sound before you query it.
 
 ## The schema (only the load-bearing columns)
 
