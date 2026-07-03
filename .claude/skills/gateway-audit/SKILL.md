@@ -1,6 +1,6 @@
 ---
 name: gateway-audit
-description: "Answer 'what did my agent fleet actually do?' from an agentgateway deployment's own access log + Prometheus metrics — no external o11y backend. Groups every call by identity, route, method, and tool; clusters errors; sums tokens/cost for LLM traffic; surfaces anomalies. Read-only. The foundation the hardening skill (/gateway-harden) derives least-privilege policy from. Fire it to review fleet behavior, investigate a spike, or produce the observed-behavior baseline before tightening authz."
+description: "Answer 'what did my agent fleet actually do?' from an agentgateway deployment's own surfaces — its structured request-log DB (DuckDB, preferred) or, as fallback, its access log + Prometheus metrics — no external o11y backend. Groups every call by identity, route, method, and tool; clusters errors; sums tokens/cost for LLM traffic; surfaces anomalies. Read-only. The foundation the hardening skill (/gateway-harden) derives least-privilege policy from. Fire it to review fleet behavior, investigate a spike, or produce the observed-behavior baseline before tightening authz."
 metadata:
   author: Andrew Zigler
   organization: independent (AAIF Ambassador)
@@ -27,17 +27,81 @@ behavior you haven't measured.
   surface so `/gateway-harden` can propose rules that allow exactly what's real.
 - **Content/demo** — show a fleet's actual traffic in a talk or article.
 
-## Inputs
+## Inputs — two sources (prefer the DB)
 
-| Input | Where | Notes |
-|---|---|---|
-| **Access log** (primary) | the gateway's stdout/stderr sink | e.g. pico: `~/Library/Logs/agentgateway.log` (tail via `ssh pico`). One `info … request …` line per call. |
-| **Prometheus metrics** (cross-check) | `statsAddr`, e.g. `localhost:15020/metrics` | aggregate counters; use to sanity-check the log-derived totals and for rates over time. |
-| **Time window** (optional) | — | default: whole log. Narrow with a timestamp filter; **always state the window in the report** — a short window is a partial picture. |
-| **`agctl proxy`** (optional) | admin API | live route/backend state, to name what the traffic hit. |
+agentgateway exposes fleet behavior two ways. Prefer the structured DB whenever it's on.
 
-Ground the field meanings in the **capability map**
-(`~/explore/agentgateway/refs/capability-map.md`) — the authoritative per-field inventory.
+- **Source A — the request-log DB (DuckDB), PREFERRED** when `config.database.url` is
+  set. A structured, indexed SQLite table the gateway persists per call (the same store
+  behind the admin UI's Logs view); you read a read-only snapshot with DuckDB. Exact,
+  indexed, rotation-proof — and one query produces the whole report.
+- **Source B — the text access log (grep), FALLBACK** when the DB isn't configured. The
+  gateway's stdout/stderr stream, parsed with grep/awk. Same fields, less precise, and
+  exposed to log rotation.
+
+Cross-check either against **Prometheus metrics** (`statsAddr`, e.g.
+`localhost:15020/metrics`) for aggregate counters and rates over time; use `agctl proxy`
+(admin API) to name what the traffic hit. **Always state the time window in the report** —
+a short window is a partial picture.
+
+Ground field meanings in the **capability map**
+(`~/explore/agentgateway/refs/capability-map.md`); ground every DB query in the
+**request-log cookbook** (`refs/gateway-request-log-cookbook.md`) — the single source of
+query truth (verified schema, gotchas, per-metric queries).
+
+## Source A — the request-log DB (DuckDB, preferred)
+
+The gateway **writes** SQLite (`config.database.url`, `mode=rwc`, WAL); you **read** with
+DuckDB. Never point the analytics engine at the live file — snapshot a consistent copy
+(`VACUUM INTO` folds the WAL and never blocks the writer), then attach it read-only:
+
+```bash
+GW_DB=/absolute/path/requests.db             # what agentgateway writes (local)
+SNAP=/tmp/reqsnap.db                          # consistent read copy
+sqlite3 "$GW_DB" "VACUUM INTO '$SNAP'"        # point-in-time, self-contained, WAL folded in
+# remote gateway (mesh case): ssh <gateway-host> "sqlite3 …/requests.db 'VACUUM INTO /tmp/reqsnap.db'" && scp <gateway-host>:/tmp/reqsnap.db "$SNAP"
+```
+
+```sql
+LOAD sqlite;   -- INSTALL sqlite; first time
+ATTACH '/tmp/reqsnap.db' AS gw (TYPE sqlite, READ_ONLY);
+```
+
+**One composite query = the whole report in a single pass** — overview totals, protocol
+mix, status classes, by-identity with tokens, error clusters, and latency percentiles.
+Its six `sect` groups map 1:1 onto the report shape below. For LLM dollars, cache
+economics, volume-over-time, and single-request trace, pull the matching query from the
+cookbook rather than duplicating it here.
+
+```sql
+WITH base AS (
+  SELECT coalesce(attributes_json->>'$.protocol','?') AS proto, http_status AS st,
+         coalesce(nullif(agentgateway_user,''), attributes_json->>'$.agent','unattributed') AS ident,
+         attributes_json->>'$.route' AS route, attributes_json->>'$."http.path"' AS path,
+         duration_ms AS dur,
+         coalesce(input_tokens,0) AS in_tok, coalesce(output_tokens,0) AS out_tok
+  FROM gw.request_logs)
+SELECT '1_overview' sect, 0 ord, 'window '||(SELECT min(started_at) FROM gw.request_logs)||' .. '||(SELECT max(completed_at) FROM gw.request_logs) line
+UNION ALL SELECT '1_overview', 1, 'calls '||count(*)||' · in_tok '||sum(in_tok)||' · out_tok '||sum(out_tok) FROM base
+UNION ALL SELECT '2_protocol', row_number() OVER (ORDER BY count(*) DESC), 'proto '||proto||' ×'||count(*) FROM base GROUP BY proto
+UNION ALL SELECT '3_status', cast(st AS INT), 'status '||st||' ×'||count(*) FROM base GROUP BY st
+UNION ALL SELECT '4_identity', row_number() OVER (ORDER BY count(*) DESC), 'ident '||ident||' — '||count(*)||' calls · '||sum(in_tok+out_tok)||' tok' FROM base GROUP BY ident
+UNION ALL SELECT '5_errors', row_number() OVER (ORDER BY count(*) DESC), 'err '||st||' '||coalesce(ident,'?')||' '||coalesce(route,'?')||' '||coalesce(path,'?')||' ×'||count(*) FROM base WHERE st>=400 GROUP BY st,ident,route,path
+UNION ALL SELECT '6_latency', 0, 'p50 '||round(quantile_cont(dur,0.5))||'ms · p95 '||round(quantile_cont(dur,0.95))||'ms · max '||max(dur)||'ms' FROM base
+ORDER BY sect, ord;
+```
+
+Identity resolves `agentgateway_user` (keyed) → the `agent` attribute (`unkeyed`) →
+`unattributed`; on a shared box `src.addr` is **not** per-agent identity (see
+`/gateway-harden`). Cost honesty holds here too: `cost` is NULL on flat-rate/local — the
+composite reports tokens only; only add `$` when the cookbook's cost query shows
+`count(cost) > 0`. Never join `request_log_payloads` unless you intend to read
+prompt/response content — and never print or commit that content.
+
+## Source B — the text access log (grep, fallback)
+
+When the DB isn't configured, derive the same report from the stdout access log. Set
+`LOG` to the log file (or `LOG="ssh <gateway-host> cat <path>"` and pipe).
 
 ## The field schema (what each log line carries)
 
@@ -55,8 +119,8 @@ Space-separated `key=value` pairs after `… info … request`. The ones this sk
 
 ## Parse recipe (copy-paste, works on the real format)
 
-Set `LOG` to the log (or `LOG="ssh pico cat ~/Library/Logs/agentgateway.log"` and pipe).
-Every request line contains `http.status=`, so that's the reliable filter.
+(e.g. `LOG="ssh pico cat ~/Library/Logs/agentgateway.log"` and pipe.) Every request line
+contains `http.status=`, so that's the reliable filter.
 
 ```bash
 REQ() { grep -F 'http.status=' "$LOG"; }        # all request lines
@@ -96,9 +160,10 @@ allowlist. Produce it explicitly:
 REQ | grep -oE 'src\.addr=[0-9.]+.*(gen_ai\.tool\.name=[^ ]+|mcp\.method\.name=[^ ]+)' # then group per identity
 ```
 
-## Report shape
+## Report shape (source-agnostic)
 
-Emit a compact markdown report (no preamble):
+Emit a compact markdown report (no preamble) — the same shape whichever source you used.
+Source A's composite `sect` groups (`1_overview` … `6_latency`) map straight onto it:
 
 ```
 # Gateway audit — <window> (<host>)
@@ -139,3 +204,12 @@ model · input/output/cache tokens · $ (only if a cost catalog is set — else 
 
 `/gateway-harden` — feed it the "tools invoked / by identity" section; it proposes the
 least-privilege CEL that allows exactly the observed surface and denies the rest.
+
+## Reads / relates
+
+- **Query foundation:** `refs/gateway-request-log-cookbook.md` — the verified DuckDB
+  cookbook (schema, gotchas, per-metric queries) this skill's Source A composes from.
+- **Sibling DB-backed skills** (same cookbook, different lens):
+  `/gateway-cost` (token/cost accounting), `/gateway-watch` (near-real-time trend /
+  volume-over-time), `/gateway-trace` (one request or session, end to end by `id`).
+- **Field/authz reference:** `~/explore/agentgateway/refs/capability-map.md`.
