@@ -29,7 +29,7 @@ quick-reference harness; this is the fuller "how we work" doc. Short version:
    says *"Please do not"* try to write the definitive guide first. Sustainability
    is the competitive advantage in a 12-month, renew-every-6-months program.
 
-6. **Diversify deliberately.** Rotate projects and formats; use `/ssot` so the
+6. **Diversify deliberately.** Rotate projects and formats; use `/randomize` so the
    selection doesn't collapse to "another MCP blog." But lean into the two
    standout lanes (AGENTS.md/public-agents; local-model + gateway) for the
    pieces only Andrew can write.

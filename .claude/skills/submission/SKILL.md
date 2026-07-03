@@ -35,7 +35,7 @@ verify gate.
 
 ### 1. Pick
 Choose from the `idea:` backlog (`br list`) balancing **project / format /
-leverage** (heuristics in the strategy doc). Use `/ssot` to avoid collapsing to
+leverage** (heuristics in the strategy doc). Use `/randomize` to avoid collapsing to
 the modal choice. Promote the chosen idea: create/convert a `submission:` bead
 with the format, project tie-in, leverage thesis, and acceptance bar ("what makes
 this useful to a developer"). `br update <id> --status=in_progress`.

@@ -36,7 +36,7 @@ The reason "top ambassador" is realistic, not aspirational:
    practice is latent, credible ambassador content** — "here's how I actually run
    this," which is exactly what AAIF rewards over marketing.
 2. **The publishing machine already exists.** `/zig-voice`, `/explore`, `/talk`,
-   `/cfp`, `/ssot`, `/impeccable`, plus LinearB / Dev Interrupted distribution.
+   `/cfp`, `/randomize`, `/impeccable`, plus LinearB / Dev Interrupted distribution.
    Most ambassadors have to build a content pipeline; Andrew has one and just
    needs to point it at AAIF targets.
 3. **`public-agents` is empty and uses his exact `SKILL.md` format.** The single
@@ -77,7 +77,7 @@ ever cramming. The point is the *mix*, not a number; adjust to real life.
 
 ## Selection heuristics (what to make next)
 
-When picking the next submission, balance three axes (use `/ssot` to resist
+When picking the next submission, balance three axes (use `/randomize` to resist
 collapsing to "always another MCP blog"):
 
 - **Project balance** — rotate across MCP / goose / AGENTS.md / agentgateway so

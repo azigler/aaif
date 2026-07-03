@@ -81,7 +81,7 @@ Every contribution flows through these steps. One submission = one `submission:`
 bead = one folder under `submissions/`.
 
 1. **Pick** — choose the next contribution from the idea backlog (`br list`,
-   `idea:` beads) balancing project / format / leverage. Use `/ssot` to resist
+   `idea:` beads) balancing project / format / leverage. Use `/randomize` to resist
    collapsing to the modal choice. Heuristics: `refs/program/strategy-top-ambassador.md`.
 2. **Research** — ground it in `refs/projects/<project>.md`; verify current facts
    against the live repos (they move fast). Fold new findings back into refs.
