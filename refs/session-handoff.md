@@ -1,67 +1,30 @@
-# Session handoff — 2026-07-03 (agentgateway plane WORKING; next = skills + tutorial)
+# Session handoff — 2026-07-03 ba17a917 (gateway compaction bug fixed; toggle hardened; next = skills + tutorial)
 
-> Resume doc for continuing in the **aaif** folder (Zig is restarting the session here
-> with `cc-gw` on, so this session's own Claude Code traffic routes through the gateway
-> and generates logs = dogfooding). Transcript + memory were copied into this project's
-> Claude dir so history/memory are available here. Run `/onboard` then pick up below.
+## State at offboard
+- Current branch: `main` (aaif)
+- Open beads: 28; in-progress: 0. Top: `aaif-715` (article/tutorial), `aaif-46m` (crash-course, superseded), `aaif-ambassador-program-18o.27` (skills bundle extensions).
+- In-flight subagents: none. Dirty files: none in aaif. (~/dotfiles has Zig's own uncommitted `.profile`/`.zprofile`/`settings.json`/two aaif skills — NOT mine, left untouched.)
+- This session's commits landed in **other repos** (work was infra/refs, not aaif tracked files):
+  - `dotfiles@c750121` — cc-gw/cc-direct true toggle
+  - `explore@5023a13` — agentgateway maxBufferSize fix + capability-map finding
+- ⚠ aaif is an **unabsorbed submodule** — run `cd ~/explore && git submodule absorbgitdirs aaif` before any worktree subagents (else worktrees land in the parent's `.claude/worktrees/`).
 
-## Where we are: the o11y/gov plane is DEPLOYED + FULLY WORKING on pico
+## What happened this session
+Started dogfooding (this CC session launched with `cc-gw` ON → its own traffic routes through the pico gateway). Three intertwined issues, all traced to the AI-parsing path, all resolved:
 
-A real, instrumented, governed agentgateway plane runs on **pico** (macOS, launchd
-`com.zig.agentgateway`). Verified end-to-end:
-- **goose** (Block, an AAIF project) → local models via **ollama** on pico, scoped by a
-  virtual key (`sk-goose`) to 2 MCP tools.
-- **Claude Code** → Anthropic via the gateway's passthrough route (`cc-gw` toggle), full
-  token o11y, `agent="unkeyed"` (OAuth, no per-agent key).
-- **Per-identity governance**: virtual keys + `mcpAuthorization` CEL — goose sees 2 tools,
-  cc sees all 14, no key → 401. The centerpiece demo.
-- **Admin UI** (`http://pico.tailfb4637.ts.net:15000/ui`): LLM + MCP dashboards, 9-model
-  catalog, **web Logs view** (SQLite request-log DB), **playground Send works**, payload
-  logging on (`has_payload=1`).
+1. **Compaction 503 "request was too large" (root-caused + FIXED).** The gateway's own error (`reason=Internal`, never reached Anthropic). Cause: `frontendPolicies.http.maxBufferSize` default = **2 MiB**; CC context-compaction (its largest request) exceeds it → deterministic 503 → retries dead-loop → context can't shrink. **Fix: raised to 32 MiB (`33554432`)** on the global (only) knob; matches Anthropic's ~32MB ceiling. Deployed to `pico:~/.config/agentgateway/config.yaml`, restarted, **verified live** (bind up, a real 200 flowed through). The depth-vs-fragility finding is written into `~/explore/agentgateway/refs/capability-map.md` — prime *tempered-realism* article material.
+2. **cc-gw/cc-direct → true toggle.** Now also adds/removes the `omni-gw` MCP server (CC presents its virtual key → governed tools) in lockstep with the LLM route; `cc-route` reports both. Compaction caveat baked into the comment block. Tested round-trip.
+3. **CC prompt logging** — already ON (recent `claude-cli` rows `has_payload=1`); the "off" Zig saw was stale pre-reload history. No change needed.
 
-**Config:** live (gitignored, real keys/IP): `~/explore/agentgateway/experiment/config-pico.yaml`;
-generalized template committed: `config-pico.example.yaml`. Deploy = push to
-`pico:~/.config/agentgateway/config.yaml` + `launchctl kickstart -k gui/$(id -u)/com.zig.agentgateway`.
-Full field inventory + findings: `~/explore/agentgateway/refs/capability-map.md`.
+Also nailed the **launch-time `ANTHROPIC_BASE_URL` gotcha**: `cc-direct` only affects *future* sessions; a session started under cc-gw stays routed until restart (this is why my traffic kept hitting the gateway after Zig went direct).
 
-## Hard-won findings (all in the capability map)
+## What's next (the handoff's standing phase — unchanged)
+1. **Skills first** — harden `gateway-audit` + `gateway-harden`; build the `aaif-ambassador-program-18o.27` bundle (`/gateway-cost`, `/gateway-watch`, `/gateway-trace`); figure out how they're actually used. Wire the audit/cost skills to query the SQLite request-log DB via **DuckDB** (ATTACH; SQLite-write / DuckDB-read split).
+2. **Tutorial (`aaif-715`)** — clean setup from nothing → full instrumentation (goose + local ollama + Claude + the true cc-gw toggle). **EXCLUDE Tailscale/tailnet** (bind localhost/LAN). Section-by-section, ambitious/technical, tempered-realism (the 2 MiB compaction finding is a centerpiece), applied-academic voice, "As above, so below."
+3. **Self-made screenshots** via browser/Playwright (on this box) — capture all UI shots myself; Zig only reviews. First **re-review `~/linearb/skills/.claude/skills/lb-demo-flow-builder/SKILL.md`** (screenshots-as-spine, section-by-section, read-aloud narration, placeholder discipline) and harden the demo/tutorial skill to do this.
 
-- **The LLM-playground 403 was OLLAMA, not the gateway.** agentgateway forwards the
-  browser `Origin`; it strips browser CORS headers for Anthropic but NOT ollama, so ollama's
-  `OLLAMA_ORIGINS` allow-list 403s. Fixed via the ollama provider's `defaults.requestHeaders.remove`.
-  (Source-confirmed; an **unreported upstream bug** — candidate agentgateway contribution.)
-- **High-level `llm:`/`mcp:` blocks** (not raw `binds`) are what light up the UI dashboards.
-- **Request-log DB** = `config.database.url` (SQLite); payloads via `accessLog.database.add`
-  (`llm.prompt`/`llm.completion` CEL). DB identity via `config.standardAttributes.user`.
-- **ToS: routing your own Claude Code through your own gateway is Anthropic-DOCUMENTED +
-  supported** (not "gray"). Drop the caveat everywhere (corrected in `frontier-o11y.md`).
-
-## Zig's directives for THIS next phase (2026-07-03)
-
-1. **Skills first.** Harden + finish the gateway skills (`aaif/.claude/skills/gateway-audit`,
-   `gateway-harden`; the `aaif-5ad` bundle) and figure out how we actually USE them.
-2. **Tutorial = clean setup from nothing → this full instrumentation** (goose + local models
-   via ollama + Claude + the cc-gw toggle). **EXCLUDE Tailscale/tailnet** — too much complexity,
-   not necessary. Bind to localhost/LAN in the tutorial instead.
-3. **Self-made screenshots**: use a **browser/Playwright** (available on this box) to access the
-   gateway UI and capture all tutorial screenshots MYSELF. Zig reviews, doesn't screenshot.
-4. **Harden the demo/tutorial-building skill** to do #3 — and **re-review the LinearB
-   `lb-demo-flow-builder` skill** (`~/linearb/skills/.claude/skills/lb-demo-flow-builder/SKILL.md`):
-   screenshots-as-spine, section-by-section, read-aloud narration, placeholder discipline.
-5. **DuckDB decision (settled this session):** agentgateway writes to **SQLite** (sqlx; NOT
-   swappable to DuckDB). The right pattern (fits Zig's hevyd/DuckDB-native flow): keep SQLite as
-   the write store, use **DuckDB as the analytics read layer** — `duckdb` ATTACHes the SQLite log
-   and runs columnar OLAP (verified working). Wire the `gateway-audit`/`gateway-cost` skills to
-   query the SQLite via DuckDB. Teach this SQLite-write / DuckDB-read split in the tutorial.
-
-## Beads
-
-- `aaif-715` — the article/tutorial (the deliverable). `aaif-5ad` — the skills bundle (audit +
-  harden shipped; cost/watch/trace backlog `aaif-ambassador-program-18o.27`).
-- `aaif-46m` — the (now largely superseded) hands-on crash-course bead; the plane is built now.
-
-## Hard rules (unchanged)
-- Never publish/submit to any AAIF surface without Zig's explicit go-ahead (⛔ gate).
-- No gossip about other ambassadors in committed content.
-- Zig on SSH+tmux: plain URLs, no clickable links / SendUserFile / images.
-- Always commit + push as you go.
+## Warnings / watch-outs
+- **This session chose "ride" (stay routed).** Auto-compaction will fire soon and is now the LIVE proof of the maxBufferSize fix — if it succeeds through the gateway, the fix is validated end-to-end. If it still fails, the request may exceed 32 MiB (unlikely; Anthropic caps ~32MB) — then flip `cc-direct` + restart.
+- After editing the toggle, **re-source `~/.bash_aliases`** (or new shell) before toggling — a running shell holds old function defs.
+- Gateway config source-of-truth = `~/explore/agentgateway/experiment/config-pico.yaml` (gitignored, real keys); committed template = `config-pico.example.yaml`. Deploy = `cat > pico:~/.config/agentgateway/config.yaml` then `launchctl kickstart -k gui/$(id -u)/com.zig.agentgateway`.
+- Hard rules unchanged: never publish/submit to AAIF without Zig's go-ahead; no ambassador gossip in committed content; SSH+tmux (plain URLs, no SendUserFile/images); always commit + push.
