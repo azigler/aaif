@@ -188,15 +188,17 @@ aaif/
                               IDs, notes — read like refs/, never published
 ```
 
-## Conventions (inherited from the explore umbrella + global)
+## Conventions (global `~/.claude/CLAUDE.md` + this file)
 
 - **Gitmoji + bead trailer** on commits (`/commit`); one bead = one commit.
 - **Always push** — commit and push as you go; this repo is public by design.
 - Public-facing writing under Andrew's name → **`/zig-voice`**; keep AAIF framing
   **vendor-neutral** (LinearB tie = one closing link max).
 - Reference material lives in `refs/` at root (not `.claude/refs/`).
-- This is a **submodule of `~/explore`** (remote `azigler/aaif`, public) but a
-  standalone repo with its own life.
+- This is a **top-level home project** at `~/aaif` (remote `azigler/aaif`, public) —
+  **graduated out of the `~/explore` umbrella on 2026-07-03** (`/graduate`). It reads only
+  the global `~/.claude/CLAUDE.md` plus this file — no longer the explore umbrella's
+  `CLAUDE.md`/beads/monorepo. Own git, own `.beads`, own life.
 - **`.local/` is a private reference folder — READ it like `refs/`, never publish
   from it.** It is gitignored (never committed) yet **first-class context**: it
   holds the **authoritative source docs** (the AAIF Ambassador Handbook + social
