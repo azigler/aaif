@@ -133,6 +133,7 @@ guards the floor.
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
+| Watching the AAIF submissions landscape (trends / bloat / opportunities / grading sync) | `/aaif-radar` (`.claude/skills/aaif-radar/`) — weekly read-only scan → **private** report (`.local/radar/`) + **participant-free** closed `note` bead; notifies only when notable (fired by `pulse-aaif-radar`, Sat 15:00 PT) |
 | Auditing an agentgateway fleet's traffic | `/gateway-audit` (`.claude/skills/gateway-audit/`) — aggregate: what the fleet did, from its request-log DB (DuckDB) or logs+metrics (read-only) |
 | Accounting a fleet's token/cost | `/gateway-cost` (`.claude/skills/gateway-cost/`) — tokens + cache economics + $ only when priced (read-only) |
 | Watching a live fleet in near-real-time | `/gateway-watch` (`.claude/skills/gateway-watch/`) — threshold/anomaly alerts, one line per breach (read-only) |
@@ -170,6 +171,7 @@ aaif/
 │   └── skills/
 │       ├── submission     ← the end-to-end submission pipeline
 │       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
+│       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
 │       ├── gateway-audit  ← aggregate: what the fleet did (DuckDB request-log, or logs+metrics)
 │       ├── gateway-cost   ← tokens + cache economics + $ only when priced
 │       ├── gateway-watch  ← near-real-time threshold/anomaly alerts (one line per breach)
