@@ -108,6 +108,19 @@ git add .beads/issues.jsonl && git commit -m ":card_file_box: beads: radar note 
 This is the durable, committed memory of what each week taught us — safe because it carries
 only the model, never the people.
 
+### Output 3 — a `pulse-ledger` row (radar is a pulse loop; every run leaves a ledger)
+The radar fires on `pulse-aaif-radar.timer`, so — like every pulse loop — it MUST leave a
+ledger row the harness dashboard can read (no ledger-less ticks). Append ONE line to
+`/home/ubuntu/aaif/refs/pulse-ledger.jsonl` with `"row":"aaif-radar"`. **Participant-free**
+(this file is committed + read cross-machine — same rule as the bead: model only, never people):
+```bash
+TS=$(date -u +%FT%TZ)
+printf '%s\n' "{\"ts\":\"$TS\",\"row\":\"aaif-radar\",\"outcome\":\"done\",\"proof\":{\"kind\":\"artifact\",\"path\":\".local/radar/<YYYY-Www>.md\"},\"note\":\"radar <YYYY-Www> — <N new subs, trend deltas; participant-free>\"}" \
+  >> /home/ubuntu/aaif/refs/pulse-ledger.jsonl
+git -C /home/ubuntu/aaif add refs/pulse-ledger.jsonl && git -C /home/ubuntu/aaif commit -m ":card_file_box: pulse: aaif-radar <YYYY-Www> ledger row"
+```
+A run with nothing new still logs `"outcome":"quiet"` (no proof needed). First run creates the file.
+
 ## Notify (only when it matters)
 File a **P1 `human:` bead + push notification** if the week shows: a clear **new opportunity**
 in Zig's lane, meaningful **over-rotation** worth steering around, a **grading-model drift**
