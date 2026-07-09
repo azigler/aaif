@@ -1,58 +1,50 @@
-# Session handoff — 2026-07-04 d9f0200b
+# Session handoff — 2026-07-08/09
 
-Huge multi-thread session: recovered `.local/`+`submissions/`, built the `honk` MCP nucleus
-on pico, wrote+scrutinized the tutorial through v4, shipped `/aaif-radar` + `/cdn`, and
-overturned the Remote-Control-vs-gateway finding.
+Marathon session on the AAIF gateway tutorial. Ended with a Zig-directed re-architecture
+spec'd into **`aaif-yw5`** for a FRESH session to execute end-to-end (this context is saturated —
+that's the point: a clean window drives it better).
+
+## THE NEXT ACTION (read this first)
+Onboard, then execute spec bead **`aaif-yw5`** (`br show aaif-yw5`) end-to-end:
+Phase 0 — consolidate the 5 `gateway-*` skills into ONE `agentgateway` skill →
+Phase 1 — substance-first rewrite of the tutorial (fix the real gaps) →
+Phase 2 — workflow hardening (parallel fresh-eyes critiques incl. a dedicated **story-fidelity**
+agent → synthesis → final cold read) →
+Zig review → push to the **GIST FIRST**, then metis vault.
+Private execution specifics (infra, IPs, keys, asset IDs, screenshot rig, delivery paths, config
+ground truth, full fact list): **`.local/goose-tutorial-execution.md`** — read it like `refs/`.
 
 ## State at offboard
-- Branch: `main` · clean tree · pushed. Last commit `0f15977` (bead state: CDN live on .34/.28).
-- Open beads: 22. Active P1s: `aaif-…28` (the tutorial), `aaif-715`, `aaif-49y`, `.5`/`.6`.
-- In-flight subagents: none. No worktrees.
-- Markers: `.offboard-pending` cleared.
+- Branch `main`, clean/pushed after this commit. Tutorial working files are gitignored (`submissions/`).
+- The tutorial lives in a SECRET review gist (id `11ee0236e263b31d9d2237070941e961`); current content =
+  the v5 "nursery-rhyme" draft that Zig **rejected** as over-whimsical / vaporous / structurally gapped.
+  `aaif-yw5` is the plan to replace it. The whimsy over-rotated; the substance (model setup, MCP
+  virtualization + per-agent scoping) is missing.
+- Header v2 (branded: ZIG-00 wing / TINY-TOOLS fuselage / AAIF-logo roundel, 1200x630) is LIVE on the
+  gist + the publish file. Keep it.
+- Delivery HELD (nothing to metis). Metis Obsidian vault is the source (git flows FROM metis); deliver
+  gist-first after Zig's explicit okay.
 
-## What happened this session
-1. **Recovered `.local/` + `submissions/`** (both lost in the ~/explore→~/aaif graduation).
-   Rebuilt text files from old session transcripts (extracted Write/Read tool payloads);
-   re-fetched the acceptance meme; **3 program PDFs restored from Zig's Drive**; regenerated
-   `academic-and-whitepaper-paths.md` + `hands-on-engineering-projects.md` from the restored
-   `aaif-opportunities.pdf`. Full audit in `.local/RECOVERY-NOTES.md`. `.local/infra-architecture.md`
-   written (three hosts: zig-computer=orchestrator, **pico=gateway+models**, metis=Zig's Mac).
-2. **`/aaif-radar`** built (weekly submissions-landscape scan → private report + participant-free
-   `note` bead) + **`pulse-aaif-radar`** systemd timer (Sat 15:00 PT, enabled; baseline note `aaif-hip`).
-3. **`honk` — the curated MCP nucleus — BUILT + VERIFIED on pico.** Edited pico's live gateway
-   config (`~/.config/agentgateway/config.yaml`, backed up `.bak-pre-honk-*`): federated
-   `filesystem`+`fetch`, curated to 6 tools via CEL. V1 (tools/list=exactly 6) + V3 (`move_file`
-   → "Unknown tool", logged) + goose end-to-end (read/write/fetch, all `agent="goose"` 200) all
-   pass. Spec = bead `.31`; runner = `.32`. goose config: `honk` extension enabled, `developer`
-   extension **DISABLED** for the demo.
-4. **Tutorial "Every goose needs its plane" (bead `.28`)** — written through **v4** (insider
-   tech-tutorial, dual-track human/agent, demystify thesis, /randomize-driven cadence v4 seed
-   `4cbec873…`). Scrutinized (fix-then-ship, all findings applied). On the gist:
-   **https://gist.github.com/azigler/11ee0236e263b31d9d2237070941e961** (`TUTORIAL.md`).
-   Working files in `submissions/2026-07-harness-loop-gateway/` (gitignored): TUTORIAL.md,
-   nucleus-spec.md, findings.md, walkthrough-v2-goose.md, screenshots/, images/.
-5. **`/cdn`** now works (R2 creds staged in `~/.secrets`): tutorial screenshots at
-   `cdn.zig.computer/aaif/honk-tutorial/{00-overview,01-servers}.png`, embedded in the gist
-   (renders inline). Kills the scp-review loop.
-6. **BREAKTHROUGH — Remote Control COEXISTS with gateway routing** (socket-verified: the az3 CC
-   session holds `pico:17017` + live claude.ai TLS at once). The old "routing disables Remote
-   Control" finding was WRONG; corrected in `~/explore/agentgateway/refs/capability-map.md`
-   (committed to explore) + aaif `findings.md`. So cc-gw is viable for the frontier session.
-   Updated the `cc-gw` toggle (`~/dotfiles/bash/.bash_aliases`): CC model→gateway (no MCP),
-   goose keeps honk. **The .bash_aliases edits are UNCOMMITTED in dotfiles for Zig to review.**
-
-## What's next
-- **Zig is reading v4 tutorial → will send line notes.** Apply them, re-check voice+facts, push gist.
-- Richer Tool Playground screenshot (6 tools + a live call) + redact `/Users/pico` paths in the Servers shot.
-- Zig runs `cc-gw` himself (his call) to route his CC through the gateway.
-- Publish path: images on CDN ✓; **needs Zig's explicit go-ahead to submit** (hard rule).
-- Art direction resumes on bead `.33` (tabled): goose + AAIF-ambassador-character duo, the
-  /randomize composition plan, mascot fidelity = light face + black features (NOT a black silhouette).
+## What happened this session (highlights)
+- dotfiles committed (cc-gw toggle rework, effortLevel xhigh, Hermes PATH). Vendored the
+  aaif-blog/brand-guidelines skills into `~/aaif/.claude/skills` (fixed broken dotfiles symlinks).
+- `/aaif-radar` W27 delta (AGENTS.md→tooling; agentgateway governance content appearing; note `aaif-hip`).
+- Gateway forensics: the "CC still routing through the gateway days later" traffic = **stale
+  `ANTHROPIC_BASE_URL` baked into long-running CC processes** on zig-computer (an `~/explore` session +
+  2 linearb ones), NOT metis; the iPhone `Anthropic`-SDK rows were smoke tests. cc-direct config is
+  clean; the leak is per-process env, not config. RC-vs-gateway coexistence is un-retestable from the
+  gateway log (no CC version / no RC visibility) — documented, do not re-flip the memory.
+- Tutorial arc: fact-checked → applied Fable's editorial review → honk→tiny-tools → Goose capitalized →
+  retitled to the mouse-cookie snowclone → full v5 rewrite → header remade (nano-banana, 2 gens ~$0.20)
+  → **Zig rejected v5 for over-whimsy/no-substance** → the `aaif-yw5` re-architecture spec.
 
 ## Warnings / watch-outs
-- **goose's `developer` extension is DISABLED** (for the tutorial demo). Re-enable for Zig's
-  daily goose use after screenshot capture is final.
-- pico's gateway config was modified (honk). Backup: `~/.config/agentgateway/config.yaml.bak-pre-honk-*`.
-- `~/dotfiles/bash/.bash_aliases` has uncommitted `cc-gw` changes (Zig to review/commit his dotfiles).
-- Hard rule stands: never publish/submit to any AAIF surface without Zig's explicit go-ahead.
-- Bead `.34` / `explore-q9qb` = CDN; now unblocked (R2 live). Zig set up R2 himself.
+- The rewrite must be SUBSTANTIVE + technical ("wouldn't earn a technical leader's respect" was the
+  verdict). Whimsy = a CORRECT, light "If You Give a Mouse a Cookie" touch in the SECTION HEADERS only,
+  not scattered cutesy lines. Verify every fact (the `.local` fact list) survives hardening.
+- Two-tier rule: no pico IPs/paths/keys/ollama-baseUrl in committed content or the tutorial (generalize
+  to `localhost`). New screenshots (the Models view) need redaction (regenerate leaky cells).
+- Hard rule stands: never submit to any AAIF surface without Zig's explicit go-ahead. The gist is a
+  personal review draft (editable); the AAIF submission is separate + gated.
+- `/openrouter` + the Workflow tool are cost/token-heavy; Zig explicitly authorized the workflow for
+  `aaif-yw5`.
