@@ -134,12 +134,8 @@ guards the floor.
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
 | Watching the AAIF submissions landscape (trends / bloat / opportunities / grading sync) | `/aaif-radar` (`.claude/skills/aaif-radar/`) — weekly read-only scan → **private** report (`.local/radar/`) + **participant-free** closed `note` bead; notifies only when notable (fired by `pulse-aaif-radar`, Sat 15:00 PT) |
-| Auditing an agentgateway fleet's traffic | `/gateway-audit` (`.claude/skills/gateway-audit/`) — aggregate: what the fleet did, from its request-log DB (DuckDB) or logs+metrics (read-only) |
-| Accounting a fleet's token/cost | `/gateway-cost` (`.claude/skills/gateway-cost/`) — tokens + cache economics + $ only when priced (read-only) |
-| Watching a live fleet in near-real-time | `/gateway-watch` (`.claude/skills/gateway-watch/`) — threshold/anomaly alerts, one line per breach (read-only) |
-| Tracing one request / one session end-to-end | `/gateway-trace` (`.claude/skills/gateway-trace/`) — single-call timeline + session slice + privacy-gated payloads (read-only) |
-| Deriving least-privilege gateway policy | `/gateway-harden` (`.claude/skills/gateway-harden/`) — observed behavior → proposed CEL allowlist (human-gated, never applies) |
-| Writing/verifying a gateway request-log query | `refs/gateway-request-log-cookbook.md` — the verified DuckDB-over-SQLite cookbook (schema, gotchas, queries) the five gateway skills share |
+| Observing / accounting / tracing / hardening an agentgateway fleet | `/agentgateway` (`.claude/skills/agentgateway/`) — one read-only skill, four components: **audit** (what the fleet did), **cost** (tokens + cache economics + $ only when priced), **trace** (one request/session + privacy-gated payloads), **harden** (observed behavior → proposed least-privilege CEL; human-gated, never applies) |
+| Writing/verifying a gateway request-log query | `refs/gateway-request-log-cookbook.md` — the verified DuckDB-over-SQLite cookbook (schema, gotchas, queries) the `/agentgateway` skill's components share |
 | Understanding AAIF the org | `refs/aaif-overview.md` |
 | Needing the authoritative source / private context | **`.local/`** — read it like `refs/` (handbook PDFs, Asana hub IDs); never commit or quote its contents |
 
@@ -172,15 +168,11 @@ aaif/
 │       ├── submission     ← the end-to-end submission pipeline
 │       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
 │       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
-│       ├── gateway-audit  ← aggregate: what the fleet did (DuckDB request-log, or logs+metrics)
-│       ├── gateway-cost   ← tokens + cache economics + $ only when priced
-│       ├── gateway-watch  ← near-real-time threshold/anomaly alerts (one line per breach)
-│       ├── gateway-trace  ← one request / one session, end to end
-│       └── gateway-harden ← observed behavior → least-privilege CEL (human-gated)
-│           (the five gateway-* skills share refs/gateway-request-log-cookbook.md)
+│       └── agentgateway   ← one read-only skill, four components: audit (what the fleet did) · cost (tokens + cache economics + $ only when priced) · trace (one request/session + privacy-gated payloads) · harden (observed behavior → least-privilege CEL; human-gated)
+│           (its four components share refs/gateway-request-log-cookbook.md)
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
-│   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the gateway skills
+│   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the /agentgateway skill
 │   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)
 │   ├── projects/         ← per-project contribution-surface briefs
 │   ├── brand/            ← badge kit + Credly badge + header
