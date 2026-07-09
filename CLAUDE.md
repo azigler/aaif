@@ -94,7 +94,9 @@ bead = one folder under `submissions/`.
 4. **Verify (the anti-slop gate)** — run/test it; `/scrutinize` substantial work;
    run **`/aaif-review`** to score-check (highest legitimate type + verifiability →
    clean automated approval); confirm the prime-directive checklist. Andrew signs off.
-5. **Publish** — push the public artifact (blog URL, PR, video, talk page…).
+5. **Publish** — push the public artifact (blog URL, PR, video, talk page…). Pieces that ship on
+   **andrewzigler.com** go through **`/camp-publish`** (lexicon frontmatter + MDX body transform →
+   build-validate → land in the camp vault before the daily 8pm-PT build).
 6. **Submit** — ⛔ **STOP: never submit without alerting Zig and reviewing it
    together first** (see the Hard rule above — no accidental spam / premature
    spotlight). *After his explicit go-ahead,* open an issue in the **AAIF
@@ -133,6 +135,7 @@ guards the floor.
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
+| Publishing a finished piece to andrewzigler.com | `/camp-publish` (`.claude/skills/camp-publish/`) — lexicon frontmatter + MDX body transform, build-validate, land in the camp vault before the daily build (the Publish step) |
 | Watching the AAIF submissions landscape (trends / bloat / opportunities / grading sync) | `/aaif-radar` (`.claude/skills/aaif-radar/`) — weekly read-only scan → **private** report (`.local/radar/`) + **participant-free** closed `note` bead; notifies only when notable (fired by `pulse-aaif-radar`, Sat 15:00 PT) |
 | Observing / accounting / tracing / hardening an agentgateway fleet | `/agentgateway` (`.claude/skills/agentgateway/`) — one read-only skill, four components: **audit** (what the fleet did), **cost** (tokens + cache economics + $ only when priced), **trace** (one request/session + privacy-gated payloads), **harden** (observed behavior → proposed least-privilege CEL; human-gated, never applies) |
 | Writing/verifying a gateway request-log query | `refs/gateway-request-log-cookbook.md` — the verified DuckDB-over-SQLite cookbook (schema, gotchas, queries) the `/agentgateway` skill's components share |
@@ -167,6 +170,7 @@ aaif/
 │   └── skills/
 │       ├── submission     ← the end-to-end submission pipeline
 │       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
+│       ├── camp-publish   ← land a finished piece into the andrewzigler.com publish pipeline (lexicon frontmatter + MDX transform, build-validate, land in the vault)
 │       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
 │       └── agentgateway   ← one read-only skill, four components: audit (what the fleet did) · cost (tokens + cache economics + $ only when priced) · trace (one request/session + privacy-gated payloads) · harden (observed behavior → least-privilege CEL; human-gated)
 │           (its four components share refs/gateway-request-log-cookbook.md)
