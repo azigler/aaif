@@ -12,7 +12,7 @@ assigns them — see `refs/program/ambassador-program.md`).
 
 | Month | Title | Format | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
-| _2026-07_ | _(first contribution — TBD)_ | — | — | — | planned | — |
+| 2026-07 | If you give a Goose an MCP server | tutorial | agentgateway · goose · MCP | https://www.andrewzigler.com/feed/if-you-give-a-goose-an-mcp-server | approved | 20 |
 
 <!--
 Row template (copy when a submission ships):
@@ -23,9 +23,9 @@ Row template (copy when a submission ships):
 
 | Metric | Value |
 |---|---|
-| Contributions shipped | 0 |
-| Months with ≥1 contribution | 0 |
-| Approved points (scorecard total) | 0 |
+| Contributions shipped | 1 |
+| Months with ≥1 contribution | 1 |
+| Approved points (scorecard total) | 20 |
 
 _Updated as submissions are approved. The AAIF scoreboard is the source of truth
 for official points; this table mirrors it for the portfolio._
