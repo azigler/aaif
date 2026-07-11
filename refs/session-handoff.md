@@ -1,50 +1,49 @@
-# Session handoff — 2026-07-08/09
+# Session handoff — 2026-07-09/11 (bb750042)
 
-Marathon session on the AAIF gateway tutorial. Ended with a Zig-directed re-architecture
-spec'd into **`aaif-yw5`** for a FRESH session to execute end-to-end (this context is saturated —
-that's the point: a clean window drives it better).
-
-## THE NEXT ACTION (read this first)
-Onboard, then execute spec bead **`aaif-yw5`** (`br show aaif-yw5`) end-to-end:
-Phase 0 — consolidate the 5 `gateway-*` skills into ONE `agentgateway` skill →
-Phase 1 — substance-first rewrite of the tutorial (fix the real gaps) →
-Phase 2 — workflow hardening (parallel fresh-eyes critiques incl. a dedicated **story-fidelity**
-agent → synthesis → final cold read) →
-Zig review → push to the **GIST FIRST**, then metis vault.
-Private execution specifics (infra, IPs, keys, asset IDs, screenshot rig, delivery paths, config
-ground truth, full fact list): **`.local/goose-tutorial-execution.md`** — read it like `refs/`.
+Marathon session: took the Goose/agentgateway tutorial (spec `aaif-yw5`) from a rejected v5 draft
+all the way to **APPROVED, 20 points**, plus two harness improvements. `aaif-yw5` is CLOSED and the
+July cadence floor is cleared with margin.
 
 ## State at offboard
-- Branch `main`, clean/pushed after this commit. Tutorial working files are gitignored (`submissions/`).
-- The tutorial lives in a SECRET review gist (id `11ee0236e263b31d9d2237070941e961`); current content =
-  the v5 "nursery-rhyme" draft that Zig **rejected** as over-whimsical / vaporous / structurally gapped.
-  `aaif-yw5` is the plan to replace it. The whimsy over-rotated; the substance (model setup, MCP
-  virtualization + per-agent scoping) is missing.
-- Header v2 (branded: ZIG-00 wing / TINY-TOOLS fuselage / AAIF-logo roundel, 1200x630) is LIVE on the
-  gist + the publish file. Keep it.
-- Delivery HELD (nothing to metis). Metis Obsidian vault is the source (git flows FROM metis); deliver
-  gist-first after Zig's explicit okay.
+- Branch `main`, clean, pushed. Last commit `8f3b5c8` (close aaif-yw5 + SUBMISSIONS.md).
+- Open beads: 36 (22 ready) — all the backlog `idea:`/`submission:`/`wg:` items; nothing in-flight.
+- No in-flight subagents, no dirty files, no `.offboard-pending`.
+- Two dotfiles commits pushed to `azigler/dotfiles` (`aa651a3`, `d22094f`) — see below.
 
-## What happened this session (highlights)
-- dotfiles committed (cc-gw toggle rework, effortLevel xhigh, Hermes PATH). Vendored the
-  aaif-blog/brand-guidelines skills into `~/aaif/.claude/skills` (fixed broken dotfiles symlinks).
-- `/aaif-radar` W27 delta (AGENTS.md→tooling; agentgateway governance content appearing; note `aaif-hip`).
-- Gateway forensics: the "CC still routing through the gateway days later" traffic = **stale
-  `ANTHROPIC_BASE_URL` baked into long-running CC processes** on zig-computer (an `~/explore` session +
-  2 linearb ones), NOT metis; the iPhone `Anthropic`-SDK rows were smoke tests. cc-direct config is
-  clean; the leak is per-process env, not config. RC-vs-gateway coexistence is un-retestable from the
-  gateway log (no CC version / no RC visibility) — documented, do not re-flip the memory.
-- Tutorial arc: fact-checked → applied Fable's editorial review → honk→tiny-tools → Goose capitalized →
-  retitled to the mouse-cookie snowclone → full v5 rewrite → header remade (nano-banana, 2 gens ~$0.20)
-  → **Zig rejected v5 for over-whimsy/no-substance** → the `aaif-yw5` re-architecture spec.
+## What happened this session
+- **`aaif-yw5` DONE + APPROVED.** "If you give a Goose an MCP server" — tutorial / **20 pts / high /
+  no-human-review** (AAIF issue #162, scorecard PR #163, recognition month 2026-07). Arc: 5 gateway-*
+  skills -> one `/agentgateway` skill; substance-first rewrite (v6); Workflow hardening (6 critiques ->
+  synthesis -> cold read, v8); Zig-feedback pass (v9 — new Step 4 "Point Goose at your virtualized MCP
+  server", inverted whittle-down skill loop, payload capture ON, Step 6 simulate + REAL move_file
+  capture from pico HTTP 400/-32602); v9 scrutiny+blind-reader review (fixed 3 blockers); config
+  reconciled against pico's LIVE config.yaml (v1.3.1).
+- **PUBLISHED** to https://www.andrewzigler.com/feed/if-you-give-a-goose-an-mcp-server (category Devlog;
+  full vite build prerendered it; verified in-browser: 7 steps + 5 images render). LinkedIn amplification
+  posted (promotable:true). Organic: goose account shared it, Angie reposted, ~20 new followers.
+- **NEW skill `/camp-publish`** (`.claude/skills/camp-publish/`) — lands a finished piece into the
+  andrewzigler.com publish pipeline (lexicon frontmatter + MDX transform -> build-validate -> land in
+  the metis vault before the 8pm-PT daily build). Studied `~/andrewzigler3` to build it; private infra
+  in `.local/camp-publish-infra.md`.
+- **Fixed the cc-gw/cc-direct dotfiles toggle** -> ROUTING-ONLY. `cc-gw` no longer pins ANTHROPIC_MODEL
+  (was clobbering the /model picker for all sessions); `cc-direct` now unsets ANTHROPIC_MODEL too (shell
+  + tmux). Memory `cc-proxy-tradeoffs` updated ("don't re-add a model pin to cc-gw").
+- Side-quests: diagnosed the MCP Tool Playground auth ("no API Key found" = it wants the raw mcp-block
+  `sk-goose` key, not an LLM virtual key); verified `#AAIFAmbassador` + `#AAAmbassador` are both legit
+  (different jobs per the guide; hashtag bead `...18o.3` still open, unresolved).
+
+## What's next
+- The `aaif-yw5` arc is fully closed. Next contribution = pick from `br ready` (22 items). Strong,
+  now-validated lane: agentgateway/goose/MCP hands-on tutorials (this one hit 20/high).
+- **One manual step outstanding**: log the win to July's Asana recurring task (no write path from the
+  harness — the paste-ready text is in the final chat message; `.local/private-notes.md` has the hub IDs).
+- `/aaif-review` calibration sharpened (`.local/research/aaif-review-system.md`): multi-project tag can
+  still land HIGH (don't auto-predict medium); agentgateway records as `"other"` in scorecard projects[].
 
 ## Warnings / watch-outs
-- The rewrite must be SUBSTANTIVE + technical ("wouldn't earn a technical leader's respect" was the
-  verdict). Whimsy = a CORRECT, light "If You Give a Mouse a Cookie" touch in the SECTION HEADERS only,
-  not scattered cutesy lines. Verify every fact (the `.local` fact list) survives hardening.
-- Two-tier rule: no pico IPs/paths/keys/ollama-baseUrl in committed content or the tutorial (generalize
-  to `localhost`). New screenshots (the Models view) need redaction (regenerate leaky cells).
-- Hard rule stands: never submit to any AAIF surface without Zig's explicit go-ahead. The gist is a
-  personal review draft (editable); the AAIF submission is separate + gated.
-- `/openrouter` + the Workflow tool are cost/token-heavy; Zig explicitly authorized the workflow for
-  `aaif-yw5`.
+- Hard rule stands: never touch an AAIF surface without Zig's explicit go (we only opened #162 on his
+  "send it").
+- Zig keeps primary CC on `cc-direct` (Remote Control + 1M). The routing-only toggle change is in dotfiles;
+  his live shells with stale exports need `unset ANTHROPIC_MODEL ANTHROPIC_BASE_URL` (or a re-sourced
+  `cc-direct`) before relaunch to pick up the fix — running sessions are unaffected.
+- `.local/` was consulted heavily (infra, vault path, keys) — never leak it into committed content.
