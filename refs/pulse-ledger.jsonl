@@ -1,1 +1,2 @@
 {"ts": "2026-07-07T15:28:08Z", "row": "aaif-radar", "outcome": "quiet", "note": "ledger initialized 2026-07-07 (pulse-aaif-radar wired to a ledger; harnessd-v8o.9 follow-up). Participant-free. First tracked radar pending (next ~2026-07-11)."}
+{"ts":"2026-07-11T22:09:35Z","row":"aaif-radar","outcome":"done","proof":{"kind":"artifact","path":".local/radar/2026-W28.md"},"note":"radar 2026-W28 — 35 new subs, +32 scorecards (47->79); blog_post x mcp over-rotation, agentgateway+talks under-served; grading model holds, pc ladder refined to 5/10/15/25; participant-free"}
