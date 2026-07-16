@@ -24,9 +24,15 @@ Re-run the build after any edit.
   `research/angle-options.md`.
 - **Methodology — LOCKED.** Built under the aaif `/research-paper` loop
   (`.claude/skills/research-paper/`; cookbook `refs/research-paper-pipeline.md`).
-- **Steer capability — IN as forward agenda**, not as a shipped system. The
-  Attribute / Evaluate / Serve capabilities are the concrete core; Steer is framed
-  as the direction the loop points, with the boundary conditions first-class.
+- **Steer capability — cadence today, automation forward.** The paper's posture
+  (per rounds 2–3, do NOT revert): the review cadence (Steer as a rhythm with a
+  clock and a rule, modeled on the standard's own tier governance) is mechanically
+  expressible **today**; only the *closed-loop controller* that reads a metric and
+  auto-rewrites policy is the forward agenda. Attribute / Evaluate / Serve are the
+  write/read core the cadence runs on; boundary conditions stay first-class.
+  (Earlier ledger framing "Steer IN as forward agenda, not a shipped system" was
+  stale and backward — corrected 2026-07-16 so a gate-reviewer administering
+  against this ledger does not "fix" the paper into the demoted-Steer posture.)
 - **Format — provisional LaTeX (`article` class).** First full draft built under
   the `/research-paper` loop; convert if the LF specifies a Doc/Markdown target
   (OQ2). Single-column, 11pt, `natbib` numeric citations.
@@ -70,6 +76,25 @@ Re-run the build after any edit.
   (body-duplicating sentence + unresolvable data/ pointer cut). ACCURACY: the
   aibench2026 claims verified source-accurate against the report; dropped one double
   hedge to "up to five percentage points". Gates green, held 8pp.
+- **Round-4b (Fable's round-4 review) applied (2026-07-16).** BLOCKER decided by
+  Zig: `aibench2026` **KEPT**, URL resolved at publish (his employer/campaign call —
+  not cut; the vendor-neutral asymmetry is his accepted risk, mitigated by the
+  campaign carrying the data under the brand). §3 **RE-AIMED**: the indictment
+  re-pointed from the SQL-injection example (which §5 concedes outcome-conditioning
+  also misses) to "task accuracy's visibility ends at the call" — splitting two
+  failure classes (latent defects → preventive gates; delivery failures → this
+  paper's subject) with a §5 forward-reference, so §5's belts paragraph completes
+  §3's promise instead of undermining it. CORRECTNESS: §2 restored the round-3
+  SEP-2243 logic (servers reject header/body mismatch; gateway decides *without
+  parsing the body* — the belts compression had wrongly made the gateway do it);
+  §5 disambiguated "act without human review" from the universal automated screen.
+  §5 "Stated plainly" referent fixed + sharpened scoped claim added ("delivered
+  outcome is the only *adaptive* conditioning variable that closes the
+  action-to-outcome loop"). §4 coined "attribution gap" at first use (lost its
+  coiner when DX was cut) and moved the `dora2025` cite to the four keys (the
+  attribution-limitation is now the paper's own observation). Figure caption:
+  agentgateway tagged "(an AAIF project)". Steer ledger entry corrected. Gates
+  green, held 8pp.
 
 ### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
 - **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
@@ -81,6 +106,22 @@ Re-run the build after any edit.
   window (→ "finalized on").
 - **NANDA** entry points at the canonical MIT NANDA page (the direct PDF
   302-redirects there); add a Wayback snapshot if a directly-openable PDF is wanted.
+- **§2 SEP-2243 normative claim (round-4b restore)** — "requires servers to reject
+  a request whose headers and body disagree" — re-verify against the SEP-2243 Final
+  text (restored from the round-3 wording; confirm the server-rejection MUST holds).
+- **`dora2025` scope (round-4b)** — cited for DORA's four keys; the
+  attribution-limitation is stated as the paper's OWN analytic observation. If the
+  2025 report carries a measurement-limitations discussion, the cite may also anchor
+  that; otherwise leave the limitation uncited (it is definitional, not empirical).
+- **`ibmcontext`** — still homepage-grade (`ibm.com/think`); land the actual IBM
+  "structured context layer" artifact or swap to a canonical context-engineering
+  source (§4's naming argument leans on it).
+- **`progressiveautonomy`** — two vendor homepages as "representative industry
+  usage"; tolerable as an explicitly-representative cite, but firm up if a canonical
+  source exists.
+- **`aibench2026` at publish** — Zig KEPT it; backfill the real author/URL when the
+  report goes public. Fable's asymmetry flag (LinearB data in a DX-cut paper) is an
+  accepted, Zig-owned risk.
 
 ## Owner judgment needed (these are Andrew's calls, at Final)
 
@@ -141,7 +182,7 @@ delivery evidence layer"). This is a first full draft — a critic loop +
 |---|---|
 | "Audit logs can't judge quality" (a truism) | Never anchor to the truism. Anchor to **what the spec makes measurable** — delivered-change attribution and held-in-production outcome signals — and to external evidence. The claim is about outcomes joined to changes, not about logs judging code. |
 | "This reads naive on authz" | The **two honesty valves**: per-call auth is an enforcement point (not a scope engine), and per-call identity is the principal + client, not an individual agent. Both are stated up front, not hand-waved. |
-| "The framework (Steer) is speculative" | **Steer is framed as forward agenda**, explicitly, with the **boundary conditions first-class** (attribution lag, unstable identity, Goodhart, small-n). The concrete core is Attribute / Evaluate / Serve. |
+| "The framework (Steer) is speculative" | **The cadence is expressible today** (a review rhythm with a clock and a rule, modeled on the standard's own tier governance); only the **closed-loop controller** that auto-rewrites policy is forward agenda. **Boundary conditions first-class** (attribution lag, unstable identity, Goodhart, small-n). Attribute / Evaluate / Serve are the concrete core it runs on. |
 
 ## Publish checklist (GATED)
 
