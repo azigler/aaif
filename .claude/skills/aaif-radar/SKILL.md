@@ -132,6 +132,16 @@ When grading drifts from `.local/research/aaif-review-system.md` (new type, chan
 new adjustment/rejection rule), update that file (and note it) so `/aaif-review`'s type→points
 predictions stay accurate. This is the whole point of "stay in sync with Angie's grading."
 
+**The fold-back rule (non-negotiable):** any grading-model refinement the radar discovers —
+a changed base, a new type, a new/adjusted ladder rung, a new adjustment or rejection rule —
+MUST **also** land as a diff to the public `/aaif-review` skill
+(`.claude/skills/aaif-review/SKILL.md`) or a filed bead against it, in the **same** run that
+updates the private notes. It can **never** live only in a private note. `/aaif-review` is the
+operational gate every point prediction runs through; if the model shifts in `.local/` but the
+skill isn't updated, every prediction silently goes stale (exactly the 5/15/25 → 5/10/15/25
+`project_contribution` drift the W28 scan caught). Private note and public skill move together,
+or the refinement isn't done.
+
 ## Guardrails
 - **Read-only.** Never open an issue/PR/comment on any AAIF surface. No writes to `aaif/*`.
 - **The two-output wall** (above) is the load-bearing rule — peers in `.local/` only.

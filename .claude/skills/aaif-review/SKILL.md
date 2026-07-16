@@ -50,23 +50,29 @@ never by underselling a piece that genuinely is the higher type.
 | `conference_talk` | 30 | a talk at a conference (verifiable session page) |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
-| `project_contribution` | 5 / 15 / 25 … 50 | code/artifact contribution — **scope ladder below** |
+| `project_contribution` | 5 / 10 / 15 / 25 | code/artifact contribution — **scope ladder below** |
 
 > Firmness note: `blog_post`, `short_technical_video`, `tutorial`, `conference_talk`,
-> `organizing_meetup`, `social_thread`, and the `project_contribution` ladder are
-> **confirmed against real scorecards**. `community_help`, `meetup_talk`, `podcast`,
-> `livestream`, `workshop`, `course` are from the program point table but not yet seen
-> in a scorecard — treat their exact value as provisional and confirm on first use.
+> `organizing_meetup`, and `social_thread` are grounded in observed scorecards. The
+> `project_contribution` ladder was **refined to 5 / 10 / 15 / 25 in the W28 radar scan**,
+> which added the `10` rung (a substantive bug-report / small-fix, above a trivial
+> one-liner) between the trivial-fix and example/demo rungs. `community_help`,
+> `meetup_talk`, `podcast`, `livestream`, `workshop`, `course` are from the program point
+> table but not yet seen scored — treat their exact value as provisional and confirm on
+> first use.
 
 ### `project_contribution` scope ladder
 
 The only variable type. Points track **how substantial + how "upstream"** the work is:
 
 - **5** — a trivial upstream fix (one-line CLI/help/docs/link fix that merged).
+- **10** — a substantive **bug report / small fix**, a rung above a trivial one-liner.
 - **15** — a self-authored, AAIF-relevant **example/demo repo** that is *not* a merged
   upstream PR.
-- **25** — a substantial self-authored **skill / feature artifact**.
-- **50** — the ceiling: a major merged feature or large body of upstream work.
+- **25** — a substantial self-authored **skill / feature artifact** (the top rung
+  observed so far).
+- **50** — a presumed higher ceiling (a major merged feature / large body of upstream
+  work), **not yet observed** in a scorecard — treat as provisional.
 
 So a merged non-trivial upstream PR beats a demo repo; a demo repo beats a docs typo.
 If the goal is points, **merge it upstream** and make the merge visible.
