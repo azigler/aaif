@@ -32,8 +32,10 @@ issued once and rarely revisited, with grants conditioned on delivered-outcome
 evidence.
 
 Stated plainly: the grant a workflow has earned is enforced per action; its
-delivered outcome is evaluated on a cadence. That coupling, adaptive trust on a
-preventive floor, is what no accuracy-graded ladder provides.
+delivered outcome is evaluated on a cadence. That coupling, per-action
+enforcement of a cadence-evaluated grant, is what no accuracy-graded ladder
+provides. Delivered outcome is the only \emph{adaptive} conditioning variable
+that closes the action-to-outcome loop.
 
 Earned autonomy is one of two layers, and it is the adaptive one. Beneath it
 sits a preventive layer that screens every change before merge regardless of
@@ -46,8 +48,9 @@ production, passes each outcome check, and would earn a workflow more scope on
 outcome evidence alone. Only a gate that reads the change itself catches it. What
 the cadence catches is the complementary class: the reverts, rework, and unmerged
 changes that read clean at the tool boundary and fail only in delivery.
-Earned autonomy governs how much a workflow is trusted to act unreviewed over
-time; it presupposes, and does not replace, the review of the individual change.
+Earned autonomy governs how much a workflow is trusted to act without human
+review over time; it presupposes, and does not replace, the automated screening
+of every change.
 
 \paragraph{The failure modes are dials, not objections.} Because Steer is a
 cadence, its known failure modes are design parameters that set the cadence's
@@ -117,7 +120,7 @@ authorization:
         && tool in ["read_file", "list_directory", "search_files"]
 \end{lstlisting}
 \end{minipage}
-\caption{\textbf{Actuator validated on agentgateway}, an open-source MCP gateway.
+\caption{\textbf{Actuator validated on agentgateway}, an open-source MCP gateway (an AAIF project).
 A per-call authorization rule gates tool scope on a workflow's tier-earned
 identity; the identical \texttt{write\_file} call was allowed for the trusted
 identity and denied, per call, for the sandbox identity, because

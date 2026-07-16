@@ -13,21 +13,24 @@ correct change produce identical protocol records.
 
 This is the clean-record trap, and the audit layer has always had it. A log
 tells you an action happened and was permitted; it never tells you the action
-was any good. The argument of this paper is that conditioning autonomy on task
-accuracy re-creates that same trap one level up. Grade an agent on how well it
-performs its task, and a workflow that scores 99\% on tool-call correctness still
-ships the Veracode defect, because tool-call correctness and delivered-code
-quality are different measurements: the defective call \emph{is} a correct call. Worse, an autonomy ladder
+was any good. Conditioning autonomy on task accuracy re-creates that trap one
+level up, because task accuracy measures the agent's behavior at the call and
+sees nothing of what the call delivers. A workflow that scores 99\% on tool-call
+correctness is graded on whether its calls are well-formed, not on what they
+deliver: the defective call \emph{is} a correct call. Worse, an autonomy ladder
 built on task accuracy promotes a workflow precisely when its accuracy scores are
 high, which is the moment its output is drawing the least human scrutiny. The
 metric rises as the examination falls.
 
-Even a perfectly accurate agent would be graded on the wrong variable, because
-task accuracy measures the agent's behavior and says nothing about the outcome
-that behavior delivered. An industry benchmark of 2.7 million pull requests
-across 253 organizations reaches the same conclusion from the field: the output
-that matters is delivered work, not generated code, and agent-opened pull
-requests merge at markedly lower rates than human-opened ones, because a change
-no human owns tends to sit unmerged \citep{aibench2026}. The variable that
-counts lives one step past the tool boundary, at the delivered change,
-and no protocol call runs there.
+What lies past the call divides into two failure classes, and a division of labor
+Section 5 returns to. Latent defects, the security, privacy, and license problems
+the SQL injection stands for, ride clean through every production signal and are
+caught only by reading the change itself; they belong to the preventive gates.
+Delivery failures, the reverts, rework, and changes that sit unmerged, are caught
+only by watching what shipped, and that is this paper's subject. An industry
+benchmark of 2.7 million pull requests across 253 organizations supplies the
+field evidence: the output that matters is delivered work, not generated code,
+and agent-opened pull requests merge at markedly lower rates than human-opened
+ones, because a change no human owns tends to sit unmerged \citep{aibench2026}.
+The variable that counts lives one step past the tool boundary, at the delivered
+change, and no protocol call runs there.

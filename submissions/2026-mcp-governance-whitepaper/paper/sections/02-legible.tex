@@ -37,10 +37,10 @@ belongs to the tracing plane, not to a bespoke protocol message.
 (SEP-2567), any request can land on any server replica, and authorization is
 therefore evaluated on every call rather than inherited from a session
 established once \citep{sep2567}. The release also requires routing headers,
-\texttt{Mcp-Method} and \texttt{Mcp-Name}, on Streamable-HTTP POSTs (SEP-2243)
-\citep{mcpchangelog}, which lets a gateway reject a request whose headers and
-body disagree. A gateway can now make an allow, deny, or downgrade decision on
-the operation from the headers alone. The per-call boundary is a real
+\texttt{Mcp-Method} and \texttt{Mcp-Name}, on Streamable-HTTP POSTs, and requires
+servers to reject a request whose headers and body disagree (SEP-2243)
+\citep{mcpchangelog}. A gateway can now make an allow, deny, or downgrade decision
+on the operation without parsing the body. The per-call boundary is a real
 enforcement point.
 
 \paragraph{Fleet-scalable.} List and read results now carry required cache
