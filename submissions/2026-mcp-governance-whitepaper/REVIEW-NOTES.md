@@ -37,6 +37,25 @@ Re-run the build after any edit.
   its function (evidence feeds the authorizer; context feeds the actor). Survives
   being said aloud without a definition; contrasted with context-engineering's
   "context layer" on first use. Final pick is Andrew's (OQ3).
+- **Fable round-3 applied (2026-07-16).** References hardened (Digital Apprentice
+  authors + title corrected — the arXiv ID was real; Röder / NANDA / DX / McKinsey
+  landed with real URLs + years; AWS cut as tangential); Serve's two consumers
+  named; the exhibit keyed to tier identities + a compile-evidence-into-identity
+  sentence; agentgateway named with a portability guard; section 2 opens on the
+  payoff; the DX attribution claim softened to DX's causal-driver framing;
+  em-dashes and "actually" removed; two not-X-it-is-Y recasts; skeptic meta-phrase
+  cut; figure float fixed. Subtitle/layer-name/length still Andrew's calls.
+
+### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
+- **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
+  from `/specification/draft/` → `/specification/2026-07-28/` (they resolve now as
+  the draft; the dated path goes live only after 7-28).
+- **"required cache metadata" (SEP-2549)** is a normative MUST — re-verify against
+  the Final text.
+- **Tense pass** on "finalizing on 2026-07-28" if the paper lands in the Aug–Sep
+  window (→ "finalized on").
+- **NANDA** entry points at the canonical MIT NANDA page (the direct PDF
+  302-redirects there); add a Wayback snapshot if a directly-openable PDF is wanted.
 
 ## Owner judgment needed (these are Andrew's calls, at Final)
 

@@ -1,13 +1,13 @@
 \section{The delivery evidence layer}
 
-Start with a defect that most engineering organizations already know they have.
+Start with a limit that most engineering organizations already know they have.
 The delivery-metrics programs leaders run today, DORA's four keys and DX Core 4,
-measure delivery at the team level, and they cannot tell AI-authored change apart
-from human-authored change. DX names this the attribution gap directly: the
-industry's standard delivery metrics were designed before agents wrote code, and
-they aggregate over authorship \citep{dxcore4}. An organization can watch its
-change-failure rate move and have no way to know whether its agents caused the
-move. The 95\% with no measurable P\&L return and the attribution gap are the
+measure delivery at the team level, but they cannot tell you whether a movement in
+those metrics was driven by AI tooling, by process change, or by a quality
+trade-off. DX names this the attribution gap directly: standard delivery metrics,
+designed before agents wrote code, cannot say what drove the change they measure
+\citep{dxcore4}. An organization can watch its change-failure rate move and have
+no way to attribute the move to its agents. The 95\% with no measurable P\&L return and the attribution gap are the
 same problem seen from two ends: an outcome that cannot be attributed to the work
 that produced it.
 
@@ -36,7 +36,7 @@ change held in production, and cost-to-outcome. These are delivery signals, not
 activity counts. They answer a different question than how many actions the agent
 took. They answer what the actions delivered, and what the delivery cost.
 Evaluate is where the conditioning variable of the whole argument, delivered
-outcome, actually gets computed.
+outcome, gets computed.
 
 \paragraph{Serve.} Serve hands that evidence back as deterministic, typed,
 freshness-contracted context, delivered over the spec's own substrate. Here the
@@ -44,10 +44,13 @@ release pays a second dividend: full JSON Schema typing (SEP-2106) makes the
 served context checkable, required cache scopes and TTLs (SEP-2549) make its
 freshness a contract rather than a hope, and the per-call boundary (SEP-2567) is
 where it is delivered and re-authorized. The same protocol that emitted the
-events carries the answers back.
+events carries the answers back, and Serve reaches two consumers over those rails:
+the review cadence reads the evidence as the authorizer's input, and the agents
+read the distillation as operating context, the current baselines and constraints
+they should act within.
 
 \paragraph{Steer.} Steer feeds evaluations into boundary policy: the outcomes a
-workflow has actually delivered set the autonomy it is granted on its next call.
+workflow has delivered set the autonomy it is granted on its next call.
 Steer is the capability that turns the join into a loop, and it is where the
 protocol earns its place in this argument, because the per-call enforcement point
 is the actuator the loop writes to. It is also the capability most easily
@@ -59,5 +62,5 @@ speculative. Attribute is a join over data an organization already has. Evaluate
 computes metrics teams already track. Serve is a typed read over a governed
 transport. Steer is policy at a boundary the spec now provides. What makes them a
 layer rather than four disconnected scripts is that they share one store of
-delivered-outcome evidence, keyed to the unit an organization actually wants to
+delivered-outcome evidence, keyed to the unit an organization wants to
 govern.

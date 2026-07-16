@@ -1,8 +1,8 @@
 \section{What the spec makes legible and enforceable}
 
-The 2026-07-28 revision is the largest change to the protocol since its launch,
-and for a governance argument its importance is specific. After this revision,
-every agent action is at once a well-formed record and a policy decision point.
+After the 2026-07-28 revision, every agent action is at once a well-formed record
+and a policy decision point. That, not the size of the release, is what makes it
+matter for a governance argument.
 Five properties of the release, taken together, produce that result. None of
 them is invented here; each is a mechanism the release already ships, and the
 point is what they add up to.
@@ -22,9 +22,9 @@ checkable rather than conventional \citep{mcpchangelog}. A record whose payloads
 validate against a schema is a record a downstream system can parse without
 guessing at its structure.
 
-\paragraph{Traceable.} The release documents W3C Trace Context conventions ---
-\texttt{traceparent}, \texttt{tracestate}, and \texttt{baggage} in
-\texttt{\_meta} (SEP-414) --- so a single action correlates across SDKs,
+\paragraph{Traceable.} The release documents W3C Trace Context conventions
+(\texttt{traceparent}, \texttt{tracestate}, and \texttt{baggage} in
+\texttt{\_meta}, per SEP-414), so a single action correlates across SDKs,
 gateways, and any OpenTelemetry backend \citep{mcpchangelog}. The deprecation of
 the old Logging primitive points the same way: diagnostic logging moves to
 \texttt{stderr} and OpenTelemetry (SEP-2577) \citep{deprecated}. Observability
@@ -47,7 +47,7 @@ sessions gone, these results are stable enough to cache, which is what turns
 governing a fleet of agents from a per-agent tax into a per-server cost.
 
 Set these five properties side by side and the shape is clear. An organization
-running agents on the 2026-07-28 spec gets, without extra work, a stream of
+running agents on the 2026-07-28 spec gets, from the protocol alone, a stream of
 actions that are attributable, typed, traceable, individually enforceable, and
 cheap to observe at fleet scale. This is a genuine advance in what a protocol
 makes governable, and the temptation is to stop here and call the governance

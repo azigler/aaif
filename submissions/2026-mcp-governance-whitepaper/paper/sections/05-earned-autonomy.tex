@@ -18,9 +18,10 @@ governance works. This is the precise shape to port. Earned autonomy is a rollin
 trust review in which workflow configurations hold published autonomy tiers,
 delivery-evidence-layer signals are the input, promotion and relegation follow
 defined triggers, and the resulting grant is enforced per call at the boundary
-the spec provides. Steer is that cadence. It is not a controller that reads a
-metric and rewrites policy in a closed loop; it is a review rhythm with a clock
-and a rule, of the same kind the standard already runs on itself.
+the spec provides. Steer is that cadence: a review rhythm with a clock and a
+rule, of the same kind the standard already runs on itself. The closed-loop
+controller that reads a metric and rewrites policy is the forward agenda, not the
+claim here.
 
 Every component of this cadence is mechanically expressible today. Identity and
 per-call enforcement come from the spec. Attribution, outcome evaluation, and
@@ -31,7 +32,7 @@ conditioned on delivered-outcome evidence. Automating the cadence, turning the
 rolling human review into a closed control loop, is the forward agenda, not a
 claim about today.
 
-Stated plainly, and stated as the sentence a skeptic should attack: autonomy
+Stated plainly: autonomy
 conditioned on task accuracy re-creates at the trust layer the same clean-record
 trap the audit layer already has; delivered outcome is the only conditioning
 variable that closes the loop, and the 2026-07-28 spec is the first standard
@@ -39,15 +40,15 @@ substrate on which that condition is enforceable per action.
 
 \paragraph{The failure modes are dials, not objections.} Because Steer is a
 cadence, its known failure modes are design parameters that set the cadence's
-dials. \emph{Attribution lag} --- outcomes arrive days or weeks after the change
---- sets the length of the trailing window the review scores on; instantaneous
-scoring is the mistake the window length corrects. \emph{Unstable identity} ---
-agent instances are ephemeral and interchangeable --- sets the unit of trust: the
+dials. \emph{Attribution lag} (outcomes arrive days or weeks after the change)
+sets the length of the trailing window the review scores on; instantaneous
+scoring is the mistake the window length corrects. \emph{Unstable identity}
+(agent instances are ephemeral and interchangeable) sets the unit of trust: the
 durable thing to govern is a workflow configuration, not an instance, because the
 configuration is what produced the work and what will produce it again.
 \emph{Goodhart's law} sets the gating signal: gate on held-in-production outcomes
 and never on activity counts, because the moment the metric is a throughput count
-it is gamed. \emph{Small-n} --- too few observations to trust --- sets the
+it is gamed. \emph{Small-n} (too few observations to trust) sets the
 cold-start default: absent evidence, a workflow starts in a sandbox tier, since
 autonomy is earned from evidence and the safe default without it is low.
 
@@ -77,39 +78,41 @@ There is also direct empirical support for building the feedback capability the
 framework depends on. DORA's 2025 research found that AI acts as an amplifier: it
 has a positive relationship with delivery throughput and a negative one with
 stability, and which effect dominates is conditional on a team's existing
-capability \citep{dora2025}. The organizational property that decides whether AI
-speed helps or hurts is the delivery-feedback capability, which is the same
-capability this paper argues an organization must build. The amplifier result is
-not only a stake. It is corroboration that the conditioning variable is the right
-one.
+capabilities \citep{dora2025}. Among those capabilities is the delivery-feedback
+capability this paper argues an organization must build. The amplifier result
+doubles as corroboration that the conditioning variable is the right one.
 
-The cadence is configuration, not research. The trust decision --- read the
-delivered-outcome evidence, set the tier --- is the organization's to make; the
-gateway's only job is to enforce the resulting scope on every call. A workflow
-holds the identity its current tier has earned, and the gateway gates each tool
-call against that identity:
+The cadence is configuration, not research. The trust decision, reading the
+delivered-outcome evidence and setting the tier, is the organization's to make;
+the gateway's only job is to enforce the resulting scope on every call. The
+gateway never consults evidence at call time: the cadence compiles evidence into
+an identity assignment, and the gateway enforces that identity. A workflow holds
+the identity its current tier has earned, and the gateway gates each tool call
+against that identity:
 
-\begin{figure}[t]
+\begin{figure}[!ht]
 \centering
 \begin{minipage}{0.92\linewidth}
 \begin{lstlisting}[style=policy]
-# Per-call authorization at an MCP gateway. A workflow holds the
-# identity its current tier earns; the gateway enforces scope on
-# every tool call. Relegation = the cadence reassigns the workflow
-# to a lower-tier identity, and its next call is gated anew.
+# Per-call authorization at an MCP gateway. The cadence maps each
+# workflow to a tier identity at credential issuance; the gateway
+# enforces that identity's scope on every tool call. Relegation =
+# the cadence reissues the workflow a lower-tier identity (no edit
+# to this policy), and its next call is gated anew.
 authorization:
-  - allow: workflow == "wf-alpha"          # trusted: full access
-  - allow: workflow == "wf-beta"           # sandbox: read-only
+  - allow: identity == "tier-trusted"       # full access
+  - allow: identity == "tier-sandbox"       # read-only
         && tool in ["read_file", "list_directory", "search_files"]
 \end{lstlisting}
 \end{minipage}
-\caption{\textbf{Validated on a running MCP gateway.} A per-call authorization
-rule gating tool scope on a workflow's tier-earned identity. On an isolated
-gateway instance, the identical \texttt{write\_file} call was allowed for the
-trusted identity and denied per call for the sandbox identity, while the read
-call was allowed for both (see \texttt{data/}). The evidence-to-tier decision is
-the organization's cadence; the gateway is only the actuator. The trailing window
-the cadence scores on absorbs attribution lag, and the unit of trust is a workflow
-configuration, not an instance. This is the shape teams already use to gate a
-deploy, pointed at delivered-outcome evidence.}
+\caption{\textbf{Validated on agentgateway}, an open-source MCP gateway in the
+same foundation. A per-call authorization rule gates tool scope on a workflow's
+tier-earned identity; the identical \texttt{write\_file} call was allowed for the
+trusted identity and denied, per call, for the sandbox identity, while the read
+call was allowed for both (reproduction in \texttt{data/}). The pattern needs only
+per-call, identity-scoped policy and runs on any gateway with that capability. The
+evidence-to-tier decision is the organization's cadence; the gateway is only the
+actuator, and the unit of trust is a workflow configuration, not an instance. This
+is the shape teams already use to gate a deploy, pointed at delivered-outcome
+evidence.}
 \end{figure}
