@@ -8,10 +8,15 @@
 
 ## Build command
 
-**TBD** — pending the Linux Foundation publishing format answer (LaTeX vs
-Doc/Markdown). The `paper/` directory and its build command are deferred until
-that target is known; everything else in this folder is format-agnostic and
-proceeds now.
+```bash
+cd paper && latexmk -pdf main.tex
+```
+
+Renders `paper/main.pdf` (8 pages, first full draft). Clean `article` class, no
+venue branding; root owns preamble + metadata, one `\input` per section. This is
+the provisional format (mise conventions: article-class LaTeX, ~5–8pp per OQ2);
+if the Linux Foundation specifies a Google Doc / Markdown target, convert then.
+Re-run the build after any edit.
 
 ## Decisions made
 
@@ -22,7 +27,16 @@ proceeds now.
 - **Steer capability — IN as forward agenda**, not as a shipped system. The
   Attribute / Evaluate / Serve capabilities are the concrete core; Steer is framed
   as the direction the loop points, with the boundary conditions first-class.
-- **Format — DEFERRED** (see Build command).
+- **Format — provisional LaTeX (`article` class).** First full draft built under
+  the `/research-paper` loop; convert if the LF specifies a Doc/Markdown target
+  (OQ2). Single-column, 11pt, `natbib` numeric citations.
+- **Subtitle — needs Andrew's confirmation.** Working: *"Conditioning Agent Trust
+  on Delivered Outcomes, Not Task Accuracy"* (X-not-Y house syntax). Flagged in
+  Owner judgment (d).
+- **Layer name — "the delivery evidence layer" (leading candidate).** Named by
+  its function (evidence feeds the authorizer; context feeds the actor). Survives
+  being said aloud without a definition; contrasted with context-engineering's
+  "context layer" on first use. Final pick is Andrew's (OQ3).
 
 ## Owner judgment needed (these are Andrew's calls, at Final)
 
@@ -42,7 +56,16 @@ proceeds now.
 - **The Explicit-Handle Pattern is NOT an API** — no schema, no method, no wire
   concept. Calling it "the handle API" is the single most likely accuracy error.
 - **The deprecated Logging is DIAGNOSTIC only** — don't overstate what it carried
-  or imply it was a value/outcome ledger.
+  or imply it was a value/outcome ledger. (Drafted as diagnostic → stderr/OTel.)
+- **Three citations need a canonical locator confirmed before publish** (flagged
+  in `references.bib` `note` fields, not invented):
+  - `roder` (Matthias Roder, "The Earned Autonomy Gradient") — cited by name per
+    the spec; exact year + URL not captured in P0. Confirm or drop.
+  - `digitalapprentice` (arXiv 2606.04321) — confirm the exact author list + title
+    against the live arXiv record.
+  - `nanda2025` — the report is real (MIT Media Lab, Project NANDA, "The GenAI
+    Divide"); the canonical download URL was via an aggregator in P0. Confirm the
+    primary URL. Every stat in the paper already carries an adjacent `\cite{}`.
 
 ### (b) The two honesty valves (non-negotiable framings)
 
@@ -63,6 +86,10 @@ from it.
 ### (d) Voice + sign-off
 
 Andrew's own voice pass (`/zig-voice`) and **final sign-off** before any submit.
+Two items that are specifically his call: the **subtitle** ("Conditioning Agent
+Trust on Delivered Outcomes, Not Task Accuracy") and the **layer name** ("the
+delivery evidence layer"). This is a first full draft — a critic loop +
+`/scrutinize` follow before the gate.
 
 ## Concern → defense table (seed)
 
@@ -96,4 +123,12 @@ Andrew's own voice pass (`/zig-voice`) and **final sign-off** before any submit.
 | `refs/mcp-sep-grounding.md` | Verbatim-source pointer tier (SEP grounding + external-evidence base) |
 | `data/.gitkeep` | Placeholder — the dir holds vendor-neutral reference-implementation evidence later |
 | `REVIEW-NOTES.md` | This ledger |
-| `paper/` | **DEFERRED** — added once the LF publishing format is known |
+| `paper/main.tex` | Root — preamble, metadata, executive summary (abstract), section includes |
+| `paper/sections/01-question.tex` | §1 The question that predates the spec |
+| `paper/sections/02-legible.tex` | §2 What the spec makes legible and enforceable (the SEP walk) |
+| `paper/sections/03-record.tex` | §3 What the record cannot tell you (the trap + indictment) |
+| `paper/sections/04-layer.tex` | §4 The delivery evidence layer (Attribute / Evaluate / Serve / Steer) |
+| `paper/sections/05-earned-autonomy.tex` | §5 Earned autonomy (the spine) + the illustrative gateway-policy exhibit |
+| `paper/sections/06-recommendations.tex` | §6 Recommendations + evaluation checklist |
+| `paper/references.bib` | BibTeX — every cited source, verified in `research/p0-verified-findings.md` |
+| `paper/main.pdf` | Built artifact (8 pages) |

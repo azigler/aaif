@@ -1,0 +1,55 @@
+\section{What the spec makes legible and enforceable}
+
+The 2026-07-28 revision is the largest change to the protocol since its launch,
+and for a governance argument its importance is specific. After this revision,
+every agent action is at once a well-formed record and a policy decision point.
+Five properties of the release, taken together, produce that result. None of
+them is invented here; each is a mechanism the release already ships, and the
+point is what they add up to.
+
+\paragraph{Identity-bound.} Every request now carries the client's identity in
+its \texttt{\_meta} block rather than establishing it once per session: the
+\texttt{io.modelcontextprotocol/clientInfo} field travels with the call itself
+(SEP-2575) \citep{mcpchangelog}. On the authorization side, the release hardens
+OAuth so a client must validate a present issuer (\texttt{iss}) parameter against
+the recorded authorization server before it redeems a code, closing a class of
+mix-up attack (SEP-2468) \citep{mcpchangelog}. An action arrives attributable to
+an authenticated principal and a named client implementation.
+
+\paragraph{Typed.} Tool inputs and outputs are lifted to full JSON Schema
+2020-12 (SEP-2106), so the shape of every call and its result is declared and
+checkable rather than conventional \citep{mcpchangelog}. A record whose payloads
+validate against a schema is a record a downstream system can parse without
+guessing at its structure.
+
+\paragraph{Traceable.} The release documents W3C Trace Context conventions ---
+\texttt{traceparent}, \texttt{tracestate}, and \texttt{baggage} in
+\texttt{\_meta} (SEP-414) --- so a single action correlates across SDKs,
+gateways, and any OpenTelemetry backend \citep{mcpchangelog}. The deprecation of
+the old Logging primitive points the same way: diagnostic logging moves to
+\texttt{stderr} and OpenTelemetry (SEP-2577) \citep{deprecated}. Observability
+belongs to the tracing plane, not to a bespoke protocol message.
+
+\paragraph{Enforceable.} Because the release removes protocol sessions
+(SEP-2567), any request can land on any server replica, and authorization is
+therefore evaluated on every call rather than inherited from a session
+established once \citep{sep2567}. The release also requires routing headers,
+\texttt{Mcp-Method} and \texttt{Mcp-Name}, on Streamable-HTTP POSTs, and requires
+servers to reject a request whose headers and body disagree (SEP-2243)
+\citep{mcpchangelog}. A gateway can now make an allow, deny, or downgrade
+decision on the operation without parsing the body. The per-call boundary is a
+real enforcement point.
+
+\paragraph{Fleet-scalable.} List and read results now carry required cache
+metadata: a \texttt{ttlMs} freshness hint and a \texttt{cacheScope} of
+\texttt{public} or \texttt{private} (SEP-2549) \citep{mcpchangelog}. With
+sessions gone, these results are stable enough to cache, which is what turns
+governing a fleet of agents from a per-agent tax into a per-server cost.
+
+Set these five properties side by side and the shape is clear. An organization
+running agents on the 2026-07-28 spec gets, without extra work, a stream of
+actions that are attributable, typed, traceable, individually enforceable, and
+cheap to observe at fleet scale. This is a genuine advance in what a protocol
+makes governable, and the temptation is to stop here and call the governance
+problem solved. It is not solved. A well-formed record has a limit, and that
+limit is the subject of the next section.

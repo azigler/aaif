@@ -1,0 +1,44 @@
+\section{The question that predates the spec}
+
+Organizations have poured budget, headcount, and roadmap into autonomous
+software work, and most of them still cannot say whether it paid off. MIT Media
+Lab's Project NANDA, surveying roughly three hundred enterprise generative-AI
+initiatives, found that about 95\% showed no measurable P\&L return
+\citep{nanda2025}. That figure has many causes, and the most conservative one is
+worth stating plainly: a return you cannot attribute is a return you cannot
+claim. At minimum, the 95\% is an attribution failure.
+
+Adoption is not the constraint. Stanford's AI Index put enterprise AI adoption
+at 78\% in its 2025 edition and 88\% a year later
+\citep{stanford2025, stanford2026}. The tools are in the building. What remains
+unanswered is whether the autonomous work they produce is delivering, and for
+whom.
+
+Scale is what makes the gap urgent. A single developer reviewing a single
+assistant's suggestions is a manageable trust problem. A fleet of agents opening
+changes across dozens of repositories, at a rate no human reads line by line, is
+not. Trust at that scale has to be granted by policy rather than by inspection,
+and policy needs a signal to run on. The governance question here is older than
+any protocol. Before a wire format made agent activity legible, leaders already
+needed to know which autonomous work had earned more scope and which had not.
+The Model Context Protocol revision finalizing on 2026-07-28 does not create that
+question. It changes what an organization can answer it with.
+
+The question also already has a named answer in the field, and that answer is
+worth taking seriously before improving on it. Earned autonomy, graduated
+autonomy, and progressive autonomy all describe the same ladder: an agent starts
+under human review, and as it performs, it earns the right to act with less
+oversight. Matthias Roder's earned-autonomy gradient formalizes the rungs
+\citep{roder}; a growing set of platform vendors ship progressive-autonomy
+controls \citep{progressiveautonomy}; the Digital Apprentice line of work models
+the same apprenticeship arc \citep{digitalapprentice}; McKinsey and AWS both
+frame agent trust as something conditioned and revoked over time
+\citep{mckinsey, aws}. This ladder is published across vendors and research, and
+it is converging on a shared shape.
+
+Every published version conditions autonomy on the same class of signal: how
+well the agent performed its task. Extraction accuracy, override rate, tool-call
+correctness. That choice of variable is the one thing worth revisiting, because
+it is the same variable that lets a clean record hide a bad outcome. The rest of
+this paper argues for a different conditioning variable, and shows why the
+2026-07-28 spec is the first standard substrate on which it can be enforced.

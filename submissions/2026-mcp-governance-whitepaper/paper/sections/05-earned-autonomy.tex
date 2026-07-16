@@ -1,0 +1,111 @@
+\section{Earned autonomy}
+
+The 2026-07-28 release ships into a conformance-gated, SDK-tiered ecosystem: a
+conformance suite live since 2026-01-23, published SDK tiers since 2026-02-23,
+and, as of SEP-2484 (Final 2026-06-04), a standing rule that future
+Standards-Track SEPs cannot reach Final without a matching conformance scenario
+\citep{sep2484, sdktiers}. The SDK tiers are the part worth studying. A Tier 1
+SDK must pass 100\% of the conformance suite; if any test fails continuously for
+four weeks, it is relegated to Tier 2; and features move through a lifecycle with
+a minimum twelve-month deprecation window measured from the revision release
+\citep{sdktiers, mcplifecycle}. Standing is earned by demonstrated conformance
+and lost publicly when the demonstration lapses.
+
+That is a working model of earned standing, and it is a model humans run. No
+automated controller relegates an SDK. Maintainers publish tiers against measured
+conformance, on defined clocks, with a defined relegation rule, and the
+governance works. This is the precise shape to port. Earned autonomy is a rolling
+trust review in which workflow configurations hold published autonomy tiers,
+delivery-evidence-layer signals are the input, promotion and relegation follow
+defined triggers, and the resulting grant is enforced per call at the boundary
+the spec provides. Steer is that cadence. It is not a controller that reads a
+metric and rewrites policy in a closed loop; it is a review rhythm with a clock
+and a rule, of the same kind the standard already runs on itself.
+
+Every component of this cadence is mechanically expressible today. Identity and
+per-call enforcement come from the spec. Attribution, outcome evaluation, and
+served evidence come from the delivery evidence layer. Published tiers, clocks,
+and triggers are process. The only genuinely new input is the swap at the center:
+replace static scope grants, issued once and rarely revisited, with grants
+conditioned on delivered-outcome evidence. Automating the cadence, turning the
+rolling human review into a closed control loop, is the forward agenda, not a
+claim about today.
+
+Stated plainly, and stated as the sentence a skeptic should attack: autonomy
+conditioned on task accuracy re-creates at the trust layer the same clean-record
+trap the audit layer already has; delivered outcome is the only conditioning
+variable that closes the loop, and the 2026-07-28 spec is the first standard
+substrate on which that condition is enforceable per action.
+
+\paragraph{The failure modes are dials, not objections.} Because Steer is a
+cadence, its known failure modes are design parameters that set the cadence's
+dials. \emph{Attribution lag} --- outcomes arrive days or weeks after the change
+--- sets the length of the trailing window the review scores on; instantaneous
+scoring is the mistake the window length corrects. \emph{Unstable identity} ---
+agent instances are ephemeral and interchangeable --- sets the unit of trust: the
+durable thing to govern is a workflow configuration, not an instance, because the
+configuration is what produced the work and what will produce it again.
+\emph{Goodhart's law} sets the gating signal: gate on held-in-production outcomes
+and never on activity counts, because the moment the metric is a throughput count
+it is gamed. \emph{Small-n} --- too few observations to trust --- sets the
+cold-start default: absent evidence, a workflow starts in a sandbox tier, since
+autonomy is earned from evidence and the safe default without it is low.
+
+\paragraph{Two clarifications keep the framework honest} about what the protocol
+does and does not provide. First, the per-call boundary is an enforcement point,
+not a scope engine. The spec gives the point at which authorization is checked on
+every call; it does not decide what a given principal may do. The scope
+semantics, the policy itself, remain the implementer's design. Authentication is
+not authorization scope. Second, per-call identity attributes to the
+authenticated principal and the named client implementation, carried in
+\texttt{clientInfo}, and not to an individual agent or subagent. Agent-level
+attribution is a convention an organization builds on top, and it is exactly why
+the unit of trust is a workflow configuration: that is the granularity the
+evidence layer can attribute to, not a per-instance identity the protocol never
+reported.
+
+This shape has precedent outside software delivery. Open-source foundations
+already promote projects by earned standing: the CNCF moves a project from
+Sandbox to Incubating to Graduated on demonstrated adoption, security review, and
+governance maturity \citep{cncflifecycle}. The criteria are partly quantitative
+and partly qualitative, and the decision is ratified by humans. It is
+evidence-based maturation with human ratification, not a purely metric-gated
+switch, which is exactly the posture earned autonomy takes toward a workflow
+rather than a whole project.
+
+There is also direct empirical support for building the feedback capability the
+framework depends on. DORA's 2025 research found that AI acts as an amplifier: it
+has a positive relationship with delivery throughput and a negative one with
+stability, and which effect dominates is conditional on a team's existing
+capability \citep{dora2025}. The organizational property that decides whether AI
+speed helps or hurts is the delivery-feedback capability, which is the same
+capability this paper argues an organization must build. The amplifier result is
+not only a stake. It is corroboration that the conditioning variable is the right
+one.
+
+The cadence is configuration, not research. A gateway can express the entire
+conditioning rule in a handful of lines: a scope grant that holds only while a
+workflow configuration's trailing outcome evidence clears a threshold, and that
+downgrades at the same per-call boundary when it does not.
+
+\begin{figure}[t]
+\centering
+\begin{minipage}{0.92\linewidth}
+\begin{lstlisting}[style=policy]
+# Grant repo-write only while a workflow configuration's
+# agent-authored changes keep holding in production.
+policy conditional_write_scope {
+  when   request.scope == "repo:write"
+  allow  identity.workflow_tier == "trusted"
+      && evidence(identity.workflow_id).revert_rate_28d < 0.05
+  else   downgrade "repo:read"   # relegation, enforced per call
+}
+\end{lstlisting}
+\end{minipage}
+\caption{\textbf{Illustrative.} A gateway policy conditioning a write-scope grant
+on a workflow configuration's trailing 28-day revert rate. The evidence lookup is
+the delivery evidence layer; the trailing window absorbs attribution lag; the
+unit of trust is a workflow configuration, not an instance; and the downgrade is
+relegation enforced at the per-call boundary. This is the same shape teams
+already use to gate a deploy, pointed at a different signal.}
+\end{figure}

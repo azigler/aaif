@@ -1,0 +1,63 @@
+\section{The delivery evidence layer}
+
+Start with a defect that most engineering organizations already know they have.
+The delivery-metrics programs leaders run today, DORA's four keys and DX Core 4,
+measure delivery at the team level, and they cannot tell AI-authored change apart
+from human-authored change. DX names this the attribution gap directly: the
+industry's standard delivery metrics were designed before agents wrote code, and
+they aggregate over authorship \citep{dxcore4}. An organization can watch its
+change-failure rate move and have no way to know whether its agents caused the
+move. The 95\% with no measurable P\&L return and the attribution gap are the
+same problem seen from two ends: an outcome that cannot be attributed to the work
+that produced it.
+
+Closing that gap requires a layer the protocol does not provide, and naming it
+correctly matters, because an adjacent discipline already claimed a
+similar-sounding term for the opposite job. Context engineering builds a
+\emph{context layer} whose purpose is to feed better inputs to agents so they act
+well \citep{ibmcontext}. The layer this paper describes runs in the other
+direction. Call it the \emph{delivery evidence layer}: its purpose is to feed
+outcome evidence to the authorizer so the organization can decide what an agent
+is allowed to do next. Context feeds the actor. Evidence feeds the authorizer.
+It is one store, and it has four capabilities.
+
+\paragraph{Attribute.} Attribute joins the spec's per-call action records to
+version-control and CI/CD events, so a delivered change carries a legible answer
+to which autonomous work produced it and through what path. The join is the
+implementer's to build. The 2026-07-28 spec emits attributable, traceable action
+records (SEP-414, SEP-2575), and the organization's own pipeline emits commits,
+reviews, and deploys, but nothing in the protocol stitches the two together. That
+stitch is the fix for the attribution gap, and it is the foundational capability;
+the other three depend on it.
+
+\paragraph{Evaluate.} Evaluate attaches outcome signals to each agent-authored
+change: change-failure rate, revert, rework, override-before-merge, whether the
+change held in production, and cost-to-outcome. These are delivery signals, not
+activity counts. They answer a different question than how many actions the agent
+took. They answer what the actions delivered, and what the delivery cost.
+Evaluate is where the conditioning variable of the whole argument, delivered
+outcome, actually gets computed.
+
+\paragraph{Serve.} Serve hands that evidence back as deterministic, typed,
+freshness-contracted context, delivered over the spec's own substrate. Here the
+release pays a second dividend: full JSON Schema typing (SEP-2106) makes the
+served context checkable, required cache scopes and TTLs (SEP-2549) make its
+freshness a contract rather than a hope, and the per-call boundary (SEP-2567) is
+where it is delivered and re-authorized. The same protocol that emitted the
+events carries the answers back.
+
+\paragraph{Steer.} Steer feeds evaluations into boundary policy: the outcomes a
+workflow has actually delivered set the autonomy it is granted on its next call.
+Steer is the capability that turns the join into a loop, and it is where the
+protocol earns its place in this argument, because the per-call enforcement point
+is the actuator the loop writes to. It is also the capability most easily
+overstated, so the next section defines it carefully and states its limits first.
+
+Attribute and Evaluate are the write path: they observe and record. Serve and
+Steer are the read path: they return evidence and act on it. None of the four is
+speculative. Attribute is a join over data an organization already has. Evaluate
+computes metrics teams already track. Serve is a typed read over a governed
+transport. Steer is policy at a boundary the spec now provides. What makes them a
+layer rather than four disconnected scripts is that they share one store of
+delivered-outcome evidence, keyed to the unit an organization actually wants to
+govern.
