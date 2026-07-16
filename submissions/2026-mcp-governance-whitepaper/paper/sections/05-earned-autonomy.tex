@@ -83,29 +83,33 @@ capability this paper argues an organization must build. The amplifier result is
 not only a stake. It is corroboration that the conditioning variable is the right
 one.
 
-The cadence is configuration, not research. A gateway can express the entire
-conditioning rule in a handful of lines: a scope grant that holds only while a
-workflow configuration's trailing outcome evidence clears a threshold, and that
-downgrades at the same per-call boundary when it does not.
+The cadence is configuration, not research. The trust decision --- read the
+delivered-outcome evidence, set the tier --- is the organization's to make; the
+gateway's only job is to enforce the resulting scope on every call. A workflow
+holds the identity its current tier has earned, and the gateway gates each tool
+call against that identity:
 
 \begin{figure}[t]
 \centering
 \begin{minipage}{0.92\linewidth}
 \begin{lstlisting}[style=policy]
-# Grant repo-write only while a workflow configuration's
-# agent-authored changes keep holding in production.
-policy conditional_write_scope {
-  when   request.scope == "repo:write"
-  allow  identity.workflow_tier == "trusted"
-      && evidence(identity.workflow_id).revert_rate_28d < 0.05
-  else   downgrade "repo:read"   # relegation, enforced per call
-}
+# Per-call authorization at an MCP gateway. A workflow holds the
+# identity its current tier earns; the gateway enforces scope on
+# every tool call. Relegation = the cadence reassigns the workflow
+# to a lower-tier identity, and its next call is gated anew.
+authorization:
+  - allow: workflow == "wf-alpha"          # trusted: full access
+  - allow: workflow == "wf-beta"           # sandbox: read-only
+        && tool in ["read_file", "list_directory", "search_files"]
 \end{lstlisting}
 \end{minipage}
-\caption{\textbf{Illustrative.} A gateway policy conditioning a write-scope grant
-on a workflow configuration's trailing 28-day revert rate. The evidence lookup is
-the delivery evidence layer; the trailing window absorbs attribution lag; the
-unit of trust is a workflow configuration, not an instance; and the downgrade is
-relegation enforced at the per-call boundary. This is the same shape teams
-already use to gate a deploy, pointed at a different signal.}
+\caption{\textbf{Validated on a running MCP gateway.} A per-call authorization
+rule gating tool scope on a workflow's tier-earned identity. On an isolated
+gateway instance, the identical \texttt{write\_file} call was allowed for the
+trusted identity and denied per call for the sandbox identity, while the read
+call was allowed for both (see \texttt{data/}). The evidence-to-tier decision is
+the organization's cadence; the gateway is only the actuator. The trailing window
+the cadence scores on absorbs attribution lag, and the unit of trust is a workflow
+configuration, not an instance. This is the shape teams already use to gate a
+deploy, pointed at delivered-outcome evidence.}
 \end{figure}
