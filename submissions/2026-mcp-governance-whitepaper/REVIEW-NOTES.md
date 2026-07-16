@@ -111,8 +111,32 @@ Re-run the build after any edit.
   Two §3 line nits fixed (garden-path recast; "because" kept — verified as the
   report's own causal claim, not correlation). Vendor gate updated: **LinearB is an
   intentionally-named source now; its customers (Expedia/Adobe/Syngenta) stay OUT.**
-  Gates green, 8pp. REMAINING (Zig's, org-level): confirm Ben's sign-off on the
-  brand exposure; disclose the affiliation to the LF at submission (not at discovery).
+  Gates green, 8pp.
+- **Round-4c follow-ups (Fable round-4c review, 2026-07-16).** Micro-nits applied:
+  §3 "supplies **the** field evidence" → "supplies field evidence" (lowers the
+  weight on the employer report); cosmetic line-break artifact tidied; bib note
+  marks **title and URL provisional pending publication** (title-lock hedge —
+  campaign assets get retitled late). **BYLINE DECISION PENDING (Zig's call):** the
+  footnote removal left the paper with NO reader-facing affiliation — a bare byline
+  citing the author's employer as §3 field evidence, while the affiliation is public
+  everywhere else this audience lives. Fable's lighter instrument: byline
+  "Andrew Zigler, LinearB" or a one-line end author-note (transparent-first-party
+  reads as "his shop measured this," a credibility gain). If Zig declines, record
+  here with residual risk; the LF submission-time disclosure is the fallback.
+  REMAINING (Zig's, org-level, settle with Ben in one conversation): (1) sign-off on
+  the brand appearance (LinearB benchmark in an LF whitepaper — plausibly a win);
+  (2) **title lock** — confirm "The Engineering Productivity Gap: The 2026 AI
+  Benchmarks" is final or keep the bib note provisional; (3) **scheduling
+  dependency** — the paper CANNOT publish before the report's public URL exists
+  (§3's field evidence resolves to nothing until then); this couples the LF timeline
+  to the campaign release calendar — if LF review overlaps the pre-release window,
+  attach a shareable report excerpt at submission.
+- **STANDING GATE (compounding optics, load-bearing since LinearB is named).** §4's
+  four capabilities and §6's checklist are in pure capability language — no product
+  nouns, no workflow-automation specifics shaped like a named vendor tool. With
+  LinearB on the page, the category→product hunt is one search shorter, so this
+  discipline is now load-bearing: treat ANY future edit that adds LinearB-shaped
+  specificity to §4/§6 as a gate failure, same class as naming a customer.
 
 ### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
 - **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
