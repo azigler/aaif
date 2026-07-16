@@ -116,13 +116,12 @@ Re-run the build after any edit.
   §3 "supplies **the** field evidence" → "supplies field evidence" (lowers the
   weight on the employer report); cosmetic line-break artifact tidied; bib note
   marks **title and URL provisional pending publication** (title-lock hedge —
-  campaign assets get retitled late). **BYLINE DECISION PENDING (Zig's call):** the
-  footnote removal left the paper with NO reader-facing affiliation — a bare byline
-  citing the author's employer as §3 field evidence, while the affiliation is public
-  everywhere else this audience lives. Fable's lighter instrument: byline
-  "Andrew Zigler, LinearB" or a one-line end author-note (transparent-first-party
-  reads as "his shop measured this," a credibility gain). If Zig declines, record
-  here with residual risk; the LF submission-time disclosure is the fallback.
+  campaign assets get retitled late). **BYLINE DECISION — RESOLVED (2026-07-16):**
+  Zig chose the byline affiliation **"Andrew Zigler, LinearB"** (stacked under the
+  title, `\author{Andrew Zigler \\ \large LinearB}`). This is the reader-facing
+  affiliation that makes the §3 cite transparent-first-party ("his shop measured
+  this") rather than concealed-first-party. The LF submission-time disclosure
+  remains the org-level backstop.
   REMAINING (Zig's, org-level, settle with Ben in one conversation): (1) sign-off on
   the brand appearance (LinearB benchmark in an LF whitepaper — plausibly a win);
   (2) **title lock** — confirm "The Engineering Productivity Gap: The 2026 AI
@@ -224,7 +223,7 @@ delivery evidence layer"). This is a first full draft — a critic loop +
 |---|---|
 | "Audit logs can't judge quality" (a truism) | Never anchor to the truism. Anchor to **what the spec makes measurable** — delivered-change attribution and held-in-production outcome signals — and to external evidence. The claim is about outcomes joined to changes, not about logs judging code. |
 | "This reads naive on authz" | The **two honesty valves**: per-call auth is an enforcement point (not a scope engine), and per-call identity is the principal + client, not an individual agent. Both are stated up front, not hand-waved. |
-| "aibench2026 resolves to the author's employer (LinearB)" | **Named + cited once** (in-paper COI footnote removed at Zig's request; affiliation disclosed to the LF at submission). LinearB is cited by name as the benchmark source (as the paper names Veracode); the cite appears once, as §3 field evidence, with the §6 product-recommendation use cut. Naming-not-anonymizing removes the scandal pattern (discovered anonymization); the affiliation is disclosed to the publisher at submission rather than left to discovery. |
+| "aibench2026 resolves to the author's employer (LinearB)" | **Named + cited once + byline affiliation.** LinearB is cited by name as the benchmark source (as the paper names Veracode); the **author byline carries the affiliation** ("Andrew Zigler, LinearB"), so the §3 cite reads transparent-first-party, not concealed; the cite appears once, as §3 field evidence, with the §6 product-recommendation use cut. Visible-not-anonymized removes the discovered-story scandal genus; the LF submission-time disclosure is the org-level backstop. |
 | "The framework (Steer) is speculative" | **The cadence is expressible today** (a review rhythm with a clock and a rule, modeled on the standard's own tier governance); only the **closed-loop controller** that auto-rewrites policy is forward agenda. **Boundary conditions first-class** (attribution lag, unstable identity, Goodhart, small-n). Attribute / Evaluate / Serve are the concrete core it runs on. |
 
 ## Publish checklist (GATED)
