@@ -2,19 +2,22 @@
 
 After the 2026-07-28 revision, every agent action is at once a well-formed record
 and a policy decision point. That, not the size of the release, is what makes it
-matter for a governance argument.
-Five properties of the release, taken together, produce that result. None of
-them is invented here; each is a mechanism the release already ships, and the
-point is what they add up to.
+matter for a governance argument. Five properties produce that result. None is
+invented here; each is a mechanism the release already ships, and the point is
+what they add up to.
 
-\paragraph{Identity-bound.} Every request now carries the client's identity in
-its \texttt{\_meta} block rather than establishing it once per session: the
+\paragraph{Identity-bound.} Every request now carries a client label in its
+\texttt{\_meta} block rather than establishing it once per session: the
 \texttt{io.modelcontextprotocol/clientInfo} field travels with the call itself
-(SEP-2575) \citep{mcpchangelog}. On the authorization side, the release hardens
-OAuth so a client must validate a present issuer (\texttt{iss}) parameter against
-the recorded authorization server before it redeems a code, closing a class of
+(the Specification Enhancement Proposal SEP-2575) \citep{mcpchangelog}. That
+label is self-declared by the client, not authenticated. The authenticated
+principal comes from the authorization side: the release hardens OAuth so a
+client must validate a present issuer (\texttt{iss}) parameter against the
+recorded authorization server before it redeems a code, closing a class of
 mix-up attack (SEP-2468) \citep{mcpchangelog}. An action arrives attributable to
-an authenticated principal and a named client implementation.
+an OAuth-authenticated principal, with \texttt{clientInfo} adding a
+client-asserted implementation label that is useful for attribution only when it
+is bound to an issued credential.
 
 \paragraph{Typed.} Tool inputs and outputs are lifted to full JSON Schema
 2020-12 (SEP-2106), so the shape of every call and its result is declared and
@@ -34,17 +37,19 @@ belongs to the tracing plane, not to a bespoke protocol message.
 (SEP-2567), any request can land on any server replica, and authorization is
 therefore evaluated on every call rather than inherited from a session
 established once \citep{sep2567}. The release also requires routing headers,
-\texttt{Mcp-Method} and \texttt{Mcp-Name}, on Streamable-HTTP POSTs, and requires
-servers to reject a request whose headers and body disagree (SEP-2243)
-\citep{mcpchangelog}. A gateway can now make an allow, deny, or downgrade
-decision on the operation without parsing the body. The per-call boundary is a
-real enforcement point.
+\texttt{Mcp-Method} and \texttt{Mcp-Name}, on Streamable-HTTP POSTs (SEP-2243)
+\citep{mcpchangelog}, which lets a gateway reject a request whose headers and
+body disagree. A gateway can now make an allow, deny, or downgrade decision on
+the operation from the headers alone. The per-call boundary is a real
+enforcement point.
 
 \paragraph{Fleet-scalable.} List and read results now carry required cache
 metadata: a \texttt{ttlMs} freshness hint and a \texttt{cacheScope} of
 \texttt{public} or \texttt{private} (SEP-2549) \citep{mcpchangelog}. With
-sessions gone, these results are stable enough to cache, which is what turns
-governing a fleet of agents from a per-agent tax into a per-server cost.
+sessions gone, these results are stable enough to cache, which makes the served
+context and tool listings cheap to reuse at fleet scale. Authorization stays
+per-call; caching lowers the data-fetch cost, not the cost of the decision made
+on every request.
 
 Set these five properties side by side and the shape is clear. An organization
 running agents on the 2026-07-28 spec gets, from the protocol alone, a stream of

@@ -4,15 +4,13 @@ Organizations have poured budget, headcount, and roadmap into autonomous
 software work, and most of them still cannot say whether it paid off. MIT Media
 Lab's Project NANDA, surveying roughly three hundred enterprise generative-AI
 initiatives, found that about 95\% showed no measurable P\&L return
-\citep{nanda2025}. That figure has many causes, and the most conservative one is
-worth stating plainly: a return you cannot attribute is a return you cannot
-claim. At minimum, the 95\% is an attribution failure.
+\citep{nanda2025}. That figure has many causes. One of them is plain: a return
+you cannot attribute is a return you cannot claim. The 95\% is, in part, an
+attribution failure.
 
-Adoption is not the constraint. Stanford's AI Index put enterprise AI adoption
-at 78\% in its 2025 edition and 88\% a year later
-\citep{stanford2025, stanford2026}. The tools are in the building. What remains
-unanswered is whether the autonomous work they produce is delivering, and for
-whom.
+Adoption is not the constraint. The tools are in the building, and enterprise
+use keeps climbing. What remains unanswered is whether the autonomous work they
+produce is delivering, and for whom.
 
 Scale is what makes the gap urgent. A single developer reviewing a single
 assistant's suggestions is a manageable trust problem. A fleet of agents opening
@@ -36,9 +34,11 @@ trust as decision rights granted and revoked over time \citep{mckinsey}. This
 ladder is published across vendors and research, and
 it is converging on a shared shape.
 
-Every published version conditions autonomy on the same class of signal: how
+Every approach we surveyed conditions autonomy on the same class of signal: how
 well the agent performed its task. Extraction accuracy, override rate, tool-call
-correctness. That choice of variable is the one thing worth revisiting, because
-it is the same variable that lets a clean record hide a bad outcome. The rest of
-this paper argues for a different conditioning variable, and shows why the
-2026-07-28 spec is the first standard substrate on which it can be enforced.
+correctness. That choice of variable is the one thing this paper revisits, because
+it is the same variable that lets a clean record hide a bad outcome. This paper
+keeps the name earned autonomy and changes only the variable it conditions on:
+delivered outcome, not task accuracy. The rest of the argument shows why the
+2026-07-28 spec is the first open protocol standard on which that condition can
+be enforced per action.

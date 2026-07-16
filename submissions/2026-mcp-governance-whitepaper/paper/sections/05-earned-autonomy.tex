@@ -11,8 +11,8 @@ a minimum twelve-month deprecation window measured from the revision release
 \citep{sdktiers, mcplifecycle}. Standing is earned by demonstrated conformance
 and lost publicly when the demonstration lapses.
 
-That is a working model of earned standing, and it is a model humans run. No
-automated controller relegates an SDK. Maintainers publish tiers against measured
+That is a working model of earned standing, and humans run it: no automated
+controller relegates an SDK. Maintainers publish tiers against measured
 conformance, on defined clocks, with a defined relegation rule, and the
 governance works. This is the precise shape to port. Earned autonomy is a rolling
 trust review in which workflow configurations hold published autonomy tiers,
@@ -23,20 +23,32 @@ rule, of the same kind the standard already runs on itself. The closed-loop
 controller that reads a metric and rewrites policy is the forward agenda, not the
 claim here.
 
-Every component of this cadence is mechanically expressible today. Identity and
-per-call enforcement come from the spec. Attribution, outcome evaluation, and
-served evidence come from the delivery evidence layer. Published tiers, clocks,
-and triggers are process. The only genuinely new input is the swap at the center:
-replace static scope grants, issued once and rarely revisited, with grants
-conditioned on delivered-outcome evidence. Automating the cadence, turning the
-rolling human review into a closed control loop, is the forward agenda, not a
-claim about today.
+Every component of this cadence is mechanically expressible today: identity and
+per-call enforcement from the spec, attribution and outcome evaluation from the
+delivery evidence layer, published tiers and clocks from process. The only
+genuinely new input is the swap at the center: replace static scope grants,
+issued once and rarely revisited, with grants conditioned on delivered-outcome
+evidence.
 
-Stated plainly: autonomy
-conditioned on task accuracy re-creates at the trust layer the same clean-record
-trap the audit layer already has; delivered outcome is the only conditioning
-variable that closes the loop, and the 2026-07-28 spec is the first standard
-substrate on which that condition is enforceable per action.
+Stated plainly: autonomy conditioned on task accuracy re-creates at the trust
+layer the same clean-record trap the audit layer already has. Delivered outcome
+is the adaptive conditioning variable every published ladder leaves out, and the
+2026-07-28 spec is the first open protocol standard (proprietary gateways
+enforced per-call before it) to make per-action agent-tool authorization a
+first-class, session-independent property. The grant a workflow has earned is
+enforced per action; its delivered outcome is evaluated on a cadence.
+
+Earned autonomy is one of two layers, and it is the adaptive one. Beneath it
+sits a preventive layer that screens every change before merge regardless of
+which workflow authored it or what record that workflow holds: pre-merge
+security scanning, blast-radius and impact gating, and agentic code review. A
+cadence tuned to delivered outcomes is blind to the latent-defect classes
+(security, privacy, license) that ride clean through every production signal
+until they are exploited. The SQL injection of the earlier section holds in
+production, passes each outcome check, and would earn a workflow more scope on
+outcome evidence alone. Only a gate that reads the change itself catches it.
+Earned autonomy governs how much a workflow is trusted to act unreviewed over
+time; it presupposes, and does not replace, the review of the individual change.
 
 \paragraph{The failure modes are dials, not objections.} Because Steer is a
 cadence, its known failure modes are design parameters that set the cadence's
@@ -65,14 +77,11 @@ the unit of trust is a workflow configuration: that is the granularity the
 evidence layer can attribute to, not a per-instance identity the protocol never
 reported.
 
-This shape has precedent outside software delivery. Open-source foundations
-already promote projects by earned standing: the CNCF moves a project from
+This shape has precedent outside software delivery. The CNCF moves a project from
 Sandbox to Incubating to Graduated on demonstrated adoption, security review, and
-governance maturity \citep{cncflifecycle}. The criteria are partly quantitative
-and partly qualitative, and the decision is ratified by humans. It is
-evidence-based maturation with human ratification, not a purely metric-gated
-switch, which is exactly the posture earned autonomy takes toward a workflow
-rather than a whole project.
+governance maturity, ratified by humans rather than by a metric gate
+\citep{cncflifecycle}. That is the posture earned autonomy takes toward a
+workflow: evidence-based maturation with human ratification.
 
 There is also direct empirical support for building the feedback capability the
 framework depends on. DORA's 2025 research found that AI acts as an amplifier: it
@@ -80,7 +89,8 @@ has a positive relationship with delivery throughput and a negative one with
 stability, and which effect dominates is conditional on a team's existing
 capabilities \citep{dora2025}. Among those capabilities is the delivery-feedback
 capability this paper argues an organization must build. The amplifier result
-doubles as corroboration that the conditioning variable is the right one.
+corroborates that delivery stability is the thing at risk. It motivates caring
+about outcomes; it does not, by itself, pick the conditioning variable.
 
 The cadence is configuration, not research. The trust decision, reading the
 delivered-outcome evidence and setting the tier, is the organization's to make;
@@ -88,7 +98,11 @@ the gateway's only job is to enforce the resulting scope on every call. The
 gateway never consults evidence at call time: the cadence compiles evidence into
 an identity assignment, and the gateway enforces that identity. A workflow holds
 the identity its current tier has earned, and the gateway gates each tool call
-against that identity:
+against that identity. Because a tier is bound to a credential, relegation is not
+complete until the prior tier's credential is revoked, not merely superseded: a
+workflow that keeps a live higher-tier key keeps the scope it was supposed to
+lose. Issuing, rotating, and revoking those credentials is the organization's
+responsibility, not the protocol's.
 
 \begin{figure}[!ht]
 \centering
@@ -105,14 +119,17 @@ authorization:
         && tool in ["read_file", "list_directory", "search_files"]
 \end{lstlisting}
 \end{minipage}
-\caption{\textbf{Validated on agentgateway}, an open-source MCP gateway in the
-same foundation. A per-call authorization rule gates tool scope on a workflow's
-tier-earned identity; the identical \texttt{write\_file} call was allowed for the
-trusted identity and denied, per call, for the sandbox identity, while the read
-call was allowed for both (reproduction in \texttt{data/}). The pattern needs only
-per-call, identity-scoped policy and runs on any gateway with that capability. The
-evidence-to-tier decision is the organization's cadence; the gateway is only the
-actuator, and the unit of trust is a workflow configuration, not an instance. This
-is the shape teams already use to gate a deploy, pointed at delivered-outcome
-evidence.}
+\caption{\textbf{Actuator validated on agentgateway}, an open-source MCP gateway.
+A per-call authorization rule gates tool scope on a workflow's tier-earned
+identity; the identical \texttt{write\_file} call was allowed for the trusted
+identity and denied, per call, for the sandbox identity, because
+\texttt{write\_file} is absent from that tier's allowlist, while the read call was
+allowed for both (run notes in \texttt{data/}). This validates the actuator, the
+per-call identity-scoped authorization point; the sensor (the delivery evidence
+layer) and the policy (the cadence) are described in this paper, not demonstrated
+here. The pattern needs only per-call, identity-scoped policy and runs on any
+gateway with that capability. The evidence-to-tier decision is the organization's
+cadence; the gateway is only the actuator, and the unit of trust is a workflow
+configuration, not an instance. It is the shape teams already use to gate a
+deploy, pointed at delivered-outcome evidence.}
 \end{figure}
