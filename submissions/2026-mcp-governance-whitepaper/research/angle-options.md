@@ -85,10 +85,13 @@ argument from a slogan:
 ## The 6-section spine
 
 1. **The question that predates the spec** — ROI on autonomous work. Stakes:
-   the MIT NANDA finding that ~95% of GenAI pilots fail to reach production; the
-   DORA 2025 result that AI amplifies throughput *and* instability together. The
-   governance question is older than the protocol; the protocol changes what we
-   can answer it *with*.
+   the MIT / Project NANDA finding that ~95% of enterprise GenAI initiatives show
+   no measurable P&L return (NOT "fail to reach production" — that is a separate
+   NANDA funnel stat); the DORA 2025 result that AI *amplifies* what a team already
+   is — a positive relationship with delivery throughput and a negative one with
+   stability, so acceleration exposes instability where control systems are weak.
+   The governance question is older than the protocol; the protocol changes what
+   we can answer it *with*. (See research/p0-verified-findings.md for exact figures + sources.)
 2. **What the spec makes legible + enforceable** — the SEP walk: per-call action
    records, per-call enforcement point, the stateless core, the conformance /
    lifecycle machinery. The celebration of the spec, **earned** by walking the

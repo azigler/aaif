@@ -22,10 +22,14 @@ the 2026-07-28 revision is a Release Candidate; current Final is 2025-11-25.
 The Section 1 stakes argument cites external, verifiable evidence — the category
 and the numbers, never a vendor or customer:
 
-- **DORA 2025** — AI amplifies throughput **and** instability together (the
-  amplifier framing: speed up without a guard and you speed up the failures too).
-- **MIT NANDA** — ~95% of GenAI pilots fail to reach production (the ROI gap that
-  predates the protocol).
+- **DORA 2025** — AI is an **amplifier**: a *positive* relationship with delivery
+  throughput and a *negative* one with stability (strong teams improve, weak teams
+  worsen). Frame as "acceleration exposes downstream instability where control
+  systems are weak," not "speed and failure rise together."
+- **MIT / Project NANDA** — ~95% of enterprise GenAI initiatives show **no
+  measurable P&L return** (the ROI gap that predates the protocol). NOT "fail to
+  reach production" — that is a separate NANDA funnel stat (60% eval → 20% pilot →
+  5% production). Attribute to NANDA / MIT Media Lab.
 - **Veracode** — ~45% of AI-generated code ships with an OWASP Top-10
   vulnerability (the quality-at-scale risk).
 - **Stanford AI Index** — adoption / capability trend baseline.
