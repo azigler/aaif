@@ -15,19 +15,19 @@ This is the clean-record trap, and the audit layer has always had it. A log
 tells you an action happened and was permitted; it never tells you the action
 was any good. The argument of this paper is that conditioning autonomy on task
 accuracy re-creates that same trap one level up. Grade an agent on how well it
-performs its task, how often its tool calls are correct and how rarely it is
-overridden, and a workflow that scores 99\% on tool-call correctness still ships
-the Veracode defect in the remaining cases, because tool-call correctness and
-delivered-code quality are different measurements. Worse, an autonomy ladder
+performs its task, and a workflow that scores 99\% on tool-call correctness still
+ships the Veracode defect in the remaining cases, because tool-call correctness
+and delivered-code quality are different measurements. Worse, an autonomy ladder
 built on task accuracy promotes a workflow precisely when its accuracy scores are
 high, which is the moment its output is drawing the least human scrutiny. The
 metric rises as the examination falls.
 
-Task accuracy is also weak on its own terms. On structured agent benchmarks,
-current systems still fail roughly one in three attempts \citep{stanford2026}.
-Weakness, though, is the smaller problem. Even a perfectly accurate agent would
-be graded on the wrong variable, because task accuracy measures the agent's
-behavior and says nothing about the outcome that behavior delivered.
-Behavior-graded trust inherits every known failure of activity metrics. The
-variable that closes the loop lives one step past the tool boundary, at the
-delivered change, and no protocol call runs there.
+Even a perfectly accurate agent would be graded on the wrong variable, because
+task accuracy measures the agent's behavior and says nothing about the outcome
+that behavior delivered. An industry benchmark of 2.7 million pull requests
+across 253 organizations reaches the same conclusion from the field: the output
+that matters is delivered work, not generated code, and agent-opened pull
+requests merge at markedly lower rates than human-opened ones, because a change
+no human owns tends to sit unmerged \citep{aibench2026}. The variable that
+actually matters lives one step past the tool boundary, at the delivered change,
+and no protocol call runs there.

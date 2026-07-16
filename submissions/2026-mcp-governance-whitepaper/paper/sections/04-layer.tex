@@ -17,18 +17,18 @@ similar-sounding term for the opposite job. Context engineering builds a
 \emph{context layer} whose purpose is to feed better inputs to agents so they act
 well \citep{ibmcontext}. The layer this paper describes runs in the other
 direction. Call it the \emph{delivery evidence layer}: its purpose is to feed
-outcome evidence to the authorizer so the organization can decide what an agent
+outcome evidence to the authorizer (the human or process that makes the trust
+decision, later the cadence) so the organization can decide what an agent
 is allowed to do next. Context feeds the actor. Evidence feeds the authorizer.
 It is one store, and it has four capabilities.
 
 \paragraph{Attribute.} Attribute joins the spec's per-call action records to
 version-control and CI/CD events, so a delivered change carries a legible answer
 to which autonomous work produced it and through what path. The join is the
-implementer's to build. The 2026-07-28 spec emits attributable, traceable action
-records (SEP-414, SEP-2575), and the organization's own pipeline emits commits,
-reviews, and deploys, but nothing in the protocol stitches the two together. That
-stitch is the fix for the attribution gap, and it is the foundational capability;
-the other three depend on it.
+implementer's to build. The spec emits attributable, traceable action records
+(SEP-414, SEP-2575) and the pipeline emits commits, reviews, and deploys, but
+nothing in the protocol stitches the two together. That stitch is the fix for the
+attribution gap, and it is the foundational capability the other three depend on.
 
 \paragraph{Evaluate.} Evaluate attaches outcome signals to each agent-authored
 change: change-failure rate, revert, rework, override-before-merge, whether the
@@ -45,7 +45,8 @@ served context checkable, required cache scopes and TTLs (SEP-2549) make its
 freshness a contract rather than a hope, and the per-call boundary (SEP-2567) is
 where it is delivered and re-authorized. The same protocol that emitted the
 events carries the answers back, and Serve reaches two consumers over those rails:
-the review cadence reads the evidence as the authorizer's input, and the agents
+the review cadence (defined in the next section) reads the evidence as the
+authorizer's input, and the agents
 read the distillation as operating context, the current baselines and constraints
 they should act within.
 
@@ -56,11 +57,9 @@ protocol earns its place in this argument, because the per-call enforcement poin
 is the actuator the loop writes to. It is also the capability most easily
 overstated, so the next section defines it carefully and states its limits first.
 
-Attribute and Evaluate are the write path: they observe and record. Serve and
-Steer are the read path: they return evidence and act on it. None of the four is
-speculative. Attribute is a join over data an organization already has. Evaluate
-computes metrics teams already track. Serve is a typed read over a governed
-transport. Steer is policy at a boundary the spec now provides. What makes them a
-layer rather than four disconnected scripts is that they share one store of
-delivered-outcome evidence, keyed to the unit an organization wants to
-govern.
+Attribute and Evaluate are the write path; Serve and Steer are the read path.
+None of the four is speculative: a join over data an organization already has,
+metrics teams already track, a typed read over a governed transport, and policy
+at a boundary the spec now provides. What makes them a layer rather than four
+disconnected scripts is that they share one store of delivered-outcome evidence,
+keyed to the unit an organization wants to govern.
