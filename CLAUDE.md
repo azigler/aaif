@@ -134,6 +134,7 @@ guards the floor.
 | Researching a project's contribution surface | `refs/projects/<project>.md` |
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
+| Building a long-form research paper / white-paper | `/research-paper` (`.claude/skills/research-paper/`) — the heavy long-form build branch of `/submission` (bootstrap → verbatim refs → angle-lock → per-section beads → read-only critic loop → REVIEW-NOTES human-gate → gated publish; every claim gets a grep-able test case; STOPS at the Zig submit-gate); the optional academic layer (Zenodo/arXiv/ORCID) points to the global `/cfp` arc — shares `refs/research-paper-pipeline.md` |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
 | Publishing a finished piece to andrewzigler.com | `/camp-publish` (`.claude/skills/camp-publish/`) — lexicon frontmatter + MDX body transform, build-validate, land in the camp vault before the daily build (the Publish step) |
 | Watching the AAIF submissions landscape (trends / bloat / opportunities / grading sync) | `/aaif-radar` (`.claude/skills/aaif-radar/`) — weekly read-only scan → **private** report (`.local/radar/`) + **participant-free** closed `note` bead; notifies only when notable (fired by `pulse-aaif-radar`, Sat 15:00 PT) |
@@ -169,6 +170,7 @@ aaif/
 │   ├── practices.md      ← the ambassador practice spec
 │   └── skills/
 │       ├── submission     ← the end-to-end submission pipeline
+│       ├── research-paper  ← the heavy long-form build branch of /submission (venue-neutral paper/whitepaper loop; deep cookbook in refs/research-paper-pipeline.md)
 │       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
 │       ├── camp-publish   ← land a finished piece into the andrewzigler.com publish pipeline (lexicon frontmatter + MDX transform, build-validate, land in the vault)
 │       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
@@ -177,6 +179,7 @@ aaif/
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
 │   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the /agentgateway skill
+│   ├── research-paper-pipeline.md  ← the venue-neutral research-paper/whitepaper cookbook (the /research-paper skill's deep reference)
 │   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)
 │   ├── projects/         ← per-project contribution-surface briefs
 │   ├── brand/            ← badge kit + Credly badge + header
