@@ -38,13 +38,24 @@ Re-run the build after any edit.
   being said aloud without a definition; contrasted with context-engineering's
   "context layer" on first use. Final pick is Andrew's (OQ3).
 - **Fable round-3 applied (2026-07-16).** References hardened (Digital Apprentice
-  authors + title corrected — the arXiv ID was real; Röder / NANDA / DX / McKinsey
+  authors + title corrected — the arXiv ID was real; Röder / NANDA / McKinsey
   landed with real URLs + years; AWS cut as tangential); Serve's two consumers
   named; the exhibit keyed to tier identities + a compile-evidence-into-identity
   sentence; agentgateway named with a portability guard; section 2 opens on the
-  payoff; the DX attribution claim softened to DX's causal-driver framing;
+  payoff; the attribution-gap claim softened to a causal-driver framing;
   em-dashes and "actually" removed; two not-X-it-is-Y recasts; skeptic meta-phrase
   cut; figure float fixed. Subtitle/layer-name/length still Andrew's calls.
+- **Belts-and-suspenders revision + DORA-only + Stanford restore (2026-07-16).**
+  Merged the adaptive/preventive reframe (outcome-conditioning is the *adaptive*
+  half that complements *preventive* gates; §6 gained the AI-code-review
+  complement, benchmark-grounded via `aibench2026`, vendor-neutral TBD cite).
+  Competitor citations removed to hold vendor-neutral: the delivery-evidence-layer
+  framing is now **DORA-only** (the second delivery-metrics framework and its bib
+  entry cut; the attribution-gap point re-cited to `dora2025`). §1 Stanford
+  adoption stat (78%→88%, AI Index 2025/2026) restored after the belts pass
+  dropped it for space; held 8pp by tightening bib note fields only. All gates
+  green (8pp · 0 undefined cites · competitor-scrub / vendor-neutral / no-MCP-1.0 /
+  no-em-dash / no-"actually").
 
 ### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
 - **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
