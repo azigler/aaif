@@ -2,12 +2,10 @@
 
 Start with a limit that most engineering organizations already know they have.
 The delivery-metrics programs leaders run today, chief among them DORA's four
-keys, measure delivery at the team level, but they cannot tell you whether a
-movement in those metrics was driven by AI tooling, by process change, or by a
-quality trade-off. The gap has a name: delivery metrics tell you what is
-happening, not why. Designed before agents wrote code, they cannot say what
-drove the change they measure \citep{dora2025}. An organization can watch its change-failure rate move and have
-no way to attribute the move to its agents. The 95\% with no measurable P\&L return and the attribution gap are the
+keys, measure delivery at the team level. Designed before agents wrote code, they
+tell you what is happening, not what drove it: a change-failure rate can move with
+no way to attribute the move to AI tooling, process change, or a quality
+trade-off \citep{dora2025}. The 95\% with no measurable P\&L return and the attribution gap are the
 same problem seen from two ends: an outcome that cannot be attributed to the work
 that produced it.
 
@@ -47,8 +45,8 @@ where it is delivered and re-authorized. The same protocol that emitted the
 events carries the answers back, and Serve reaches two consumers over those rails:
 the review cadence (defined in the next section) reads the evidence as the
 authorizer's input, and the agents
-read the distillation as operating context, the current baselines and constraints
-they should act within.
+read a distilled view of the same evidence as operating context, the current
+baselines and constraints they should act within.
 
 \paragraph{Steer.} Steer feeds evaluations into boundary policy: the outcomes a
 workflow has delivered set the autonomy it is granted on its next call.
@@ -59,7 +57,7 @@ overstated, so the next section defines it carefully and states its limits first
 
 Attribute and Evaluate are the write path; Serve and Steer are the read path.
 None of the four is speculative: a join over data an organization already has,
-metrics teams already track, a typed read over a governed transport, and policy
+metrics that teams already track, a typed read over a governed transport, and policy
 at a boundary the spec now provides. What makes them a layer rather than four
 disconnected scripts is that they share one store of delivered-outcome evidence,
 keyed to the unit an organization wants to govern.
