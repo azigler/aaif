@@ -2,7 +2,8 @@
 
 ## State at offboard
 - Branch `main`, pushed. Open beads ~40 (incl. the 15 `verify:` trail).
-- **IN-FLIGHT SUBAGENT (must integrate first next session): `worktree-agent-a6d55ca51e04aa36e`** (bead `aaif-lli`) — the "belts-and-suspenders" revision. It was editing the whitepaper (reframe + benchmark + critic fixes) and ran slightly over 8pp, trimming back. NOT merged. Its branch has the edits; collect it.
+- **READY TO MERGE (do first next session): `worktree-agent-a6d55ca51e04aa36e`** commit `0e0cde8` (bead `aaif-lli`) — the "belts-and-suspenders" revision is DONE: 8pp, clean build, 0 undefined cites, all reframe + benchmark + critic fixes applied, gates verified. Just merge it.
+  - **CASUALTY it flagged:** to hold 8pp while adding the two new paragraphs (belts-and-suspenders + §6 preventive-gates), it **dropped the §1 Stanford adoption stat (78%→88%) and the `stanford2025`/`stanford2026` cites** (kept the rhetorical frame). Least load-bearing beat. Zig's call: restore the stat + trim elsewhere (e.g. shorten long bib `note` fields), or leave dropped.
 - In-progress beads: `aaif-lli` (revise), `aaif-3v6` (critic loop), `aaif-51g` (whitepaper), `aaif-omn` (spec).
 
 ## The whitepaper arc this session (huge)
