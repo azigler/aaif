@@ -95,6 +95,23 @@ Re-run the build after any edit.
   attribution-limitation is now the paper's own observation). Figure caption:
   agentgateway tagged "(an AAIF project)". Steer ledger entry corrected. Gates
   green, held 8pp.
+- **Round-4c — `aibench2026` NAMED, not anonymized (2026-07-16, Zig's call).**
+  REVERSES the earlier "LinearB name OFF the paper" posture: Zig decided anonymizing
+  the benchmark is not fully honest, so LinearB is named as the source. Implemented
+  Fable's dominant honest-config: **(1) NAME** — §3 cites "LinearB's 2026 benchmark
+  report" by name (parallel to how the paper names Veracode's analysis) and the bib
+  entry credits LinearB with the real title + sample (report URL is the only
+  remaining TBD, pending publication). **(2) DISCLOSE** — an author `\thanks`
+  footnote states the COI (author employed by LinearB, which produced the cited
+  benchmark; LinearB not affiliated with the standards/projects discussed).
+  **(3) CITE ONCE** — the §6 product-recommendation use (the AI-code-review 5pp
+  ranking) is CUT; a named employer stat backing a product-category recommendation
+  is the positioning read, so the three preventive controls stand as a plain list.
+  Two §3 line nits fixed (garden-path recast; "because" kept — verified as the
+  report's own causal claim, not correlation). Vendor gate updated: **LinearB is an
+  intentionally-named source now; its customers (Expedia/Adobe/Syngenta) stay OUT.**
+  Gates green, 8pp. REMAINING (Zig's, org-level): confirm Ben's sign-off on the
+  brand exposure; disclose the affiliation to the LF at submission (not at discovery).
 
 ### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
 - **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
@@ -182,6 +199,7 @@ delivery evidence layer"). This is a first full draft — a critic loop +
 |---|---|
 | "Audit logs can't judge quality" (a truism) | Never anchor to the truism. Anchor to **what the spec makes measurable** — delivered-change attribution and held-in-production outcome signals — and to external evidence. The claim is about outcomes joined to changes, not about logs judging code. |
 | "This reads naive on authz" | The **two honesty valves**: per-call auth is an enforcement point (not a scope engine), and per-call identity is the principal + client, not an individual agent. Both are stated up front, not hand-waved. |
+| "aibench2026 resolves to the author's employer (LinearB)" | **Named + disclosed + cited once.** LinearB is cited by name as the benchmark source (as the paper names Veracode); an author footnote discloses the COI; the cite appears once, as §3 field evidence, with the §6 product-recommendation use cut. Disclosed employer-data citation is a known, forgivable practitioner-research pattern; the scandal pattern is undisclosed anonymization, which this removes. |
 | "The framework (Steer) is speculative" | **The cadence is expressible today** (a review rhythm with a clock and a rule, modeled on the standard's own tier governance); only the **closed-loop controller** that auto-rewrites policy is forward agenda. **Boundary conditions first-class** (attribution lag, unstable identity, Goodhart, small-n). Attribute / Evaluate / Serve are the concrete core it runs on. |
 
 ## Publish checklist (GATED)
