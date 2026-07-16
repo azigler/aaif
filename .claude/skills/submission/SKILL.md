@@ -97,9 +97,15 @@ Capture the scorecard/points when AAIF approves. Close the bead (`/commit` with
 the bead trailer; one bead = one commit). Update running totals.
 
 ### 8. Amplify
-Announce per `refs/program/brand-and-social.md`: tag **@AgenticAIFdn**, use
-**#AAIFAmbassador**, post the badge. A useful developer-value thread is itself a
-qualifying 5-pt contribution — log it too if it stands alone.
+Fire **`/amplify`** (`.claude/skills/amplify/`): it drafts the announcement in
+`/zig-voice`, applies the tag/badge rules (`refs/program/brand-and-social.md`: tag
+**@AgenticAIFdn**, use **#AAIFAmbassador**, post the badge), records it in the
+submission's **`AMPLIFY.md`** (convention +  template:
+`.claude/skills/submission/reference/AMPLIFY-template.md`), and answers *"does this
+stand alone as its own 5-pt pulse contribution?"* — then **STOPS**. A useful
+developer-value thread that stands alone earns its own row in the **pulse-contributions
+table** in `SUBMISSIONS.md` and its own gated submission. **Posting is Zig's, never
+automated** — the skill drafts; Zig posts and fills in the live URL + engagement.
 
 ## Done when
 
