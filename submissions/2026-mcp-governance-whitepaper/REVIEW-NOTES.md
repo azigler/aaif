@@ -56,6 +56,20 @@ Re-run the build after any edit.
   dropped it for space; held 8pp by tightening bib note fields only. All gates
   green (8pp · 0 undefined cites · competitor-scrub / vendor-neutral / no-MCP-1.0 /
   no-em-dash / no-"actually").
+- **Round-4 editorial ship list applied (2026-07-16).** CORRECTNESS: §3 fixed a
+  logic inversion — "ships the defect in the remaining cases" contradicted the
+  "different measurements" point (the defective call *is* a correct call). §1 Röder
+  spelling corrected (verified vs matthiasroder.com). PROTECT-THE-THESIS: §5 belts
+  paragraph now says what the cadence *catches* (reverts/rework/unmerged that read
+  clean at the tool boundary, fail in delivery) — it previously conceded the SQL
+  example is invisible to outcome-conditioning without re-anchoring the adaptive
+  layer's job; the "Stated plainly" paragraph compressed (was near-verbatim abstract
+  reruns); "workflow configuration" glossed at first use. CLARITY/REDUNDANCY: §4
+  opening triple-statement collapsed; abstract "every published ladder" scoped to
+  "these autonomy ladders"; several garden-path/hedge fixes; figure caption trimmed
+  (body-duplicating sentence + unresolvable data/ pointer cut). ACCURACY: the
+  aibench2026 claims verified source-accurate against the report; dropped one double
+  hedge to "up to five percentage points". Gates green, held 8pp.
 
 ### (a2) Final-recheck list (Fable round-3 — verify at Final / pre-publish)
 - **Repoint the two draft-path URLs** post-Final: `mcpchangelog` + `deprecated`
