@@ -101,9 +101,10 @@ Re-run the build after any edit.
   Fable's dominant honest-config: **(1) NAME** — §3 cites "LinearB's 2026 benchmark
   report" by name (parallel to how the paper names Veracode's analysis) and the bib
   entry credits LinearB with the real title + sample (report URL is the only
-  remaining TBD, pending publication). **(2) DISCLOSE** — an author `\thanks`
-  footnote states the COI (author employed by LinearB, which produced the cited
-  benchmark; LinearB not affiliated with the standards/projects discussed).
+  remaining TBD, pending publication). **(2) DISCLOSE** — a COI disclosure footnote
+  was added then **REMOVED at Zig's request** (2026-07-16); the naming stands
+  without an in-paper disclosure. The affiliation disclosure to the LF at
+  submission (org-level, below) remains the plan.
   **(3) CITE ONCE** — the §6 product-recommendation use (the AI-code-review 5pp
   ranking) is CUT; a named employer stat backing a product-category recommendation
   is the positioning read, so the three preventive controls stand as a plain list.
@@ -199,7 +200,7 @@ delivery evidence layer"). This is a first full draft — a critic loop +
 |---|---|
 | "Audit logs can't judge quality" (a truism) | Never anchor to the truism. Anchor to **what the spec makes measurable** — delivered-change attribution and held-in-production outcome signals — and to external evidence. The claim is about outcomes joined to changes, not about logs judging code. |
 | "This reads naive on authz" | The **two honesty valves**: per-call auth is an enforcement point (not a scope engine), and per-call identity is the principal + client, not an individual agent. Both are stated up front, not hand-waved. |
-| "aibench2026 resolves to the author's employer (LinearB)" | **Named + disclosed + cited once.** LinearB is cited by name as the benchmark source (as the paper names Veracode); an author footnote discloses the COI; the cite appears once, as §3 field evidence, with the §6 product-recommendation use cut. Disclosed employer-data citation is a known, forgivable practitioner-research pattern; the scandal pattern is undisclosed anonymization, which this removes. |
+| "aibench2026 resolves to the author's employer (LinearB)" | **Named + cited once** (in-paper COI footnote removed at Zig's request; affiliation disclosed to the LF at submission). LinearB is cited by name as the benchmark source (as the paper names Veracode); the cite appears once, as §3 field evidence, with the §6 product-recommendation use cut. Naming-not-anonymizing removes the scandal pattern (discovered anonymization); the affiliation is disclosed to the publisher at submission rather than left to discovery. |
 | "The framework (Steer) is speculative" | **The cadence is expressible today** (a review rhythm with a clock and a rule, modeled on the standard's own tier governance); only the **closed-loop controller** that auto-rewrites policy is forward agenda. **Boundary conditions first-class** (attribution lag, unstable identity, Goodhart, small-n). Attribute / Evaluate / Serve are the concrete core it runs on. |
 
 ## Publish checklist (GATED)
