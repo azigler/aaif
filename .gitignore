@@ -25,4 +25,7 @@ scratch/
 .bv/
 
 # working submission drafts are premature — stage via private gists for review, never commit until shipped
-submissions/
+# EXCEPTION: the MCP governance whitepaper is a deliberate public open-learning artifact (Zig 2026-07-16) —
+# the /research-paper pipeline + this scaffold are shared in the open on purpose.
+submissions/*
+!submissions/2026-mcp-governance-whitepaper/
