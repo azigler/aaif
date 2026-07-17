@@ -115,11 +115,16 @@ ledger row the harness dashboard can read (no ledger-less ticks). Append ONE lin
 (this file is committed + read cross-machine — same rule as the bead: model only, never people):
 ```bash
 TS=$(date -u +%FT%TZ)
-printf '%s\n' "{\"ts\":\"$TS\",\"row\":\"aaif-radar\",\"outcome\":\"done\",\"proof\":{\"kind\":\"artifact\",\"path\":\".local/radar/<YYYY-Www>.md\"},\"note\":\"radar <YYYY-Www> — <N new subs, trend deltas; participant-free>\"}" \
+printf '%s\n' "{\"ts\":\"$TS\",\"row\":\"aaif-radar\",\"outcome\":\"done\",\"proof\":{\"kind\":\"cmd\",\"cmd\":\"grep -q '^# AAIF submissions radar' .local/radar/<YYYY-Www>.md && grep -q '## State updated' .local/radar/<YYYY-Www>.md\"},\"note\":\"radar <YYYY-Www> — <N new subs, trend deltas; participant-free>\"}" \
   >> /home/ubuntu/aaif/refs/pulse-ledger.jsonl
 git -C /home/ubuntu/aaif add refs/pulse-ledger.jsonl && git -C /home/ubuntu/aaif commit -m ":card_file_box: pulse: aaif-radar <YYYY-Www> ledger row"
 ```
-A run with nothing new still logs `"outcome":"quiet"` (no proof needed). First run creates the file.
+Substitute every `<YYYY-Www>` with this run's week (e.g. `2026-W28`). The `kind:cmd`
+proof RE-RUNS at commit — it greps the radar report for two structural markers a stub
+lacks (bare `kind:artifact` file-exists is rejected fleet-wide as a stub-passable
+no-op; `explore-len0`). `.local/` is gitignored but the file is on disk, so the grep
+resolves from the aaif root. A run with nothing new still logs `"outcome":"quiet"` (no
+proof needed). First run creates the file.
 
 ## Notify (only when it matters)
 File a **P1 `human:` bead + push notification** if the week shows: a clear **new opportunity**
