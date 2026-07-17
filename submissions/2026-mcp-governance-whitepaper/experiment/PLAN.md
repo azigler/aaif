@@ -185,3 +185,29 @@ or pollute its request DB with experiment traffic.
    trajectory → SWE-bench eval → pull the gateway log window).
 6. Run pilot; time it; check effect direction; report to Zig to size the full run.
    **Workflow + regular sub-agents (NO Fable) for the RUN fan-out; setup is orchestrator/worktree.**
+
+### SUBSTRATE PROVEN — 2026-07-17 s2 (the governance layer is live end-to-end)
+
+- **Isolated experiment gateway stands up on pico** (spare ports 25000/25001/25003, own DB
+  `exp-requests.db`, fresh `sk-exp` key, launched with PATH so npx/uvx spawn). NEVER touches
+  the live gateway. Config lives at `/tmp/exp-gateway.yaml` on pico (key in `/tmp/exp-gw.key`).
+- **Both audit paths work:** LLM cost → the request DB (`llm|qwen3-coder:30b|exp|in|out|200`);
+  MCP tool calls → the **access log** (`/tmp/exp-gateway.log`), tagged `agent="exp"`, carrying
+  `gen_ai.tool.name` / `mcp.method.name` / `mcp.target` / `mcp.session.id` / status / duration.
+- **MCP logging is METADATA-ONLY, doc- + empirically-confirmed:** a marker string passed as a
+  `write_file` arg and returned as a `read_text_file` result appears NOWHERE in the logs/DB.
+  Contents (`mcp.tool.arguments`/`mcp.tool.result`) are opt-in CEL fields we never add. Native
+  SQLite/UI persistence is LLM-only; MCP lives in the access log (+ OTLP). Zig's live gateway
+  ALREADY logs MCP metadata (5,666 lines) — the blind spot was already closed; DB/UI for MCP
+  isn't native.
+- **goose driver PROVEN:** goose (zig-computer, isolated via `XDG_CONFIG_HOME=/tmp/expcfg`,
+  provider host/key via env `OPENAI_HOST`/`OPENAI_API_KEY`) executes NATIVE tool calls through
+  the exp gateway (`honk` extension → `:25001/mcp`, model → `:25003`). Earlier text-format
+  failures were transient COLD-START (npx/model warm-up), not config. Ablation lever = the
+  `mcpAuthorization` allowlist for the `exp` identity (full=14 fs tools+fetch / nucleus=6 /
+  bloated=pad >20). Tool inventory confirmed via `tools/list`.
+- **Architecture:** gateway+filesystem-MCP on pico (repo working copies there), goose on
+  zig-computer, model inference on pico; SWE-bench Docker eval on zig-computer (pull the diff).
+- **NEXT:** load SWE-bench Verified → pick ~3–5 mid-difficulty pilot instances → clone one on
+  pico + root the fs MCP there → goose run under the full toolset → extract diff → SWE-bench
+  eval → pull the tool audit. That's the pilot smoke test; then the full ablation matrix.
