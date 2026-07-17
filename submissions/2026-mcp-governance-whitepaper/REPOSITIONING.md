@@ -259,3 +259,32 @@ gate.
    call (R-4).
 
 **Output file:** `/home/ubuntu/aaif/submissions/2026-mcp-governance-whitepaper/REPOSITIONING.md`
+
+---
+
+## DECISIONS — Zig walk-through (2026-07-17 s2)
+
+Human-gate outcomes that now govern the rewrite (walked with Zig):
+
+- **Bridge (R-1): HOLDS — ship it.** One paper. State the bridge explicitly in §1: the
+  toolset is one axis of workflow configuration; earned autonomy governs it the same way
+  it governs authority (converge on the load-bearing set by delivered-outcome delta,
+  enforce per call).
+- **Scope (R-2): pilot-direction + literature for the shape.** Our experiment shows the
+  effect DIRECTION (honestly small-n); the full inverted-U shape leans on the cited
+  literature (both arms sourced). **Close the paper mise-en-place-style — on proposed
+  next experiments / ways to extend the study** (that "future work / extend this" section
+  is the honest home for the full-swept-curve ambition).
+- **Length (R-4): argument-driven, tight.** No new section-count mandate; ~8–10pp is
+  already "kinda high." Expect to REMOVE existing material that isn't serving the thesis
+  or isn't as strong, to make room — don't pad to a length, don't cut arbitrarily to one.
+  Get the full argument we can make, in the scope we have; no grandiosity. Likely ~7–9pp.
+- **Figures:** anchor on A (inverted-U curve — labeled honestly as direction + literature),
+  B (leave-one-out), E (governance-loop diagram); C/D only if they earn their space.
+- **Subtitle:** keep as-is (the toolset is the evidence, not the headline).
+- **Gateway logging (Zig, same session):** enable MCP tool-call **metadata** logging on the
+  LIVE gateway (payloads stay OFF — contents already live in transcripts and are sensitive;
+  metadata is the blind spot the gateway uniquely fills, incl. denials). Verify no-contents
+  empirically on the experiment gateway first, then port the validated config to live. Feeds
+  §2 (legible/enforceable) + §4 (attribute): the gateway is the governed audit *without*
+  holding the payload.
