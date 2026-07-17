@@ -211,3 +211,39 @@ or pollute its request DB with experiment traffic.
 - **NEXT:** load SWE-bench Verified → pick ~3–5 mid-difficulty pilot instances → clone one on
   pico + root the fs MCP there → goose run under the full toolset → extract diff → SWE-bench
   eval → pull the tool audit. That's the pilot smoke test; then the full ablation matrix.
+
+### PILOT SMOKE COMPLETE + THE OUTCOME FLOOR — 2026-07-17 s2 (definitive)
+
+**Full pipeline PROVEN end-to-end:** a real goose run through the governed gateway →
+MCP `edit_file` → diff → SWE-bench Docker eval → **RESOLVED 1/1** (`psf__requests-1142`,
+devstral forced run; gold patch also validated → resolved; eval ~20s once the image is built).
+
+**Two harness fixes found + applied:** (1) goose runs must **disable the built-in
+`developer`/shell extension** — otherwise the agent bypasses the governed MCP tools via
+ungoverned local shell (which also ran on the wrong host); forcing all tool use through the
+MCP surface is both the fix AND a whitepaper point ("the gateway only governs what flows
+through it"). (2) Run cap ~300–500s; ollama **one model in memory** (unload via
+`POST /api/generate {keep_alive:0}` before switching).
+
+**THE FLOOR (Zig's delegated find), characterized as a clean gradient — robust across
+qwen3-coder:30b AND devstral-small-2:**
+- Raw problem statement → model **diagnoses correctly, plans (todo), but NEVER calls
+  edit_file** → empty diff → unresolved.
+- "You MUST apply the edit" forcing prompt → still no edit → unresolved.
+- Exact fix spelled out + edit forced → **applies it correctly (== gold) → RESOLVED.**
+
+So **autonomous SWE-bench resolution floors** on these local agents: task-understanding far
+outruns delivered outcome — they read/plan but won't self-commit to the edit. The edit *path*
+works (proven); the wall is autonomous *commitment*.
+
+**This REINFORCES the thesis** (not a setback): "diagnose but don't deliver" is exactly
+*delivered-outcome > task-accuracy*, observed live — and the gateway audit makes the gap
+visible. Resolution can't give a tool-config differential (floors ~0 across configs), but the
+**rich audit signal is very much tool-sensitive**: read/edit ratio, localization behavior,
+tokens/cost, convergence-vs-flailing, stage-of-use, allow/deny — all measurable per config.
+
+**RESHAPED OUTCOME METRIC (proposed):** primary signal = **tool-use behavior from the audit**
+(how the ablation changes HOW the agent works the tools); resolution reported honestly as a
+**floor finding** that demonstrates accuracy≠outcome, with the forced run as proof the pipeline
+resolves. Ablation across full / nucleus / leave-one-out / bloated then measures the behavior
+delta (e.g. does bloat increase flailing/tokens? does removing search break localization?).
