@@ -1,11 +1,11 @@
 ---
 name: storybook-header
-description: Produce an on-brand post header in Andrew Zigler's pastoral-storybook aesthetic — a warm watercolor children's-book scene in golden-hour light over rolling farmland, starring the recurring white goose mascot "ZIG-OO" in a red aviator scarf. Maps the post's idea to a farm metaphor (never literal tech), carries one locked look across the feed via image-to-image style/character references, and outputs the exact OG-sized crop + `image:` frontmatter line. Use when a blog post / tutorial / thread / andrewzigler.com note needs a header image, or when refreshing an existing header to stay in the series.
+description: Produce an on-brand post header in Andrew Zigler's pastoral-storybook aesthetic — a warm watercolor children's-book scene in golden-hour light over rolling farmland, starring a recurring white goose in a red aviator scarf. Maps the post's idea to a farm metaphor (never literal tech), carries one locked look across the feed via image-to-image style/character references, and outputs the exact OG-sized crop + `image:` frontmatter line. Use when a blog post / tutorial / thread / andrewzigler.com note needs a header image, or when refreshing an existing header to stay in the series.
 when_to_use: A published or about-to-publish piece needs a header/OG image and it should match the goose storybook series (the /submission Publish step, /camp-publish frontmatter, or any standalone post). NOT for diagrams, screenshots, UI mockups, or literal product art — this skill is the pastoral-illustration lane only.
 metadata:
   author: Andrew Zigler
   organization: independent (AAIF Ambassador)
-  version: "1.0"
+  version: "1.1"
 ---
 
 # /storybook-header — the pastoral-goose post-header aesthetic
@@ -50,24 +50,63 @@ screens, UI, code, terminals, circuit motifs, glowing holograms, servers, gears,
 in doubt, lean **more pastoral**, not more literal. The concept is carried by the
 *farm*, never by a rendered gadget.
 
-## The mascot — ZIG-OO, the through-line character
+## Stay authentic — two traps to avoid
 
-A friendly white **goose named "ZIG-OO"** wearing a **red aviator scarf** is the
-recurring protagonist across every post. He is the continuity anchor — a reader
-recognizes the series by him.
+The style sits near two crowded neighbors; steer away from both on purpose.
+
+- **Not the industrial-AI-mascot lane.** Steve Yegge's "Gas Town" is a Mad Max
+  wasteland of anthropomorphic **robot chimps** and animal-named "agents," also
+  made with nano-banana. Being its opposite is the point: **serene, warm,
+  pastoral, literary** — never industrial, chaotic, robotic, or gritty.
+- **Not the generic-AI-cozy default.** The soft, sweet, over-warm "cozy AI
+  illustration" is nano-banana's default and reads as anyone's. Fight it with
+  **specificity**: reach for **particular, slightly surprising rural crafts and
+  places** (a canal lock, a herb-drying loft, a rope ferry, a seed-library) over
+  the first-things-the-model-draws clichés (an open **gate**, a **windmill**, a
+  **market stall**, an **orchard**). Less generic = more ours.
+
+The test: could this image belong to *anyone's* AI blog, or is it unmistakably
+*this* series? Push toward the latter — one specific goose, one specific craft,
+one hidden serial number.
+
+## The mascot — the through-line goose (unnamed)
+
+A friendly white **goose** in a **red aviator scarf** is the recurring
+protagonist across every post — the continuity anchor a reader recognizes the
+series by. **He has no name.** Do not call him "ZIG-00" / "ZIG-OO": that was only
+the **tail number painted on the first biplane**, and it seeds the Easter-egg
+convention below.
 
 - Keep him **consistent**: white goose, red aviator scarf, warm and expressive,
   same storybook proportions. The red scarf is his signature — always present.
-- He is always the **protagonist** of the scene; the farm elements around him
-  carry the post's idea.
-- **Established scenes in the series** (reuse the vocabulary, extend it — don't
-  reinvent the character):
-  - *First header* — ZIG-OO piloting a little **"TINY-TOOLS" biplane** over
-    patchwork farmland. This is the **anchor image** for the whole series (see
-    "Continuity technique").
-  - *Earned-Autonomy set* — ZIG-OO as a **farmhand earning a wider pasture** /
-    **reading a ledger** / **shepherding a flock**. Same goose, same coat, new
-    chore.
+- He is always the **protagonist**; the surroundings carry the post's idea.
+- **One goose, not a menagerie.** The lead stays the same goose across posts. Do
+  NOT rotate in a cast of other cute animals as the protagonist — a single
+  consistent character is ownable, while a parade of anthropomorphic-animal
+  "agents" drifts straight into the crowded generic lane (see "Stay authentic").
+- **Established scenes** (extend the vocabulary; don't reinvent the character):
+  - *First header* — the goose piloting a little **"TINY-TOOLS" biplane** (tail
+    number **ZIG-00**) over patchwork farmland — the **anchor image** for the
+    series (see "Continuity technique").
+  - *Differentiated set* — the goose at specific, less-generic rural crafts: a
+    **canal lock**, a **grain-sorting floor**, a **seed-library**, a **rooftop
+    dovecote**, a **hilltop weather-station**. Same goose, new specific chore.
+
+## The ZIG-NN Easter egg — the serial signature
+
+The series **counts up.** The first biplane carried **ZIG-00**; every header
+after it hides the **next number** — `ZIG-01`, `ZIG-02`, … — somewhere subtle
+in-scene: a **crate stamp**, a **drawer label**, a **lock plaque**, a **boat
+hull near the waterline**, a **lantern tag**, a **chalk slate**.
+
+- **Subtle, integrated, an Easter egg** — never a headline. Small, on a natural
+  in-world surface.
+- **Exactly one** per image, incrementing across the published series — **track
+  the last number used** so the next header takes the next integer.
+- It is the **only** readable text allowed in the image; everything else stays
+  wordless (no other signs, labels, or letters). nano-banana renders a short tag
+  like `ZIG-03` legibly on a plaque or label — verify it in the output, and clean
+  it with a small post-overlay only if it garbles.
 
 ## The metaphor method — map the idea to the farm
 
