@@ -2,7 +2,7 @@
 
 A solo-authored, **Linux-Foundation-published** technical whitepaper on the
 **2026-07-28 MCP spec**, written at **engineering-leader altitude** on
-**governance and enterprise scale**. Byline: **Andrew Zigler**.
+**governance and enterprise scale**. Byline: **Andrew Zigler, LinearB**.
 
 ## What this piece is
 
@@ -27,9 +27,10 @@ back. The spec is celebrated as the enabler throughout; the paper never faults i
   critic loop → REVIEW-NOTES human-gate → gated publish. Skill:
   `.claude/skills/research-paper/`. Deep reference / cookbook:
   `refs/research-paper-pipeline.md` (both at the repo root).
-- **Format: DEFERRED** — the `paper/` directory is intentionally absent until the
-  Linux Foundation publishing target is known (LaTeX vs Doc/Markdown). Everything
-  else here is format-agnostic and can proceed now.
+- **Format: PROVISIONAL LaTeX (`article` class)** — the `paper/` directory holds
+  the first full draft (`cd paper && latexmk -pdf main.tex` → `paper/main.pdf`).
+  This is the working format under the `/research-paper` loop; if the Linux
+  Foundation specifies a Google Doc / Markdown target, convert then (OQ2).
 
 ## Companion blog
 
@@ -51,18 +52,25 @@ is encouraged; anything that lands in the spotlight stops at the gate. See
 ```
 2026-mcp-governance-whitepaper/
 ├── README.md              ← this file
+├── paper/                 ← the whitepaper itself (provisional LaTeX, article class)
+│   ├── main.tex           ← preamble + metadata; one \input per section
+│   ├── main.pdf           ← the built draft (cd paper && latexmk -pdf main.tex)
+│   ├── references.bib     ← natbib numeric citations
+│   ├── sections/          ← 01-question … 06-recommendations (one file per section)
+│   └── figures/           ← figure assets
 ├── refs/                  ← verbatim source material (SEP grounding + external-evidence pointers)
 │   └── mcp-sep-grounding.md
 ├── research/              ← our own analysis
-│   └── angle-options.md   ← the LOCKED angle as a contract + alternatives considered
-├── data/                  ← vendor-neutral reference-implementation evidence (accrues later)
+│   ├── angle-options.md   ← the LOCKED angle as a contract + alternatives considered
+│   └── p0-verified-findings.md ← the verified P0 findings backing the paper's claims
+├── data/                  ← vendor-neutral reference-implementation evidence
+│   ├── agentgateway-prototype.md
 │   └── .gitkeep
-├── REVIEW-NOTES.md        ← the human-gate ledger (build cmd · decisions · owner judgment · concern→defense · publish checklist)
-└── (paper/  DEFERRED — added once the LF publishing format is known)
+└── REVIEW-NOTES.md        ← the human-gate ledger (build cmd · decisions · owner judgment · concern→defense · publish checklist)
 ```
 
-`data/` will hold vendor-neutral reference-implementation evidence gathered during
-the build (e.g. measurements against public reference implementations).
+`data/` holds vendor-neutral reference-implementation evidence gathered during the
+build (e.g. measurements against public reference implementations).
 
 ## A note on grounding
 
