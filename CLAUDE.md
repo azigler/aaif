@@ -133,10 +133,12 @@ guards the floor.
 | Checking program rules / points / submission process | `refs/program/ambassador-program.md` |
 | Researching a project's contribution surface | `refs/projects/<project>.md` |
 | Announcing / branding a post | `refs/program/brand-and-social.md` + `refs/brand/` |
+| Creating / reviewing AAIF-branded visuals, slides, or social graphics | `/aaif-brand-guidelines` (`.claude/skills/aaif-brand-guidelines/`) — the AAIF brand system for any branded deliverable (authored by AAIF) |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Building a long-form research paper / white-paper | `/research-paper` (`.claude/skills/research-paper/`) — the heavy long-form build branch of `/submission` (bootstrap → verbatim refs → angle-lock → per-section beads → read-only critic loop → REVIEW-NOTES human-gate → gated publish; every claim gets a grep-able test case; STOPS at the Zig submit-gate); the optional academic layer (Zenodo/arXiv/ORCID) points to the global `/cfp` arc — shares `refs/research-paper-pipeline.md` |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
 | Publishing a finished piece to andrewzigler.com | `/camp-publish` (`.claude/skills/camp-publish/`) — lexicon frontmatter + MDX body transform, build-validate, land in the camp vault before the daily build (the Publish step) |
+| Writing / reviewing / packaging an AAIF blog post (editorial + intake) | `/aaif-blog-guidelines` (`.claude/skills/aaif-blog-guidelines/`) — aaif.io editorial + submission guidelines for blog content (authored by AAIF) |
 | Watching the AAIF submissions landscape (trends / bloat / opportunities / grading sync) | `/aaif-radar` (`.claude/skills/aaif-radar/`) — weekly read-only scan → **private** report (`.local/radar/`) + **participant-free** closed `note` bead; notifies only when notable (fired by `pulse-aaif-radar`, Sat 15:00 PT) |
 | Observing / accounting / tracing / hardening an agentgateway fleet | `/agentgateway` (`.claude/skills/agentgateway/`) — one read-only skill, four components: **audit** (what the fleet did), **cost** (tokens + cache economics + $ only when priced), **trace** (one request/session + privacy-gated payloads), **harden** (observed behavior → proposed least-privilege CEL; human-gated, never applies) |
 | Writing/verifying a gateway request-log query | `refs/gateway-request-log-cookbook.md` — the verified DuckDB-over-SQLite cookbook (schema, gotchas, queries) the `/agentgateway` skill's components share |
@@ -174,16 +176,19 @@ aaif/
 │       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
 │       ├── camp-publish   ← land a finished piece into the andrewzigler.com publish pipeline (lexicon frontmatter + MDX transform, build-validate, land in the vault)
 │       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
-│       └── agentgateway   ← one read-only skill, four components: audit (what the fleet did) · cost (tokens + cache economics + $ only when priced) · trace (one request/session + privacy-gated payloads) · harden (observed behavior → least-privilege CEL; human-gated)
-│           (its four components share refs/gateway-request-log-cookbook.md)
+│       ├── aaif-blog-guidelines  ← aaif.io blog editorial + intake guidelines for AAIF blog content (authored by AAIF)
+│       ├── aaif-brand-guidelines ← the AAIF brand system for any branded visual/asset (authored by AAIF)
+│       ├── agentgateway   ← one read-only skill, four components: audit (what the fleet did) · cost (tokens + cache economics + $ only when priced) · trace (one request/session + privacy-gated payloads) · harden (observed behavior → least-privilege CEL; human-gated)
+│       │       (its four components share refs/gateway-request-log-cookbook.md)
+│       └── housekeeping    ← project-local mechanical hygiene (the index-vs-disk drift lint); supplements the global /housekeeping
 ├── refs/                 ← reference material (the research archive)
 │   ├── aaif-overview.md
 │   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the /agentgateway skill
 │   ├── research-paper-pipeline.md  ← the venue-neutral research-paper/whitepaper cookbook (the /research-paper skill's deep reference)
-│   ├── program/          ← program mechanics, strategy, brand/social (distilled; source PDFs stay in .local/)
+│   ├── program/          ← program mechanics, strategy, brand/social, ship gates, voice (distilled; source PDFs stay in .local/)
 │   ├── projects/         ← per-project contribution-surface briefs
-│   ├── brand/            ← badge kit + Credly badge + header
-│   └── research/         ← deeper research as it accrues
+│   └── brand/            ← badge kit + Credly badge + header
+│   (deeper research accrues as `study`-typed beads, not a refs/research/ dir)
 ├── submissions/          ← one folder per contribution: <YYYY-MM>-<slug>/
 └── .local/               ← PRIVATE reference (gitignored): source PDFs, Asana hub
                               IDs, notes — read like refs/, never published
