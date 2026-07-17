@@ -1,0 +1,9 @@
+# experiment harness — local-only artifacts (never commit)
+.venv/
+*.db
+*.db-wal
+*.db-shm
+results/raw/
+data/swebench_cache/
+__pycache__/
+*.pyc

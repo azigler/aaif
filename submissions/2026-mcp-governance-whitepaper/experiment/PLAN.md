@@ -126,5 +126,62 @@ the "how to actually do it" playbook is sprinkled at three depths.
 
 - Blog v4 disposition (trim to ~900 vs ship) — likely moot; the experiment reshapes it.
 - Image keepers to finalize/`/cdn`-stash + the ZIG-0N numbering.
-- The exact contrived experiment task/repo (propose 1–2 next session, align).
+- ~~The exact contrived experiment task/repo (propose 1–2 next session, align).~~ → **RESOLVED, see DESIGN LOCKED below.**
 - Harness decision beads still open: `18o.45` (handoff tier), `18o.46` (August anchor).
+
+---
+
+## DESIGN LOCKED — 2026-07-17 (session 2, the benchmark pivot)
+
+Zig reshaped the experiment away from a hand-crafted **seeded bench** (Goldilocks-unbeatable
+for a capable local model — you can't reliably build a fake edge case where the *tool* is the
+measurable difference; he's tried, it doesn't work) toward a **governed tool-ablation on a real
+benchmark.** Every decision below is Zig's explicit call this session.
+
+**Locked design:**
+- **Frame:** hold the subject agent FIXED, vary ONLY the gateway-gated toolset → any outcome
+  delta is attributable to tools alone (cleaner than the published 50%-vs-19% swing, which
+  changed the whole agent framework and conflated scaffold-quality with tool-set).
+- **Runtime:** **goose 1.41.0** (already on zig-computer) + model **qwen3-coder:30b** (local, on
+  pico) + MCP tools via the **pico agentgateway** (identity `goose`, per-call authz + audit).
+- **Tasks:** curated subset of **SWE-bench Verified** (~15–25 medium-difficulty instances;
+  benchmark-native hidden tests = objective, standard scoring — no contrivance from us).
+- **Evidence weighting:** **audit-spine (bulletproof, already-real gateway data) + outcome-bonus
+  (robust because it's a RELATIVE delta across configs, not an absolute score).**
+- **Ablation strategy:** **full baseline + leave-one-out (isolate each tool's marginal
+  contribution + STAGE) + one bloated config (>20 tools → distraction cliff).** Answers "which
+  tool matters, why, at what stage" AND the U-shape sweet-spot = "earned autonomy" arc.
+- **config-hash backbone:** `hash(prompt + tool manifest)` per config; same hash ⇒ comparable,
+  different hash ⇒ attribute the downstream delta to the change.
+- **Compute:** **PILOT FIRST** — 3–5 instances × 2 configs (full vs one load-bearing tool
+  removed) to prove the `goose → gateway → SWE-bench` harness end-to-end, confirm the effect
+  direction shows, and TIME one run to size the full matrix. Then decide the full run together.
+
+**Why Goldilocks is off the table (the homework, 2026-07-17):**
+- SWE-bench Verified for qwen3-coder-30b-a3b: **~50–52%** (OpenHands, 100-turn rich scaffold) vs
+  **~18.8%** (bash-only mini-swe-agent) — a **~30-point swing from tooling alone**, published for
+  this exact model. The effect is real, large, measurable; LiveCodeBench 40.3 (headroom).
+- Ablation literature is a **U-shape:** too few load-bearing tools → can't complete (CompAgent F1
+  0.93→0.68 on core-tool removal); too many → distraction/hallucination cliff past ~20 tools
+  (OSWorld-MCP 20.5→15.5 exposing all 158; Block/goose + Copilot cite a 5–15 sweet spot).
+
+**Infra grounding:** Docker daemon running on zig-computer (132 GB free, 12c/45 GB); local 30B
+inference on pico is the throughput bottleneck. Gateway request DB is live on pico; goose reaches
+its MCP tools through the pico gateway (identity `goose`, nucleus allowlist already configured).
+
+**Feasibility risks to surface AT the pilot:** (1) SWE-bench eval = per-repo Docker images (disk +
+setup); (2) local 30B inference is slow (throughput bounds the matrix size); (3) the
+tool-variation mechanism — gateway `mcpAuthorization` allowlist per config vs a DEDICATED
+experiment-gateway instance on a spare port — must be chosen so we never disturb the live gateway
+or pollute its request DB with experiment traffic.
+
+**Pilot execution order (this arc):**
+1. Scaffold `experiment/` workspace (harness/ · data/ · configs/ · results/).
+2. `pip install swebench`; pull SWE-bench Verified; pick 3–5 medium instances (Python, headroom).
+3. Inventory the tools the gateway exposes to goose (`tools/list`); define full-set + the
+   leave-one-out target.
+4. Choose + stand up the tool-variation mechanism (dedicated experiment gateway preferred).
+5. Write config-hash + the per-run harness (run goose on an instance under a config → capture
+   trajectory → SWE-bench eval → pull the gateway log window).
+6. Run pilot; time it; check effect direction; report to Zig to size the full run.
+   **Workflow + regular sub-agents (NO Fable) for the RUN fan-out; setup is orchestrator/worktree.**
