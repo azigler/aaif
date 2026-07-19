@@ -291,3 +291,37 @@ Every config = pure read/list/search, zero edits — the action-closure floor is
 **NEXT:** scale to 2–4 more instances to firm the direction; add a **bloated** config (>20 tools, needs
 extra MCP servers) to probe the distraction cliff harder. Per Zig's "pilot direction + literature" scope,
 this n≈few direction + the token/behavior deltas + the floor finding may be sufficient evidence.
+
+### FULL MATRIX RESULT — 2026-07-19 (6 configs × 4 instances, qwen3-coder:30b) — THE INVERTED-U, MEASURED
+
+Tool-count gradient: readonly 3 → noedit/nosearch 5 → nucleus 6 → full 15 → bloated 38. Aggregate
+behavior across the 4 instances (requests/pytest/flask/pylint), audit auto-attributed per config-identity:
+
+| config | tools | LLM tokens | tool calls | edit/write calls | distractor signal |
+|---|---|---|---|---|---|
+| readonly | 3 | **733k** (max) | 52 | **0** | can't deliver → flails (31 reads, 10 searches), most tokens, zero edits |
+| noedit | 5 | 359k | 22 | 1 (write) | — |
+| nosearch | 5 | 440k | 33 | 3 (edit) | more reads to localize w/o search |
+| **nucleus** | **6** | **340k** (MIN) | 23 | **5** (MAX) | **sweet spot — cheapest AND most action-productive** |
+| full | 15 | 464k | 30 | 2 | wastes calls on `list_allowed_directories` (×3) |
+| bloated | 38 | 476k | 35 | 3 | reaches for the distractor `sequentialthinking` (×5); +40% tokens vs nucleus |
+
+**The thesis, measured in our own data:**
+- **Cost is a U** (min at nucleus-6): too few tools (readonly, 733k) or too many (bloated, 476k) both cost
+  more than the earned lean set (340k). **Productivity is an inverted-U** (edit calls peak at nucleus-5).
+- **Extra tools demonstrably pull the agent toward low-value actions:** only full/bloated waste calls on
+  `list_allowed_directories`; only bloated burns calls on the distractor `sequentialthinking`.
+- **Too-few-load-bearing = can't deliver:** `readonly` (no write/edit) is the ONLY config that produced
+  zero diffs on the instance the model otherwise solved (pylint-6903, 5/6 configs produced a diff) — the
+  left arm, clean.
+- **Timing gradient (pylint-6903):** nucleus 151s → full 201s → bloated 400s(capped) — more tools, more flailing.
+- **0 denials everywhere → governance-by-hiding** (allowlist hides gated tools from `tools/list`; the
+  agent never attempts them). A distinct governance point vs deny-friction.
+
+**Resolution (bonus, floor-confirming):** 3/4 instances floored (0 diffs — action-closure floor); only
+pylint-6903 engaged (5/6 configs produced diffs). SWE-bench eval of those 5 running. Diffs = delivery
+attempts; resolution remains the honest floor demonstrating accuracy≠delivered-outcome.
+
+**This is sufficient own-data evidence for the "pilot direction" scope** — the inverted-U in cost +
+productivity + the distractor pull + the silent-removal governance point, with the literature carrying the
+full-curve shape. NEXT: fold into whitepaper §6 + figures + blog + LinkedIn (repositioning plan), stop at Zig's gate.

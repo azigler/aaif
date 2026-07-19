@@ -1,0 +1,200 @@
+{
+  "subject": "goose+qwen3-coder:30b",
+  "instances": [
+    "pallets__flask-5014",
+    "psf__requests-1142",
+    "pylint-dev__pylint-6903",
+    "pytest-dev__pytest-5262"
+  ],
+  "per_config": {
+    "readonly": {
+      "tools": 3,
+      "tool_calls": 52,
+      "denied": 0,
+      "edit_write_calls": 0,
+      "tokens": 733418,
+      "composition": {
+        "list_directory": 11,
+        "search_files": 10,
+        "read_text_file": 31
+      }
+    },
+    "noedit": {
+      "tools": 5,
+      "tool_calls": 22,
+      "denied": 0,
+      "edit_write_calls": 1,
+      "tokens": 358610,
+      "composition": {
+        "search_files": 9,
+        "read_text_file": 9,
+        "list_directory": 3,
+        "write_file": 1
+      }
+    },
+    "nosearch": {
+      "tools": 5,
+      "tool_calls": 33,
+      "denied": 0,
+      "edit_write_calls": 3,
+      "tokens": 440355,
+      "composition": {
+        "list_directory": 12,
+        "read_text_file": 18,
+        "edit_file": 3
+      }
+    },
+    "nucleus": {
+      "tools": 6,
+      "tool_calls": 23,
+      "denied": 0,
+      "edit_write_calls": 5,
+      "tokens": 339592,
+      "composition": {
+        "list_directory": 8,
+        "read_text_file": 9,
+        "edit_file": 5,
+        "search_files": 1
+      }
+    },
+    "full": {
+      "tools": 15,
+      "tool_calls": 30,
+      "denied": 0,
+      "edit_write_calls": 2,
+      "tokens": 464311,
+      "composition": {
+        "list_allowed_directories": 3,
+        "list_directory": 8,
+        "search_files": 5,
+        "read_text_file": 12,
+        "edit_file": 2
+      }
+    },
+    "bloated": {
+      "tools": 38,
+      "tool_calls": 35,
+      "denied": 0,
+      "edit_write_calls": 3,
+      "tokens": 476265,
+      "composition": {
+        "list_allowed_directories": 3,
+        "list_directory": 12,
+        "read_text_file": 12,
+        "sequentialthinking": 5,
+        "edit_file": 3
+      }
+    }
+  },
+  "per_cell": {
+    "readonly": {
+      "psf__requests-1142": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 400,
+        "diff": false
+      }
+    },
+    "noedit": {
+      "psf__requests-1142": {
+        "elapsed_s": 29,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 155,
+        "diff": true
+      }
+    },
+    "nosearch": {
+      "psf__requests-1142": {
+        "elapsed_s": 107,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 137,
+        "diff": true
+      }
+    },
+    "nucleus": {
+      "psf__requests-1142": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 42,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 151,
+        "diff": true
+      }
+    },
+    "full": {
+      "psf__requests-1142": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 24,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 201,
+        "diff": true
+      }
+    },
+    "bloated": {
+      "psf__requests-1142": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pytest-dev__pytest-5262": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pallets__flask-5014": {
+        "elapsed_s": 400,
+        "diff": false
+      },
+      "pylint-dev__pylint-6903": {
+        "elapsed_s": 400,
+        "diff": true
+      }
+    }
+  },
+  "note": "behavior-primary; resolution floors (action closure); nucleus=cost-min+edit-max; bloated=distractor pull"
+}
