@@ -266,3 +266,28 @@ goose + qwen3-coder:30b, shell disabled (forced through the governed MCP surface
 `harness/run_ablation.sh`. Behavior metrics per config: tool counts, reads-per-edit / gather-vs-act,
 localization, denials (removed-tool attempts), tokens (from DB), stage-of-use, diff-produced.
 First matrix (5 configs × psf__requests-1142) RUNNING; then more instances + a bloated config.
+
+### FIRST ABLATION RESULT — 2026-07-19 (5 configs × psf__requests-1142, n=1, qwen3-coder:30b)
+
+Resolution floored uniformly (**0/5 produced a diff**) — confirms resolution is config-independent
+(→ behavior is the signal). But **tool-use behavior IS tool-config-sensitive**, measurably, even at n=1:
+
+| config | tool calls | denied | tool kinds | composition | LLM tokens |
+|---|---|---|---|---|---|
+| full (~15) | 10 | 0 | 4 | read 6, list_dir 2, **list_allowed_dirs 1**, search 1 | **114,184** |
+| nucleus (6) | 8 | 0 | 3 | read 5, list_dir 2, search 1 | 96,019 |
+| nosearch (5) | 9 | 0 | 2 | **read 7**, list_dir 2 | 96,161 |
+| noedit (5) | 9 | 0 | 2 | read 7, list_dir 2 | 98,132 |
+| readonly (3) | 10 | 0 | 3 | read 7, list_dir 2, search 1 | 99,205 |
+
+**Signals (n=1, suggestive — firm up with more instances):**
+- **Over-provisioning is inefficient:** the full toolset burned **~19% more tokens (114k vs 96k nucleus) for the same zero outcome** — the "more tools, more cost, no gain" arm, observed in our own data.
+- **Extra tools → wasteful exploration:** only `full` reached for `list_allowed_directories` (a low-value tool present only in the big set) — distraction from the larger surface.
+- **Removing a localization tool shifts behavior:** `nosearch` did MORE reads (7 vs 5) — the agent compensates for missing `search_files` by reading more.
+- **Removal is SILENT (0 denials everywhere):** the allowlist hides gated-out tools from `tools/list`, so the model never *attempts* them — the ablation acts by absence, not deny-friction. (A finding in itself: governance-by-hiding vs governance-by-denial.)
+
+Every config = pure read/list/search, zero edits — the action-closure floor is universal across configs.
+
+**NEXT:** scale to 2–4 more instances to firm the direction; add a **bloated** config (>20 tools, needs
+extra MCP servers) to probe the distraction cliff harder. Per Zig's "pilot direction + literature" scope,
+this n≈few direction + the token/behavior deltas + the floor finding may be sufficient evidence.
