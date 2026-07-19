@@ -247,3 +247,22 @@ tokens/cost, convergence-vs-flailing, stage-of-use, allow/deny — all measurabl
 **floor finding** that demonstrates accuracy≠outcome, with the forced run as proof the pipeline
 resolves. Ablation across full / nucleus / leave-one-out / bloated then measures the behavior
 delta (e.g. does bloat increase flailing/tokens? does removing search break localization?).
+
+### OUTCOME METRIC LOCKED — 2026-07-18 (Zig): BEHAVIOR-PRIMARY, STAY LOCAL
+
+Empirically grounded: **three local models all floor on autonomous resolution** (qwen3-coder:30b
+read-heavy + missed edit; devstral diagnosed→`analyze` misfire→to-do→no edit; qwen3:32b read once
+then stalled in reasoning). Mechanism = **weak action closure** (gather/plan/reason without
+committing to the state-changing edit) — a capability gap a frontier model would close, but that
+trades away the self-hosted framing. Zig's call: keep it **local**, outcome = **tool-use behavior
+from the audit**, resolution = the floor finding (which IS the accuracy≠delivered-outcome thesis,
+live; the gateway audit makes the gap visible).
+
+**Ablation mechanism (built):** one gateway, **five config-identities** — `exp-full` (all ~15
+tools), `exp-nucleus` (6), `exp-nosearch` (5), `exp-noedit` (5, must write_file), `exp-readonly`
+(3, no write/edit at all). Each is an apiKey with its own `mcpAuthorization` allowlist, so the
+audit auto-attributes tool calls per config with NO per-run gateway restart. Subject fixed =
+goose + qwen3-coder:30b, shell disabled (forced through the governed MCP surface). Driver:
+`harness/run_ablation.sh`. Behavior metrics per config: tool counts, reads-per-edit / gather-vs-act,
+localization, denials (removed-tool attempts), tokens (from DB), stage-of-use, diff-produced.
+First matrix (5 configs × psf__requests-1142) RUNNING; then more instances + a bloated config.
