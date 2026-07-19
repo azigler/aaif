@@ -318,9 +318,18 @@ behavior across the 4 instances (requests/pytest/flask/pylint), audit auto-attri
 - **0 denials everywhere → governance-by-hiding** (allowlist hides gated tools from `tools/list`; the
   agent never attempts them). A distinct governance point vs deny-friction.
 
-**Resolution (bonus, floor-confirming):** 3/4 instances floored (0 diffs — action-closure floor); only
-pylint-6903 engaged (5/6 configs produced diffs). SWE-bench eval of those 5 running. Diffs = delivery
-attempts; resolution remains the honest floor demonstrating accuracy≠delivered-outcome.
+**Resolution (nuanced — NOT a uniform floor):** instance-dependent. 3/4 instances floored (action-closure
+floor — model diagnoses but won't commit; demonstrates accuracy≠delivered-outcome). But on the engageable
+instance **pylint-6903, tool config drives BOTH arms of the outcome**:
+- `readonly` (3 tools, no write/edit) → **UNRESOLVED** (can't deliver) — the LEFT arm as a hard resolution failure.
+- `nosearch`/`nucleus`/`noedit`/`full`/`bloated` → all **RESOLVED**, but with an efficiency gradient:
+  nosearch 137s · nucleus 151s · noedit 155s · full 201s · **bloated 400s (capped, 2.6× nucleus)** — the
+  RIGHT arm as latency/flailing: the extra tools resolve no better and cost far more time (+ the 40% token
+  premium from the aggregate). Verified via SWE-bench Docker eval (gold-validated pipeline).
+
+**Net:** the earned lean toolset (nucleus-6) is the cost-min, edit-max, and (where the model engages)
+fastest-to-resolve config; too few tools can't deliver; too many resolve no better and flail. The
+inverted-U holds in cost, productivity, AND resolution/efficiency — measured in our own data.
 
 **This is sufficient own-data evidence for the "pilot direction" scope** — the inverted-U in cost +
 productivity + the distractor pull + the silent-removal governance point, with the literature carrying the
