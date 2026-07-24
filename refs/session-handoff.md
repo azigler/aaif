@@ -1,73 +1,63 @@
-# Session handoff — 2026-07-17 (b0518df0 — the big Earned-Autonomy session)
+# Session handoff — the Earned-Autonomy EXPERIMENT is complete (result in hand)
 
-## ⭐ START HERE NEXT SESSION: the experiment arc
+## ⭐ STATE: experiment done + committed; write-up phase awaits Zig's review
 
-Zig's new direction (end of session): the Earned-Autonomy argument is too abstract.
-**Run a real experiment** that demonstrates the MCP governance/auditing loop with real
-data, then render it at **three altitudes** (LinkedIn → blog → whitepaper).
+Zig chose **"take stock first — you review"** at the experiment's completion. Nothing in the
+write-up phase has started. Everything below is committed + durable. Resume when Zig steers.
 
-**→ Read `submissions/2026-mcp-governance-whitepaper/experiment/PLAN.md` — it stages
-EVERYTHING** (the experiment design, the agent-identity/config-hash backbone, the
-ThoughtWorks/Fowler calibration, the 3 altitudes, the whitepaper fold-in, the process
-constraints, and the next-session execution order). Nothing executed yet — context ran out.
+## WHERE TO REVIEW (Zig's take-stock)
+- **The result:** `submissions/2026-mcp-governance-whitepaper/experiment/PLAN.md` → the
+  "FULL MATRIX RESULT" + "Resolution IS tool-sensitive" sections (the headline finding).
+- **Figure data:** `experiment/results/matrix-behavior.json` (per-config tokens/calls/edits/
+  composition + per-cell timing/diff — ready for the figures).
+- **The reposition plan:** `submissions/2026-mcp-governance-whitepaper/REPOSITIONING.md`
+  (thesis-preserving; new §6 case study; 5 figures; blog + LinkedIn angles; risks) +
+  `research/evidence-roundup-inverted-u.md` (11 cited sources + BibTeX + honesty flags).
 
-**Beads for the arc:**
-- `aaif-51g.2` — the EXPERIMENT (scope + run + mini case study). The backbone.
-- `aaif-51g.3` — the agent-identity + **config-hash** model (Zig's missing-backbone insight).
-- `aaif-51g.1` — fold **all 5** actionability ideas into the whitepaper (Zig confirmed "all 5").
-- LinkedIn-post bead + image-stash bead (both under epic `-18o`; titles: "LinkedIn post — Earned Autonomy tease" / "finalize + /cdn-stash the differentiated goose motif set").
+## THE RESULT (what the experiment proved — measured in our own data)
+A governed tool-ablation (goose + qwen3-coder:30b, tools gated per-identity at an isolated
+agentgateway on pico, audited per call). 6 configs × 4 SWE-bench-Verified instances. The
+**inverted-U holds across three axes**:
+- **Cost (tokens):** U-shape, MIN at nucleus-6 (340k); readonly-3 (733k) + bloated-38 (476k) higher.
+- **Productivity (edits):** inverted-U, edit calls peak at nucleus (5), 0 at readonly.
+- **Resolution/efficiency** (on the engageable instance pylint-6903): readonly (no edit tools)
+  **can't resolve** (left arm); all edit-capable configs resolve but **bloated is 2.6× slower**
+  than nucleus (right arm). SWE-bench Docker eval verified (gold-validated pipeline).
+- **Governance findings:** extra tools pull the agent to low-value actions (full→
+  `list_allowed_directories`, bloated→`sequentialthinking` distractor); **0 denials everywhere =
+  governance-by-hiding** (allowlist hides gated tools from tools/list; agent never attempts them).
+- **The honest floor:** 3/4 instances the model diagnoses but won't commit to editing — **weak
+  action closure** (robust across qwen3-coder, devstral, qwen3:32b); a frontier model would close
+  it but trades the self-hosted framing. This IS *accuracy≠delivered-outcome*, live — on-thesis.
 
-**Process (Zig, firm):** **NO Fable — too expensive.** Use the **Workflow** tool with
-**regular sub-agents** (scientific runners + critic + synthesizer) + beads. Calibration
-ref: `submissions/2026-mcp-governance-whitepaper/research/thoughtworks-fowler-calibration.md`.
-Experiment data comes from the agentgateway request log (`/agentgateway` skill +
-`refs/gateway-request-log-cookbook.md`); the gateway is on `pico`.
+## LOCKED DECISIONS (all Zig's, this arc)
+- Experiment = governed tool-ablation on SWE-bench (not a hand-crafted bench — Goldilocks-proof).
+- Outcome metric = **behavior-primary, stay local**; resolution = the floor finding.
+- Whitepaper: **bridge holds (one paper)**; **pilot shows direction + literature carries the shape
+  + mise-style close on next-experiments**; length argument-driven/tight (~7–9pp, prune weak parts).
+- MCP metadata logging is **metadata-only, no contents** (doc- + empirically-confirmed).
 
-## What SHIPPED this session (all pushed to main)
+## NEXT PHASE (the write-up — human-gated, awaits Zig's steer)
+1. Build the figures from `matrix-behavior.json` (cost-vs-toolset U curve; per-config edit
+   productivity; pylint efficiency gradient; stage-of-use). 2. Draft whitepaper **§6** case study
+   per REPOSITIONING.md. 3. Reshape the blog (`aaif-uf3`) + draft the LinkedIn post. 4. **STOP at
+   Zig's submit-gate** — nothing ships to AAIF / andrewzigler.com / LinkedIn without his go-ahead.
 
-**Whitepaper (`aaif-51g`, 8pp, gates green via the new `gates.sh`):**
-- Belts revision merged; **DORA-only** competitor removal; §1 Stanford stat restored.
-- Fable rounds 4 / 4b / 4c applied. **Key reversal: LinearB is now NAMED** as the
-  benchmark source in §3 + bib (Zig's honesty call — anonymizing wasn't honest), with a
-  **byline affiliation "Andrew Zigler, LinearB"** and the §6 product-rec use **cut**
-  (cite-once). §3 re-aimed (two failure classes), §5 sharpened, §2 SEP-2243 restored.
-  Full trail: the submission's `REVIEW-NOTES.md` changelog (rounds 4/4b/4c).
-- Final-recheck list carries the pre-publish items (07-28 Final re-verify, etc.).
+## INFRA STATE (on pico)
+- The **isolated experiment gateway is still UP** on pico (spare ports 25000/25001/25003, 6
+  config-identities, 5 MCP servers). Reusable for more figures/data. Tear down when done:
+  `ssh pico "pkill -f 'agentgateway -f /tmp/exp-gateway.yaml'"`. It never touched the live gateway.
+- Keys in `/tmp/exp-keys.json` on pico (NOT committed — secrets). Workspace `/tmp/exp-workspace`.
+- ollama: qwen3-coder:30b loaded (shared with live goose — same model, no clobber). One-model rule
+  honored (`keep_alive:0` to unload before switching).
+- The **live gateway** already logs MCP metadata (5,666+ lines, no contents) — Zig's blind-spot
+  question is answered; DB/UI for MCP isn't native (access-log only).
 
-**Harness improvements (Fable review → 4 workers merged):** scoring ladder fixed
-(`18o.35`, was live-wrong); `ship-gates.md` + `gates.sh` runner (`18o.36`); amplify
-engine — `/amplify` skill + SUBMISSIONS pulse table (`18o.38`); doc-drift true-up +
-`UNIGNORE-REVIEW.md` (`18o.40`, flagged a **real tailnet-IP leak** in the gitignored
-tutorial `article.md` — redact before any un-ignore). 15 harness beads filed
-(`18o.35`–`18o.49`); remaining ones + `18o.37` (07-28 timer — infra, unwired) queued.
-
-**`/storybook-header` skill (v1.1)** created + updated: the goose aesthetic, the
-**ZIG-NN serial Easter-egg** convention, and "stay authentic" (not-Yegge-industrial,
-not-generic-AI-cozy). The goose is **unnamed** — "ZIG-00" was only the biplane tail number.
-
-**Images (approved by Zig):** the **differentiated goose motif set** (canal lock /
-grain-sort / seed-library / dovecote / weather-station / rope-splice, each hiding a
-`ZIG-0N` egg). Prompts: `blog/motif-prompts/`. PNGs in scratchpad (regenerable via the
-skill). Earlier: the Earned-Autonomy header candidates (far-pasture/ledger/shepherd,
-pencil removed, full-bleed) + a first 9-motif animal stash. All need `/cdn`-stash (bead).
-
-**Blog (`aaif-uf3`):** drafts v1→v4 in `blog/drafts/` (v4 = current best, actionable,
-1045w). Zig's latest: it's close but needs the EXPERIMENT data + the insider playbook +
-the identity/hash backbone — i.e. reshape once the experiment exists. Actionability
-menu (blog-light vs whitepaper-deep): `blog/actionability-menu.md`.
-
-## Open decisions carried for Zig
-- `18o.45` — session-handoff tier (public vs `.local`); `18o.46` — pick August's anchor.
-- Blog v4 length (likely moot; the experiment reshapes it).
-- The exact contrived experiment task/repo (propose 1–2 next session, align first).
-
-## Warnings
-- **HARD GATE:** nothing publishes/submits to AAIF / andrewzigler.com / LinkedIn / DI
-  without Zig's explicit go-ahead — every time.
-- **No Fable** for the experiment arc (cost). Fable WAS used earlier this session with
-  Zig's explicit per-task OK; the standing guardrail (memory `feedback-no-fable-without-permission`)
-  still holds — ask first.
-- The ad-hoc **tailnet review server (`:19234`) dies with this session** — regenerate the
-  gallery next session from `blog/motif-prompts/` if Zig wants to review images again.
-- **End turns needing Zig's input with AskUserQuestion**, not trailing prose (he flagged
-  this — prose reads as idle/✅, not 🔔).
+## WARNINGS
+- **Zig's submit-gate** — nothing to AAIF/andrewzigler.com/LinkedIn/DI without explicit go-ahead.
+- **No Fable** without permission (this whole arc used regular sub-agents + local models).
+- Experiment key + tailnet IP (100.72.47.4) are in pico-side files only — never commit them
+  (two-tier rule); generalize private infra in any published figure/caption (REPOSITIONING R-6).
+- `/aaif-radar` W29 ran this session (note bead aaif-1ax, ledger row) — landscape confirms the
+  agentgateway-governance lane is under-served (whitepaper well-positioned); blog over-rotated
+  (differentiate the companion blog).
