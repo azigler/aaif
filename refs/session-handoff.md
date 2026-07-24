@@ -5,6 +5,18 @@
 Zig chose **"take stock first — you review"** at the experiment's completion. Nothing in the
 write-up phase has started. Everything below is committed + durable. Resume when Zig steers.
 
+## State at offboard
+- Branch: `main` · clean working tree (all evidence committed + pushed).
+- Last commits: raw ablation evidence (24 diffs + preds) · full-matrix result · resolution result.
+- Open beads: ~49; the experiment bead `aaif-51g.2` stays **in_progress** (case-study write-up = its remaining deliverable, folds into whitepaper `aaif-51g`).
+- In-flight subagents: none. Background runs: none (matrix complete).
+- Markers: `.offboard-pending` cleared; `.claude/last-offboard-session` written.
+
+## Decisions made this session
+None as `-t decision` beads — every strategic call this arc was **Zig-directed via AskUserQuestion**
+and recorded in `experiment/PLAN.md` (DESIGN LOCKED / OUTCOME METRIC LOCKED sections) +
+`REPOSITIONING.md` (Zig walk-through decisions). Those two docs ARE the decision log for this arc.
+
 ## WHERE TO REVIEW (Zig's take-stock)
 - **The result:** `submissions/2026-mcp-governance-whitepaper/experiment/PLAN.md` → the
   "FULL MATRIX RESULT" + "Resolution IS tool-sensitive" sections (the headline finding).
