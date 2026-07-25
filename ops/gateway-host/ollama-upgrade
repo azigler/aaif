@@ -1,0 +1,546 @@
+#!/usr/bin/env bash
+# ollama-upgrade — keep a self-hosted ollama install current, safely.
+#
+# Runs ON the inference host. Ollama ships as a flat tarball (binary + Metal/ggml
+# dylibs), so the install shape is a versioned directory plus a `-current` symlink:
+#
+#   ~/ollama-0.30.8/      <- extracted release
+#   ~/ollama-0.32.3/      <- extracted release
+#   ~/ollama-current  ->  ~/ollama-0.32.3
+#
+# The service definition points at the SYMLINK, so an upgrade is an atomic symlink
+# swap + restart, and a rollback is the same swap in reverse. Nothing rewrites the
+# service definition, and the model store (~/.ollama/models) is never touched.
+#
+# Same CLI surface as agentgateway-upgrade — check / apply / rollback / status /
+# verify / versions, --json, --to, --dry-run.
+#
+# Exit codes: 0 ok/current · 1 error · 2 usage · 10 upgrade available (check)
+#             11 prerelease available, no stable upgrade (check) · 20 rolled back
+set -uo pipefail
+export LC_ALL=C LANG=C   # `shasum`/`tar` are noisy about locale over SSH
+
+# ---------------------------------------------------------------- CONFIG (env) --
+OLL_REPO="${OLL_REPO:-ollama/ollama}"
+OLL_ROOT="${OLL_ROOT:-$HOME}"                       # where ollama-<ver>/ dirs live
+OLL_CURRENT="${OLL_CURRENT:-$HOME/ollama-current}"  # the symlink the service execs
+OLL_SERVICE_LABEL="${OLL_SERVICE_LABEL:-com.zig.ollama-serve}"
+# The API base the FLEET uses. Ollama is bound to the tailnet address on purpose;
+# a localhost probe would report a false failure. Must match OLLAMA_HOST.
+OLL_API="${OLL_API:-http://localhost:11434}"
+OLL_ASSET="${OLL_ASSET:-ollama-darwin.tgz}"
+OLL_STATE="${OLL_STATE:-$HOME/.local/share/ollama-upgrade}"
+OLL_KEEP_VERSIONS="${OLL_KEEP_VERSIONS:-2}"
+# A SIGKILL'd ollama can take ~20s+ to come back (launchd ThrottleInterval plus a
+# socket still in TIME_WAIT), and a first inference adds model-load time.
+OLL_HEALTH_TIMEOUT="${OLL_HEALTH_TIMEOUT:-120}"
+# Seconds to wait for the service manager to produce a NEW pid after a restart.
+OLL_RESTART_TIMEOUT="${OLL_RESTART_TIMEOUT:-60}"
+# Set to 0 to skip the real-inference check (readiness + version only).
+OLL_INFERENCE_CHECK="${OLL_INFERENCE_CHECK:-1}"
+
+LEDGER="$OLL_STATE/upgrade-ledger.jsonl"
+JSON=0; DRY_RUN=0; ALLOW_PRE=0; PIN_TAG=""; CMD=""
+
+# ------------------------------------------------------------------- plumbing --
+_now()  { date -u +%Y-%m-%dT%H:%M:%SZ; }
+_say()  { [ "$JSON" -eq 1 ] || printf '%s\n' "$*"; }
+_err()  { printf 'ERROR: %s\n' "$*" >&2; }
+_warn() { printf 'WARN: %s\n' "$*" >&2; }
+_die()  { _err "$*"; exit 1; }
+_have() { command -v "$1" >/dev/null 2>&1; }
+_py()   { if _have python3; then python3 "$@"; else _die "python3 required"; fi; }
+
+_ledger() {
+  mkdir -p "$OLL_STATE" 2>/dev/null || true
+  _py -c '
+import json, sys
+row = {"ts": sys.argv[1], "action": sys.argv[2], "result": sys.argv[3],
+       "from": sys.argv[4] or None, "to": sys.argv[5] or None,
+       "detail": sys.argv[6] or None}
+with open(sys.argv[7], "a") as f:
+    f.write(json.dumps(row) + "\n")
+' "$(_now)" "$1" "$2" "${3:-}" "${4:-}" "${5:-}" "$LEDGER" 2>/dev/null || true
+}
+
+# --------------------------------------------------------- version discovery --
+# The SERVING version is what matters, so ask the API first. Fall back to the
+# symlink target's directory name when the server is down.
+_installed_version() {
+  local v
+  v="$(curl -fsS -m 5 "${OLL_API%/}/api/version" 2>/dev/null \
+        | _py -c 'import json,sys; print(json.load(sys.stdin).get("version",""))' 2>/dev/null)"
+  if [ -z "$v" ] && [ -L "$OLL_CURRENT" ]; then
+    v="$(basename "$(readlink "$OLL_CURRENT")" | sed -n 's/^ollama-//p')"
+  fi
+  printf '%s' "${v:-none}"
+}
+
+_fetch_releases() {
+  local url="https://api.github.com/repos/${OLL_REPO}/releases?per_page=100"
+  local -a auth=()
+  [ -n "${GITHUB_TOKEN:-}" ] && auth=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+  # bash 3.2 (macOS): "${arr[@]}" on an empty array trips `set -u`.
+  curl -fsSL -m 30 --retry 2 --retry-delay 2 \
+    -H 'Accept: application/vnd.github+json' \
+    -H 'X-GitHub-Api-Version: 2022-11-28' \
+    ${auth[@]+"${auth[@]}"} "$url"
+}
+
+# Highest release by true semver over TAG NAMES — never the API's `prerelease`
+# boolean. (agentgateway's repo mis-flags it; don't build a second updater that
+# trusts a field we already know upstreams get wrong.)
+# stdin: releases JSON → stdout: "<stable>\t<any>"
+_pick_versions() {
+  _py -c '
+import json, re, sys
+SEMVER = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.\-]+))?$")
+def key(tag):
+    m = SEMVER.match(tag)
+    if not m: return None
+    if m[4] is None: return (int(m[1]), int(m[2]), int(m[3]), 1, ())
+    ids = tuple((0,int(p),"") if p.isdigit() else (1,0,p) for p in m[4].split("."))
+    return (int(m[1]), int(m[2]), int(m[3]), 0, ids)
+best_s = best_a = None
+try: rels = json.load(sys.stdin)
+except Exception: print("\t"); sys.exit(0)
+for r in rels:
+    if r.get("draft"): continue
+    t = (r.get("tag_name") or "").strip()
+    k = key(t)
+    if k is None: continue
+    if best_a is None or k > best_a[0]: best_a = (k, t)
+    if k[3] == 1 and (best_s is None or k > best_s[0]): best_s = (k, t)
+print("%s\t%s" % (best_s[1] if best_s else "", best_a[1] if best_a else ""))
+'
+}
+
+_vcmp() {
+  _py -c '
+import re, sys
+S = re.compile(r"^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.\-]+))?$")
+def key(v):
+    m = S.match(v.strip())
+    if not m: return None
+    if m[4] is None: return (int(m[1]), int(m[2]), int(m[3]), 1, ())
+    return (int(m[1]), int(m[2]), int(m[3]), 0,
+            tuple((0,int(p),"") if p.isdigit() else (1,0,p) for p in m[4].split(".")))
+a, b = key(sys.argv[1]), key(sys.argv[2])
+if a is None or b is None: print("x"); sys.exit(0)
+print("-1" if a < b else ("0" if a == b else "1"))
+' "$1" "$2"
+}
+
+# ---------------------------------------------------------------- service ops --
+_service_pid() {
+  if _have launchctl; then
+    launchctl print "gui/$(id -u)/${OLL_SERVICE_LABEL}" 2>/dev/null \
+      | grep -oE '^[[:space:]]*pid = [0-9]+' | grep -oE '[0-9]+$' | head -1
+  elif _have systemctl; then
+    systemctl --user show -p MainPID --value "${OLL_SERVICE_LABEL}" 2>/dev/null
+  fi
+}
+
+# Restart IN PLACE. Never bootout/bootstrap: on macOS a bootout leaves a pending
+# spawn that fires seconds later, races the port, and produces a bind-error
+# respawn loop. `kickstart -k` has no such behavior.
+#
+# REQUIRES the launchd job to use `KeepAlive: true`, not
+# `KeepAlive: {SuccessfulExit: false}`. `kickstart -k` kills gracefully, ollama
+# exits 0, and under SuccessfulExit=false launchd treats that as a clean finish
+# and declines to bring it back — the service silently stays DOWN through the
+# whole health window. That cost one real failed upgrade on 2026-07-25.
+_restart_service() {
+  if _have launchctl; then
+    launchctl kickstart -k "gui/$(id -u)/${OLL_SERVICE_LABEL}" >/dev/null 2>&1
+  elif _have systemctl; then
+    systemctl --user restart "${OLL_SERVICE_LABEL}" >/dev/null 2>&1
+  else
+    _err "no launchctl or systemctl — cannot restart ${OLL_SERVICE_LABEL}"; return 1
+  fi
+}
+
+# Wait for the service manager to hand us a NEW pid. Polling the API before the
+# manager has even respawned conflates "still restarting" with "came up wrong".
+# $1 = previous pid ("" to just wait for any pid)
+_await_new_pid() {
+  local prev="${1:-}" deadline=$(( $(date +%s) + OLL_RESTART_TIMEOUT )) cur
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    cur="$(_service_pid)"
+    if [ -n "$cur" ] && [ "$cur" != "0" ] && [ "$cur" != "$prev" ]; then
+      printf '%s' "$cur"; return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+# ---------------------------------------------------------------- health check --
+_await_api() {
+  local want="${1:-}" deadline=$(( $(date +%s) + OLL_HEALTH_TIMEOUT )) got
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    got="$(curl -fsS -m 5 "${OLL_API%/}/api/version" 2>/dev/null \
+            | _py -c 'import json,sys; print(json.load(sys.stdin).get("version",""))' 2>/dev/null)"
+    if [ -n "$got" ]; then
+      [ -z "$want" ] && return 0
+      [ "v${got#v}" = "v${want#v}" ] && return 0
+    fi
+    sleep 2
+  done
+  return 1
+}
+
+# Smallest installed model — keeps the inference probe cheap and avoids
+# hardcoding a model name that may get deleted.
+_smallest_model() {
+  curl -fsS -m 10 "${OLL_API%/}/api/tags" 2>/dev/null | _py -c '
+import json, sys
+try: ms = json.load(sys.stdin).get("models") or []
+except Exception: ms = []
+if not ms: sys.exit(0)
+print(sorted(ms, key=lambda m: m.get("size") or 0)[0].get("name",""))
+' 2>/dev/null
+}
+
+# A real generate call — proves the runner/Metal path actually loads, which a
+# version string cannot. This is the check that catches a broken dylib set.
+_inference_ok() {
+  local model; model="$(_smallest_model)"
+  [ -n "$model" ] || { printf 'no-models-installed'; return 1; }
+  local out
+  out="$(curl -fsS -m 240 "${OLL_API%/}/api/generate" \
+          -d "{\"model\":\"${model}\",\"prompt\":\"say hi\",\"stream\":false,\"options\":{\"num_predict\":8}}" 2>/dev/null \
+        | _py -c 'import json,sys
+try: d = json.load(sys.stdin)
+except Exception: print("unparseable"); raise SystemExit
+print("ok" if d.get("done") else "not-done:%s" % str(d.get("error"))[:80])' 2>/dev/null)"
+  [ "$out" = "ok" ] && return 0
+  printf 'inference-failed(%s):%s' "$model" "${out:-no-response}"
+  return 1
+}
+
+# $1 = expected version ("" to skip), $2 = previous pid ("" to skip)
+_verify_deployment() {
+  local want="${1:-}" prev_pid="${2:-}" problems="" cur_pid inf
+  if ! _await_api "$want"; then
+    problems="${problems} api:version-not-${want:-any}-within-${OLL_HEALTH_TIMEOUT}s"
+  fi
+  cur_pid="$(_service_pid)"
+  if [ -z "$cur_pid" ] || [ "$cur_pid" = "0" ]; then
+    problems="${problems} service:no-running-pid"
+  elif [ -n "$prev_pid" ] && [ "$cur_pid" = "$prev_pid" ]; then
+    problems="${problems} service:pid-unchanged(${cur_pid})-restart-did-not-happen"
+  fi
+  if [ "$OLL_INFERENCE_CHECK" = "1" ]; then
+    if ! inf="$(_inference_ok)"; then problems="${problems} ${inf}"; fi
+  fi
+  [ -z "$problems" ] && return 0
+  printf '%s' "${problems# }"
+  return 1
+}
+
+# ----------------------------------------------------------------- download ----
+# $1 = tag → echoes the extracted directory path on success
+_stage_release() {
+  local tag="$1" ver="${1#v}" tmp dest url want got
+  dest="${OLL_ROOT}/ollama-${ver}"
+  tmp="${OLL_ROOT}/.ollama-stage-$$"
+  rm -rf "$tmp"; mkdir -p "$tmp" || { _err "cannot create $tmp"; return 1; }
+
+  url="https://github.com/${OLL_REPO}/releases/download/${tag}/${OLL_ASSET}"
+  _say "  fetching ${OLL_ASSET} (${tag})" >&2
+  if ! curl -fsSL -m 900 --retry 2 --retry-delay 3 -o "$tmp/$OLL_ASSET" "$url"; then
+    _err "download failed: $url"; rm -rf "$tmp"; return 1
+  fi
+  # Checksums are published for the whole release in one file, as
+  #   <sha256>  ./ollama-darwin.tgz
+  if ! curl -fsSL -m 60 --retry 2 -o "$tmp/sha256sum.txt" \
+        "https://github.com/${OLL_REPO}/releases/download/${tag}/sha256sum.txt"; then
+    _err "checksum file download failed for ${tag}"; rm -rf "$tmp"; return 1
+  fi
+  want="$(tr -d '\r' < "$tmp/sha256sum.txt" \
+          | awk -v a="./${OLL_ASSET}" -v b="${OLL_ASSET}" '$2==a || $2==b {print $1; exit}')"
+  if [ -z "$want" ]; then
+    _err "no checksum entry for ${OLL_ASSET} in ${tag}/sha256sum.txt"; rm -rf "$tmp"; return 1
+  fi
+  got="$(shasum -a 256 "$tmp/$OLL_ASSET" | awk '{print $1}')"
+  if [ "$want" != "$got" ]; then
+    _err "CHECKSUM MISMATCH ${OLL_ASSET}: want=${want} got=${got}"; rm -rf "$tmp"; return 1
+  fi
+  _say "  sha256 ok  ${OLL_ASSET}" >&2
+
+  # The archive is FLAT (binary + dylibs at top level), so it must be extracted
+  # into its own directory or it litters $OLL_ROOT.
+  rm -rf "$dest"; mkdir -p "$dest" || { _err "cannot create $dest"; rm -rf "$tmp"; return 1; }
+  if ! tar -xzf "$tmp/$OLL_ASSET" -C "$dest"; then
+    _err "extract failed"; rm -rf "$tmp" "$dest"; return 1
+  fi
+  if [ ! -x "$dest/ollama" ]; then
+    _err "extracted tree has no executable ./ollama — unexpected archive layout"
+    rm -rf "$tmp" "$dest"; return 1
+  fi
+  _have xattr && xattr -dr com.apple.quarantine "$dest" 2>/dev/null || true
+  rm -rf "$tmp"
+  printf '%s' "$dest"
+}
+
+# Atomic symlink swap: build a temp link then rename() over the target.
+# `ln -sfn` unlinks first, leaving a window with no symlink at all.
+_swap_symlink() {
+  local target="$1" tmp="${OLL_CURRENT}.swap-$$"
+  ln -s "$target" "$tmp" || return 1
+  mv -f "$tmp" "$OLL_CURRENT" || { rm -f "$tmp"; return 1; }
+}
+
+# ------------------------------------------------------------------ commands ---
+cmd_check() {
+  local installed target releases latest_stable latest_any status rc
+  installed="$(_installed_version)"
+  releases="$(_fetch_releases)" || _die "could not reach the GitHub releases API for ${OLL_REPO}"
+  IFS=$'\t' read -r latest_stable latest_any <<<"$(printf '%s' "$releases" | _pick_versions)"
+  [ -n "$latest_stable$latest_any" ] || _die "no parseable releases for ${OLL_REPO}"
+
+  if [ -n "$PIN_TAG" ]; then target="$PIN_TAG"
+  elif [ "$ALLOW_PRE" -eq 1 ]; then target="$latest_any"
+  else target="$latest_stable"; fi
+
+  rc=0
+  if [ "$installed" = "none" ]; then status="not-installed"; rc=10
+  else
+    case "$(_vcmp "v${installed#v}" "$target")" in
+      -1) status="upgrade-available"; rc=10 ;;
+       0) status="current"; rc=0 ;;
+       1) status="ahead-of-target"; rc=0 ;;
+       *) status="unknown"; rc=1 ;;
+    esac
+  fi
+  if [ "$rc" -eq 0 ] && [ "$ALLOW_PRE" -eq 0 ] && [ -n "$latest_any" ] \
+     && [ "$(_vcmp "v${installed#v}" "$latest_any")" = "-1" ]; then
+    status="current-prerelease-available"; rc=11
+  fi
+
+  if [ "$JSON" -eq 1 ]; then
+    _py -c '
+import json, sys
+print(json.dumps({"installed": sys.argv[1], "target": sys.argv[2],
+                  "latest_stable": sys.argv[3], "latest_prerelease": sys.argv[4],
+                  "status": sys.argv[5], "repo": sys.argv[6]}))
+' "$installed" "$target" "$latest_stable" "$latest_any" "$status" "$OLL_REPO"
+  else
+    local chan; chan="$([ "$ALLOW_PRE" -eq 1 ] && echo prerelease || echo stable)"
+    _say "installed          : ${installed}"
+    _say "latest stable      : ${latest_stable:-<none>}"
+    _say "latest prerelease  : ${latest_any:-<none>}"
+    _say "target (${chan})   : ${target}"
+    _say "status             : ${status}"
+  fi
+  return "$rc"
+}
+
+cmd_apply() {
+  local installed target releases latest_stable latest_any
+  installed="$(_installed_version)"
+  releases="$(_fetch_releases)" || {
+    _ledger apply error "$installed" "" "github-api-unreachable"
+    _die "could not reach the GitHub releases API for ${OLL_REPO}"; }
+  IFS=$'\t' read -r latest_stable latest_any <<<"$(printf '%s' "$releases" | _pick_versions)"
+
+  if [ -n "$PIN_TAG" ]; then target="$PIN_TAG"
+  elif [ "$ALLOW_PRE" -eq 1 ]; then target="$latest_any"
+  else target="$latest_stable"; fi
+  [ -n "$target" ] || _die "no target release resolved"
+
+  if [ "$installed" != "none" ] && [ "$(_vcmp "v${installed#v}" "$target")" != "-1" ]; then
+    _say "already at ${installed} (target ${target}) — nothing to do"
+    _ledger apply noop "$installed" "$target" "already-current"
+    return 0
+  fi
+
+  [ -L "$OLL_CURRENT" ] || _die "$OLL_CURRENT is not a symlink — refusing to touch a non-symlink install"
+  local prev_target; prev_target="$(readlink "$OLL_CURRENT")"
+  _say "upgrading ollama: ${installed} -> ${target}"
+  _say "  current symlink -> ${prev_target}"
+
+  local staged
+  staged="$(_stage_release "$target")" || {
+    _ledger apply error "$installed" "$target" "download-or-extract-failed"
+    _die "staging failed — install untouched"; }
+
+  # The staged binary must run and report the version we asked for. `--version`
+  # also tries to reach a server and warns when it can't; that warning is
+  # expected here and is not a failure.
+  local staged_ver
+  staged_ver="$("$staged/ollama" --version 2>&1 | sed -n 's/.*client version is \([0-9][^ ]*\).*/\1/p' | head -1)"
+  if [ -z "$staged_ver" ]; then
+    _ledger apply error "$installed" "$target" "staged-binary-version-unreadable"
+    _die "staged binary did not report a version — install untouched"
+  fi
+  if [ "v${staged_ver#v}" != "v${target#v}" ]; then
+    _ledger apply error "$installed" "$target" "staged-version-mismatch:${staged_ver}"
+    _die "staged binary reports ${staged_ver}, expected ${target} — install untouched"
+  fi
+  _say "  staged binary self-check ok (${staged_ver})"
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    _say "dry-run: staged + verified at ${staged}; symlink NOT swapped"
+    _ledger apply dry-run "$installed" "$target" "staged-at:${staged}"
+    return 0
+  fi
+
+  local prev_pid; prev_pid="$(_service_pid)"
+  _swap_symlink "$staged" || {
+    _ledger apply error "$installed" "$target" "symlink-swap-failed"
+    _die "symlink swap failed — install untouched"; }
+  _say "  symlink -> ${staged}"
+
+  _restart_service || _warn "restart command failed; verifying anyway"
+  local new_pid
+  if new_pid="$(_await_new_pid "$prev_pid")"; then
+    _say "  restarted ${OLL_SERVICE_LABEL}: pid ${prev_pid:-?} -> ${new_pid}"
+  else
+    _warn "no new pid within ${OLL_RESTART_TIMEOUT}s — the service manager may not be"
+    _warn "bringing it back (check KeepAlive: it must be true, not SuccessfulExit=false)"
+  fi
+
+  local problems
+  if problems="$(_verify_deployment "$target" "$prev_pid")"; then
+    _prune_versions "$staged" "$prev_target"
+    _say "OK  ollama ${installed} -> ${target}, healthy (pid $(_service_pid))"
+    _ledger apply ok "$installed" "$target" "healthy"
+    return 0
+  fi
+
+  _err "post-upgrade verification FAILED: ${problems}"
+  _err "rolling back symlink to ${prev_target}"
+  if [ -x "${prev_target}/ollama" ] && _swap_symlink "$prev_target"; then
+    _restart_service || true
+    sleep 3
+    local rb
+    if rb="$(_verify_deployment "$installed" "")"; then
+      _err "ROLLED BACK to ${installed}; ollama is healthy again."
+      _ledger apply rolled-back "$installed" "$target" "verify-failed:${problems}"
+    else
+      _err "ROLLBACK DID NOT RESTORE HEALTH: ${rb}"
+      _err "MANUAL INTERVENTION REQUIRED on this host."
+      _ledger apply rollback-failed "$installed" "$target" \
+        "verify-failed:${problems}|rollback-failed:${rb}"
+    fi
+  else
+    _err "previous tree ${prev_target} is gone — CANNOT ROLL BACK."
+    _ledger apply rollback-impossible "$installed" "$target" "verify-failed:${problems}"
+  fi
+  exit 20
+}
+
+# Keep the current + previous trees (and always whatever the symlink points at).
+_prune_versions() {
+  local keep_a="${1:-}" keep_b="${2:-}" n=0 d
+  for d in $(ls -1dt "${OLL_ROOT}"/ollama-[0-9]* 2>/dev/null); do
+    [ -d "$d" ] || continue
+    case "$d" in "$keep_a"|"$keep_b") continue ;; esac
+    n=$((n + 1))
+    [ "$n" -ge "$OLL_KEEP_VERSIONS" ] && rm -rf "$d"
+  done
+  return 0
+}
+
+cmd_rollback() {
+  local installed cur prev prev_pid
+  [ -L "$OLL_CURRENT" ] || _die "$OLL_CURRENT is not a symlink"
+  cur="$(readlink "$OLL_CURRENT")"
+  prev="$(ls -1dt "${OLL_ROOT}"/ollama-[0-9]* 2>/dev/null | grep -vxF "$cur" | head -1)"
+  [ -n "$prev" ] && [ -x "$prev/ollama" ] || _die "no previous ollama tree to roll back to"
+  installed="$(_installed_version)"
+  local want; want="$(basename "$prev" | sed -n 's/^ollama-//p')"
+  _say "rolling back ${installed} -> ${want} (${prev})"
+  prev_pid="$(_service_pid)"
+  _swap_symlink "$prev" || _die "symlink swap failed"
+  _restart_service || _warn "restart command failed"
+  sleep 3
+  local problems
+  if problems="$(_verify_deployment "$want" "$prev_pid")"; then
+    _say "OK  rolled back to ${want}, healthy"
+    _ledger rollback ok "$installed" "$want" "healthy"
+    return 0
+  fi
+  _err "rolled back to ${want} but verification failed: ${problems}"
+  _ledger rollback degraded "$installed" "$want" "$problems"
+  exit 1
+}
+
+cmd_verify() {
+  local problems installed
+  installed="$(_installed_version)"
+  if problems="$(_verify_deployment "" "")"; then
+    if [ "$JSON" -eq 1 ]; then
+      _py -c 'import json,sys; print(json.dumps({"healthy":True,"version":sys.argv[1],"pid":sys.argv[2]}))' \
+        "$installed" "$(_service_pid)"
+    else
+      _say "healthy — ollama ${installed}, pid $(_service_pid), ${OLL_API} responding"
+    fi
+    return 0
+  fi
+  if [ "$JSON" -eq 1 ]; then
+    _py -c 'import json,sys; print(json.dumps({"healthy":False,"version":sys.argv[1],"problems":sys.argv[2]}))' \
+      "$installed" "$problems"
+  else
+    _err "UNHEALTHY: $problems"
+  fi
+  return 1
+}
+
+cmd_status() {
+  _say "== ollama install =="
+  _say "host            : $(hostname)"
+  _say "symlink         : $OLL_CURRENT -> $(readlink "$OLL_CURRENT" 2>/dev/null || echo '<not a symlink>')"
+  _say "serving version : $(_installed_version)"
+  _say "service         : $OLL_SERVICE_LABEL (pid $(_service_pid))"
+  _say "api             : $OLL_API"
+  _say "model store     : ${OLLAMA_MODELS:-$HOME/.ollama/models} (never touched by upgrades)"
+  _say ""
+  cmd_verify || true
+  _say ""
+  _say "== local version trees (rollback targets) =="
+  ls -1dt "${OLL_ROOT}"/ollama-[0-9]* 2>/dev/null | sed 's/^/  /' || _say "  (none)"
+  _say ""
+  _say "== last 5 ledger entries =="
+  if [ -f "$LEDGER" ]; then tail -5 "$LEDGER" | sed 's/^/  /'; else _say "  (none)"; fi
+  _say ""
+  cmd_check || true
+}
+
+cmd_versions() { ls -1dt "${OLL_ROOT}"/ollama-[0-9]* 2>/dev/null || _say "(none)"; }
+
+usage() { sed -n '2,24p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-2}"; }
+
+# ---------------------------------------------------------------------- main ---
+while [ $# -gt 0 ]; do
+  case "$1" in
+    check|apply|rollback|status|verify|versions) CMD="$1" ;;
+    --json)             JSON=1 ;;
+    --dry-run)          DRY_RUN=1 ;;
+    --allow-prerelease) ALLOW_PRE=1 ;;
+    --yes|-y)           : ;;
+    --to)               shift; PIN_TAG="${1:-}"; ALLOW_PRE=1
+                        [ -n "$PIN_TAG" ] || _die "--to needs a release tag" ;;
+    --to=*)             PIN_TAG="${1#--to=}"; ALLOW_PRE=1 ;;
+    -h|--help)          usage 0 ;;
+    *) _err "unknown argument: $1"; usage 2 ;;
+  esac
+  shift
+done
+
+_have curl || _die "curl is required"
+_have shasum || _die "shasum is required"
+_have tar || _die "tar is required"
+mkdir -p "$OLL_STATE" 2>/dev/null || true
+
+case "${CMD:-}" in
+  check)    cmd_check ;;
+  apply)    cmd_apply ;;
+  rollback) cmd_rollback ;;
+  status)   cmd_status ;;
+  verify)   cmd_verify ;;
+  versions) cmd_versions ;;
+  "")       usage 2 ;;
+esac
