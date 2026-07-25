@@ -1,0 +1,15 @@
+[Unit]
+Description=Update the gateway host's off-the-shelf services (agentgateway, ollama, brew, uv tools)
+Documentation=https://github.com/azigler/aaif/blob/main/ops/gateway-host/README.md
+# The gateway host is reached over the tailnet; don't bother trying if we're offline.
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=GATEWAY_HOST=@GATEWAY_HOST@
+ExecStart=@SCRIPT@
+# host-update exits 1 when something needs a human. It already files a P1 bead and
+# writes the ledger, so a nonzero exit here is a signal, not a crash — don't let
+# systemd's failure handling add noise on top.
+SuccessExitStatus=0 1
+TimeoutStartSec=3600

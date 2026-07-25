@@ -44,6 +44,45 @@ nothing is touched until every pre-swap gate passes. Both append a JSONL ledger
 `--dry-run` is the safe way to answer *"will the next release work here?"* before it's
 time to actually upgrade.
 
+## The scheduled loop
+
+`host-update` runs on the **harness box** and drives the gateway host over SSH. That
+direction is deliberate: the harness box is the always-on VPS, while the gateway host is
+a home Mac that may sleep. Pulling from the VPS is the reliable direction, and it puts
+results where the agent can see them.
+
+```bash
+./deploy.sh <ssh-host-alias>              # install updaters remotely + arm the timer
+./host-update --check                     # report only, changes nothing
+GATEWAY_HOST=<host> ./host-update         # the scheduled run
+./host-update --services | --packages     # narrow the scope
+```
+
+Timer: daily at **04:17 local** (`gateway-host-update.timer`), `Persistent=true` so a
+sleeping Mac catches up rather than silently skipping a day, plus a 10-minute random
+delay. The off-the-hour minute is on purpose — the GitHub releases API is rate-limited
+per IP and every scheduler in the world fires on :00.
+
+### Policy
+
+| Component | Policy |
+|---|---|
+| agentgateway | auto-apply new **stable** immediately; prereleases surfaced, never installed |
+| ollama | same |
+| uv tools | auto-upgrade (isolated venvs, trivially reversible); the phoenix service is verified afterward |
+| brew | auto-upgrade **all**, then verify no service came back in `error` |
+
+**`tailscale` is pinned** (`BREW_PIN`, default `tailscale`). This loop reaches the gateway
+host over the tailnet, and the gateway's own LLM provider targets ollama by tailnet
+address — so a botched unattended `tailscaled` upgrade at 04:17 would take the fleet's
+gateway offline *and* remove the only remote way to fix it. Reversible with
+`brew unpin tailscale` (or `BREW_PIN=""`), and visible in `brew list --pinned`.
+
+Reporting: a JSONL ledger plus a log at `~/.local/state/host-update/`. A clean run is
+**silent** — no notification. Anything needing a human becomes a **P1 bead** so it can't
+rot in a log file. An unreachable host is treated as routine (asleep/off), not an
+escalation.
+
 ## The upstream gotcha both scripts defend against
 
 **GitHub's `/releases/latest` is not the latest stable release.** Verified 2026-07-25:

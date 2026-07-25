@@ -1,0 +1,16 @@
+[Unit]
+Description=Daily gateway-host update check (agentgateway, ollama, brew, uv tools)
+Documentation=https://github.com/azigler/aaif/blob/main/ops/gateway-host/README.md
+
+[Timer]
+# Daily at 04:17 local. Off the :00/:30 marks on purpose — every scheduler in the
+# world fires on the hour, and the GitHub releases API is rate-limited per IP.
+OnCalendar=*-*-* 04:17:00
+# The gateway host is a home Mac that may be asleep at 04:17; catch up on next boot
+# rather than silently skipping a day.
+Persistent=true
+RandomizedDelaySec=600
+Unit=gateway-host-update.service
+
+[Install]
+WantedBy=timers.target

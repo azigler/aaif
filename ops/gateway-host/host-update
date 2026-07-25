@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+# host-update — the scheduled update loop for the gateway host.
+#
+# Runs ON THE HARNESS BOX (zig-computer), driving the gateway host over SSH. The
+# harness box is the always-on VPS; the gateway host is a home Mac that may sleep,
+# so pulling from the VPS is the reliable direction. It also means results land
+# where the agent can see them (ledger + notification + a bead on failure).
+#
+# Per-class policy (decided 2026-07-25):
+#   agentgateway  auto-apply new STABLE immediately; prereleases notify-only
+#   ollama        same
+#   uv tools      auto-upgrade (isolated venvs, trivially reversible)
+#   brew          auto-upgrade all, in the spirit of ~/dotfiles/ubuntu.upgrade.sh
+#
+# The two service updaters carry their own staged/validated/auto-rollback gates —
+# this script only decides WHEN to call them and reports what happened. It never
+# reimplements upgrade logic.
+#
+# Usage:
+#   host-update             # the scheduled run: check + apply per policy, report
+#   host-update --check     # report only; change nothing (safe anywhere)
+#   host-update --services  # only agentgateway + ollama
+#   host-update --packages  # only brew + uv tools
+#   host-update --quiet     # suppress the notification (still writes the ledger)
+#
+# Exit: 0 all good (incl. "nothing to do") · 1 something needs a human
+set -uo pipefail
+
+GATEWAY_HOST="${GATEWAY_HOST:?set GATEWAY_HOST to the ssh host alias for the gateway host}"
+# Escaped $HOME on purpose: it must expand in the REMOTE shell, not here.
+REMOTE_BIN_DIR="${REMOTE_BIN_DIR:-\$HOME/.local/libexec/host-update}"
+STATE_DIR="${STATE_DIR:-$HOME/.local/state/host-update}"
+LEDGER="$STATE_DIR/ledger.jsonl"
+LOG="$STATE_DIR/last-run.log"
+BEADS_REPO="${BEADS_REPO:-$HOME/aaif}"
+SSH_OPTS="${SSH_OPTS:--o ConnectTimeout=15 -o BatchMode=yes}"
+# Formulas held back from the unattended `brew upgrade`. See _update_brew.
+# Set BREW_PIN="" to upgrade everything including these.
+BREW_PIN="${BREW_PIN:-tailscale}"
+
+DO_SERVICES=1; DO_PACKAGES=1; CHECK_ONLY=0; QUIET=0
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --check)    CHECK_ONLY=1 ;;
+    --services) DO_PACKAGES=0 ;;
+    --packages) DO_SERVICES=0 ;;
+    --quiet)    QUIET=1 ;;
+    -h|--help)  sed -n '2,28p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) printf 'unknown argument: %s\n' "$1" >&2; exit 2 ;;
+  esac
+  shift
+done
+
+mkdir -p "$STATE_DIR"
+: > "$LOG"
+
+NEEDS_HUMAN=0
+SUMMARY=""
+
+_now() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+_log() { printf '%s\n' "$*" | tee -a "$LOG"; }
+_add() { SUMMARY="${SUMMARY}${SUMMARY:+$'\n'}$1"; }
+
+_ledger() {
+  python3 -c '
+import json, sys
+row = {"ts": sys.argv[1], "component": sys.argv[2], "action": sys.argv[3],
+       "result": sys.argv[4], "detail": sys.argv[5] or None}
+with open(sys.argv[6], "a") as f:
+    f.write(json.dumps(row) + "\n")
+' "$(_now)" "$1" "$2" "$3" "${4:-}" "$LEDGER" 2>/dev/null || true
+}
+
+# shellcheck disable=SC2086
+_rsh() { ssh $SSH_OPTS "$GATEWAY_HOST" "$@"; }
+
+# ---------------------------------------------------------------- services ----
+# $1 = component name, $2 = remote updater path, $3 = env prefix for the updater
+_update_service() {
+  local name="$1" bin="$2" envs="$3" out rc status installed target
+
+  out="$(_rsh "${envs} ${bin} check --json" 2>&1)"; rc=$?
+  if [ "$rc" -ne 0 ] && [ "$rc" -ne 10 ] && [ "$rc" -ne 11 ]; then
+    _log "  ${name}: CHECK FAILED (rc=${rc})"
+    _log "$(printf '%s' "$out" | sed 's/^/      /')"
+    _ledger "$name" check error "rc=${rc}"
+    _add "${name}: check failed — needs a human"
+    NEEDS_HUMAN=1
+    return 1
+  fi
+
+  status="$(printf '%s' "$out" | python3 -c 'import json,sys
+try: print(json.load(sys.stdin).get("status",""))
+except Exception: print("")' 2>/dev/null)"
+  installed="$(printf '%s' "$out" | python3 -c 'import json,sys
+try: print(json.load(sys.stdin).get("installed",""))
+except Exception: print("")' 2>/dev/null)"
+  target="$(printf '%s' "$out" | python3 -c 'import json,sys
+try: print(json.load(sys.stdin).get("target",""))
+except Exception: print("")' 2>/dev/null)"
+
+  case "$status" in
+    current)
+      _log "  ${name}: current (${installed})"
+      _ledger "$name" check current "${installed}"
+      return 0 ;;
+    current-prerelease-available)
+      # Policy: surface prereleases, never install them.
+      local pre
+      pre="$(printf '%s' "$out" | python3 -c 'import json,sys
+try: print(json.load(sys.stdin).get("latest_prerelease",""))
+except Exception: print("")' 2>/dev/null)"
+      _log "  ${name}: current (${installed}); prerelease ${pre} available (not installed — policy)"
+      _ledger "$name" check prerelease-available "${installed} -> ${pre}"
+      _add "${name}: prerelease ${pre} available (stable still ${installed}); rehearse with: ${bin} apply --to ${pre} --dry-run"
+      return 0 ;;
+    upgrade-available|not-installed)
+      : ;;
+    *)
+      _log "  ${name}: unexpected status '${status}'"
+      _ledger "$name" check unexpected "${status}"
+      _add "${name}: unexpected check status '${status}' — needs a human"
+      NEEDS_HUMAN=1
+      return 1 ;;
+  esac
+
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    _log "  ${name}: ${installed} -> ${target} available (check-only, not applied)"
+    _ledger "$name" check upgrade-available "${installed} -> ${target}"
+    _add "${name}: ${installed} -> ${target} available"
+    return 0
+  fi
+
+  _log "  ${name}: applying ${installed} -> ${target}"
+  out="$(_rsh "${envs} ${bin} apply" 2>&1)"; rc=$?
+  _log "$(printf '%s' "$out" | sed 's/^/      /')"
+
+  case "$rc" in
+    0)
+      _log "  ${name}: OK now ${target}"
+      _ledger "$name" apply ok "${installed} -> ${target}"
+      _add "${name}: upgraded ${installed} -> ${target}, healthy"
+      ;;
+    20)
+      # The updater already rolled back and verified. Report, don't panic.
+      _log "  ${name}: upgrade failed and ROLLED BACK (still ${installed})"
+      _ledger "$name" apply rolled-back "${installed} -> ${target}"
+      _add "${name}: ${target} FAILED its health check and was rolled back; still on ${installed}"
+      NEEDS_HUMAN=1
+      ;;
+    *)
+      _log "  ${name}: apply error (rc=${rc})"
+      _ledger "$name" apply error "rc=${rc} ${installed} -> ${target}"
+      _add "${name}: apply errored (rc=${rc}) — needs a human"
+      NEEDS_HUMAN=1
+      ;;
+  esac
+}
+
+# ---------------------------------------------------------------- packages ----
+_update_uv_tools() {
+  local out rc
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    out="$(_rsh 'export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH; uv tool list --outdated' 2>&1)"
+    _log "  uv tools (check):"; _log "$(printf '%s' "$out" | sed 's/^/      /')"
+    _ledger uv-tools check ok ""
+    return 0
+  fi
+  _log "  uv tools: upgrading all"
+  out="$(_rsh 'export PATH=$HOME/.local/bin:/opt/homebrew/bin:$PATH; uv tool upgrade --all 2>&1' )"; rc=$?
+  _log "$(printf '%s' "$out" | sed 's/^/      /')"
+  if [ "$rc" -eq 0 ]; then
+    _ledger uv-tools upgrade ok ""
+    # phoenix runs as a service — confirm it survived its own upgrade.
+    local ph
+    ph="$(_rsh 'launchctl print gui/$(id -u)/com.zig.phoenix 2>/dev/null | grep -cE "state = running"' 2>&1)"
+    if [ "${ph:-0}" = "1" ]; then
+      _log "  uv tools: phoenix service still running"
+    else
+      _log "  uv tools: WARNING phoenix service is not running after upgrade"
+      _add "uv tools upgraded but the phoenix service is not running — check it"
+      NEEDS_HUMAN=1
+    fi
+    _add "uv tools: upgraded"
+  else
+    _ledger uv-tools upgrade error "rc=${rc}"
+    _add "uv tool upgrade failed (rc=${rc}) — needs a human"
+    NEEDS_HUMAN=1
+  fi
+}
+
+_update_brew() {
+  local out rc
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    out="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_ENV_HINTS=1; brew outdated' 2>&1)"
+    _log "  brew (check): $(printf '%s' "$out" | grep -c . ) outdated"
+    _log "$(printf '%s' "$out" | sed 's/^/      /' | head -40)"
+    _ledger brew check ok ""
+    return 0
+  fi
+
+  # Pin the formulas whose upgrade could sever the path this automation rides on.
+  # `tailscale` is the big one: this loop reaches the gateway host over the tailnet,
+  # and the gateway's own llm provider targets ollama by tailnet address. If an
+  # unattended 04:17 tailscaled upgrade goes wrong, the host drops off the tailnet —
+  # taking the fleet's gateway AND the only remote way to fix it. Pinning is
+  # reversible (`brew unpin tailscale`) and visible in `brew list --pinned`.
+  _log "  brew: pinning network-critical formulas (${BREW_PIN})"
+  for f in $BREW_PIN; do
+    _rsh "export PATH=/opt/homebrew/bin:\$PATH HOMEBREW_NO_ENV_HINTS=1; brew pin $f" \
+      >/dev/null 2>&1 || true
+  done
+
+  # A rename left unmigrated makes every later `brew` invocation error out, so
+  # clear those first or the whole upgrade aborts on an unrelated formula.
+  _log "  brew: clearing any pending formula migrations"
+  _rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_ENV_HINTS=1
+    for f in $(brew outdated 2>&1 | sed -n "s/^Error: \(.*\) was renamed to .*/\1/p"); do
+      echo "  migrating $f"; brew migrate "$f" || true
+    done' 2>&1 | sed 's/^/      /' | tee -a "$LOG"
+
+  _log "  brew: update + upgrade (all)"
+  out="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_ENV_HINTS=1
+    brew update && brew upgrade && brew cleanup -s' 2>&1)"; rc=$?
+  _log "$(printf '%s' "$out" | tail -60 | sed 's/^/      /')"
+
+  if [ "$rc" -eq 0 ]; then
+    _ledger brew upgrade ok ""
+    _add "brew: upgraded + cleaned"
+  else
+    _ledger brew upgrade error "rc=${rc}"
+    _add "brew upgrade failed (rc=${rc}) — needs a human"
+    NEEDS_HUMAN=1
+  fi
+
+  # brew upgrade restarts services. Verify the ones that matter are back.
+  _log "  brew: verifying services that were running"
+  local svc
+  svc="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_ENV_HINTS=1
+    brew services list 2>/dev/null | awk "NR>1 && \$2==\"error\" {print \$1}"' 2>&1)"
+  if [ -n "$svc" ]; then
+    _log "  brew: services reporting error: ${svc}"
+    _add "brew services in error after upgrade: $(printf '%s' "$svc" | tr '\n' ' ')"
+    NEEDS_HUMAN=1
+  else
+    _log "  brew: no services in error"
+  fi
+}
+
+# -------------------------------------------------------------------- main ----
+_log "== host-update $(_now) -> ${GATEWAY_HOST} =="
+[ "$CHECK_ONLY" -eq 1 ] && _log "(check-only: nothing will be changed)"
+
+if ! _rsh true 2>/dev/null; then
+  _log "FATAL: cannot ssh ${GATEWAY_HOST}"
+  _ledger host ssh error "unreachable"
+  # An unreachable home Mac is routine (asleep/off) — not a human-escalation event.
+  exit 0
+fi
+
+if [ "$DO_SERVICES" -eq 1 ]; then
+  _log "-- services --"
+  _update_service agentgateway "${REMOTE_BIN_DIR}/agentgateway-upgrade" ""
+  # No OLL_API here on purpose — the updater derives it from the service's own
+  # OLLAMA_HOST. Forcing localhost would false-fail a tailnet-bound server.
+  _update_service ollama "${REMOTE_BIN_DIR}/ollama-upgrade" ""
+fi
+
+if [ "$DO_PACKAGES" -eq 1 ]; then
+  _log "-- packages --"
+  _update_uv_tools
+  _update_brew
+fi
+
+_log "== done =="
+
+# ------------------------------------------------------------- reporting -----
+if [ -n "$SUMMARY" ]; then
+  _log ""
+  _log "SUMMARY:"
+  _log "$(printf '%s' "$SUMMARY" | sed 's/^/  /')"
+fi
+
+# Only notify when there is something worth reading. A silent successful run is
+# the common case and should stay silent.
+if [ "$QUIET" -eq 0 ] && [ -n "$SUMMARY" ]; then
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send "gateway-host update" "$(printf '%s' "$SUMMARY" | head -5)" 2>/dev/null || true
+  fi
+fi
+
+# Anything needing a human becomes a P1 bead so it can't be lost in a log file.
+if [ "$NEEDS_HUMAN" -eq 1 ] && command -v br >/dev/null 2>&1 && [ -d "$BEADS_REPO/.beads" ]; then
+  (
+    cd "$BEADS_REPO" || exit 0
+    br create -p 1 -t bug "human: gateway-host update needs attention ($(date -u +%Y-%m-%d))" \
+      -d "$(printf 'The scheduled gateway-host update hit something that needs a human.\n\n## What happened\n%s\n\n## Full log\n%s\n\n## Steps to Reproduce\nRun `host-update --check` against the gateway host, or re-read the log above.\n\n## Acceptance Criteria\n- [ ] Root cause identified\n- [ ] Component is current and healthy, or deliberately pinned with a reason\n- [ ] If a release is genuinely broken for this host, pin it and note why\n' \
+        "$SUMMARY" "$LOG")" >/dev/null 2>&1 || true
+  )
+fi
+
+[ "$NEEDS_HUMAN" -eq 1 ] && exit 1
+exit 0

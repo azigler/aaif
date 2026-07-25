@@ -33,9 +33,15 @@ OLL_SERVICE_LABEL="${OLL_SERVICE_LABEL:-com.zig.ollama}"
 # while the daemon keeps happily respawning. That mismatch will send you hunting
 # a phantom.
 OLL_SERVICE_DOMAIN="${OLL_SERVICE_DOMAIN:-system}"
-# The API base the FLEET uses. Ollama is bound to the tailnet address on purpose;
-# a localhost probe would report a false failure. Must match OLLAMA_HOST.
-OLL_API="${OLL_API:-http://localhost:11434}"
+# The API base to health-check. Left unset, it is DERIVED from the service's own
+# OLLAMA_HOST (running process env, else the plist) rather than assumed.
+#
+# This matters: ollama is frequently bound to a specific address (here, a tailnet
+# IP, because the gateway's llm provider targets it there). A hardcoded
+# `localhost` probe then reports UNHEALTHY on a perfectly healthy server — the
+# check is simply pointed at the wrong interface. Deriving it removes that whole
+# class of false failure.
+OLL_API="${OLL_API:-}"
 OLL_ASSET="${OLL_ASSET:-ollama-darwin.tgz}"
 OLL_STATE="${OLL_STATE:-$HOME/.local/share/ollama-upgrade}"
 OLL_KEEP_VERSIONS="${OLL_KEEP_VERSIONS:-2}"
@@ -156,6 +162,29 @@ _service_pid() {
   elif _have systemctl; then
     systemctl --user show -p MainPID --value "${OLL_SERVICE_LABEL}" 2>/dev/null
   fi
+}
+
+# Discover the address ollama is actually bound to, so health checks can't be
+# pointed at the wrong interface. Order: running process env -> service definition
+# -> localhost. OLLAMA_HOST may be "host:port", "http://host:port", or bare host.
+_derive_api() {
+  local host="" pid
+  pid="$(_service_pid)"
+  if [ -n "$pid" ] && [ "$pid" != "0" ]; then
+    host="$(ps eww -p "$pid" 2>/dev/null | tr ' ' '\n' \
+            | sed -n 's/^OLLAMA_HOST=//p' | head -1)"
+  fi
+  if [ -z "$host" ] && _have launchctl; then
+    host="$(_launchctl print "${OLL_SERVICE_DOMAIN}/${OLL_SERVICE_LABEL}" 2>/dev/null \
+            | sed -n 's/^[[:space:]]*OLLAMA_HOST => //p' | head -1 | tr -d '[:space:]')"
+  fi
+  [ -z "$host" ] && host="localhost:11434"
+  case "$host" in
+    http://*|https://*) : ;;
+    *:*)                host="http://${host}" ;;
+    *)                  host="http://${host}:11434" ;;
+  esac
+  printf '%s' "$host"
 }
 
 # Restart IN PLACE. Never bootout/bootstrap: on macOS a bootout leaves a pending
@@ -301,12 +330,36 @@ _stage_release() {
   printf '%s' "$dest"
 }
 
-# Atomic symlink swap: build a temp link then rename() over the target.
-# `ln -sfn` unlinks first, leaving a window with no symlink at all.
+# Atomic symlink swap, via rename(2) — and it MUST be rename(2), not `mv`.
+#
+# `mv -f newlink existing-symlink-to-a-directory` FOLLOWS the destination symlink
+# and moves the source INSIDE that directory, then exits 0. The symlink is left
+# untouched while the command reports success. Verified on macOS 2026-07-25:
+#
+#   ln -s /tmp/A /tmp/cur ; ln -s /tmp/B /tmp/cur.swap
+#   mv -f /tmp/cur.swap /tmp/cur   # rc=0, but /tmp/cur STILL -> /tmp/A
+#                                  # and /tmp/A/cur.swap now exists
+#
+# That silently no-op'd three real upgrade attempts: the version never changed, so
+# the health check correctly refused to pass and rolled back each time.
+#
+# rename(2) operates on the symlink itself and never follows it. `ln -sfh` also
+# works on BSD but unlinks first, leaving a window with no symlink at all.
 _swap_symlink() {
   local target="$1" tmp="${OLL_CURRENT}.swap-$$"
+  rm -f "$tmp"
   ln -s "$target" "$tmp" || return 1
-  mv -f "$tmp" "$OLL_CURRENT" || { rm -f "$tmp"; return 1; }
+  if ! _py -c 'import os,sys; os.rename(sys.argv[1], sys.argv[2])' "$tmp" "$OLL_CURRENT"; then
+    rm -f "$tmp"; return 1
+  fi
+  # Never trust the swap — assert it. This is the check that would have caught the
+  # `mv` bug on the first attempt instead of the third.
+  local now; now="$(readlink "$OLL_CURRENT" 2>/dev/null)"
+  if [ "$now" != "$target" ]; then
+    _err "symlink swap did not take: ${OLL_CURRENT} -> ${now:-<none>} (wanted ${target})"
+    return 1
+  fi
+  return 0
 }
 
 # ------------------------------------------------------------------ commands ---
@@ -551,6 +604,9 @@ _have curl || _die "curl is required"
 _have shasum || _die "shasum is required"
 _have tar || _die "tar is required"
 mkdir -p "$OLL_STATE" 2>/dev/null || true
+
+# Resolve the API base now that the service helpers are defined.
+[ -n "$OLL_API" ] || OLL_API="$(_derive_api)"
 
 case "${CMD:-}" in
   check)    cmd_check ;;
