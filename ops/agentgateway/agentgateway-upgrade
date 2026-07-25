@@ -1,0 +1,614 @@
+#!/usr/bin/env bash
+# agentgateway-upgrade — keep a self-hosted agentgateway deployment current, safely.
+#
+# Runs ON the gateway host. Single static binary + launchd/systemd service, so an
+# upgrade is: download -> verify -> validate against the LIVE config -> atomic swap
+# -> restart -> health-verify -> auto-rollback if anything is off.
+#
+# Nothing host-specific is hardcoded: every path/label/port comes from the env
+# (see CONFIG below) with defaults derived from $HOME. Safe to keep in a public repo.
+#
+# Commands:
+#   check                 report installed vs latest; exit 0 current / 10 upgrade / 11 prerelease-only
+#   apply                 perform the staged upgrade (no-op + exit 0 when already current)
+#   rollback              restore the most recent backed-up version
+#   status                versions, service state, health, recent ledger entries
+#   verify                run the health checks against the running deployment
+#   versions              list locally retained versions
+#
+# Flags:
+#   --json                machine-readable output (check/status/verify)
+#   --to <tag>            pin a specific release tag (e.g. v1.4.0); implies prerelease OK
+#   --allow-prerelease    consider alpha/beta/rc releases as upgrade candidates
+#   --dry-run             with apply: do everything up to (not including) the swap
+#   --yes                 non-interactive (assumed when not on a TTY)
+#
+# Exit codes: 0 ok/current · 1 error · 2 usage · 10 upgrade available (check)
+#             11 prerelease available, no stable upgrade (check) · 20 rolled back
+set -uo pipefail
+
+# `shasum` is a perl script and emits locale warnings into our output on hosts
+# whose LANG the SSH session doesn't support. Pin a locale we know exists.
+export LC_ALL=C LANG=C
+
+# ---------------------------------------------------------------- CONFIG (env) --
+AGW_REPO="${AGW_REPO:-agentgateway/agentgateway}"
+AGW_BIN="${AGW_BIN:-$HOME/.local/bin/agentgateway}"
+AGW_CTL_BIN="${AGW_CTL_BIN:-$HOME/.local/bin/agctl}"
+AGW_CONFIG="${AGW_CONFIG:-$HOME/.config/agentgateway/config.yaml}"
+AGW_STATE="${AGW_STATE:-$HOME/.local/share/agentgateway}"
+AGW_SERVICE_LABEL="${AGW_SERVICE_LABEL:-com.zig.agentgateway}"
+AGW_READY_URL="${AGW_READY_URL:-http://localhost:15021/healthz/ready}"
+# Ports that MUST reject unauthenticated traffic (401/403). A 200 here after an
+# upgrade means authz broke open — that is a rollback-worthy regression.
+AGW_GUARDED_PORTS="${AGW_GUARDED_PORTS:-15001 15003}"
+AGW_KEEP_VERSIONS="${AGW_KEEP_VERSIONS:-3}"
+AGW_HEALTH_TIMEOUT="${AGW_HEALTH_TIMEOUT:-45}"
+
+LEDGER="$AGW_STATE/upgrade-ledger.jsonl"
+STAGE_DIR="$(dirname "$AGW_BIN")/.agw-upgrade-staging"
+VERSIONS_DIR="$AGW_STATE/versions"
+
+JSON=0; DRY_RUN=0; ALLOW_PRE=0; ASSUME_YES=0; PIN_TAG=""
+CMD=""
+
+# ------------------------------------------------------------------- plumbing --
+_now()  { date -u +%Y-%m-%dT%H:%M:%SZ; }
+_say()  { [ "$JSON" -eq 1 ] || printf '%s\n' "$*"; }
+_warn() { printf 'WARN: %s\n' "$*" >&2; }
+_err()  { printf 'ERROR: %s\n' "$*" >&2; }
+_die()  { _err "$*"; exit 1; }
+
+_have() { command -v "$1" >/dev/null 2>&1; }
+
+_py() {
+  if _have python3; then python3 "$@"; else _die "python3 is required (JSON parsing)"; fi
+}
+
+# Append one JSONL row. Built with python so quoting/escaping can't corrupt it.
+_ledger() {
+  mkdir -p "$AGW_STATE" 2>/dev/null || true
+  _py -c '
+import json, sys
+row = {"ts": sys.argv[1], "action": sys.argv[2], "result": sys.argv[3],
+       "from": sys.argv[4] or None, "to": sys.argv[5] or None,
+       "detail": sys.argv[6] or None}
+with open(sys.argv[7], "a") as f:
+    f.write(json.dumps(row) + "\n")
+' "$(_now)" "$1" "$2" "${3:-}" "${4:-}" "${5:-}" "$LEDGER" 2>/dev/null || true
+}
+
+_os_arch() {
+  local os arch
+  case "$(uname -s)" in
+    Darwin) os=darwin ;;
+    Linux)  os=linux ;;
+    *) _die "unsupported OS: $(uname -s)" ;;
+  esac
+  case "$(uname -m)" in
+    arm64|aarch64) arch=arm64 ;;
+    x86_64|amd64)  arch=amd64 ;;
+    *) _die "unsupported arch: $(uname -m)" ;;
+  esac
+  printf '%s-%s' "$os" "$arch"
+}
+
+# --------------------------------------------------------- version discovery --
+_installed_version() {
+  [ -x "$AGW_BIN" ] || { printf 'none'; return; }
+  # -V prints the bare version string; fall back to parsing the JSON --version.
+  local v
+  v="$("$AGW_BIN" -V 2>/dev/null | tr -d '[:space:]')"
+  if [ -z "$v" ]; then
+    v="$("$AGW_BIN" --version 2>/dev/null | _py -c 'import json,sys; print(json.load(sys.stdin).get("version",""))' 2>/dev/null)"
+  fi
+  printf '%s' "${v:-unknown}"
+}
+
+_fetch_releases() {
+  local url="https://api.github.com/repos/${AGW_REPO}/releases?per_page=100"
+  local -a auth=()
+  [ -n "${GITHUB_TOKEN:-}" ] && auth=(-H "Authorization: Bearer ${GITHUB_TOKEN}")
+  # macOS ships bash 3.2, where "${arr[@]}" on an EMPTY array trips `set -u`.
+  # ${arr[@]+"${arr[@]}"} is the 3.2-safe expansion.
+  curl -fsSL -m 30 --retry 2 --retry-delay 2 \
+    -H 'Accept: application/vnd.github+json' \
+    -H 'X-GitHub-Api-Version: 2022-11-28' \
+    ${auth[@]+"${auth[@]}"} "$url"
+}
+
+# Pick the highest release by real semver ordering.
+#
+# CRITICAL: upstream mis-flags prereleases — GitHub's own /releases/latest returned
+# v1.4.0-beta.1 with "prerelease": false (verified 2026-07-25). So the channel is
+# decided by the TAG NAME, never by the API's prerelease boolean.
+#
+# stdin: releases JSON. argv: "stable"|"any". stdout: "<stable_tag>\t<any_tag>"
+_pick_versions() {
+  _py -c '
+import json, re, sys
+
+SEMVER = re.compile(r"^v(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.\-]+))?$")
+
+def key(tag):
+    m = SEMVER.match(tag)
+    if not m:
+        return None
+    major, minor, patch, pre = int(m[1]), int(m[2]), int(m[3]), m[4]
+    if pre is None:
+        return (major, minor, patch, 1, ())
+    # semver: a prerelease sorts BELOW its release; identifiers compare
+    # numerically when numeric, else lexically, numeric < alphanumeric.
+    ids = []
+    for part in pre.split("."):
+        if part.isdigit():
+            ids.append((0, int(part), ""))
+        else:
+            ids.append((1, 0, part))
+    return (major, minor, patch, 0, tuple(ids))
+
+best_stable = best_any = None
+try:
+    releases = json.load(sys.stdin)
+except Exception:
+    print("\t"); sys.exit(0)
+
+for rel in releases:
+    if rel.get("draft"):
+        continue
+    tag = (rel.get("tag_name") or "").strip()
+    k = key(tag)
+    if k is None:
+        continue
+    if best_any is None or k > best_any[0]:
+        best_any = (k, tag)
+    if k[3] == 1 and (best_stable is None or k > best_stable[0]):
+        best_stable = (k, tag)
+
+print("%s\t%s" % (best_stable[1] if best_stable else "",
+                  best_any[1] if best_any else ""))
+'
+}
+
+# Compare two bare versions. echoes -1 / 0 / 1  (a<b / a==b / a>b)
+_vcmp() {
+  _py -c '
+import re, sys
+SEMVER = re.compile(r"^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.\-]+))?$")
+def key(v):
+    m = SEMVER.match(v.strip())
+    if not m: return None
+    pre = m[4]
+    if pre is None: return (int(m[1]), int(m[2]), int(m[3]), 1, ())
+    ids = tuple((0,int(p),"") if p.isdigit() else (1,0,p) for p in pre.split("."))
+    return (int(m[1]), int(m[2]), int(m[3]), 0, ids)
+a, b = key(sys.argv[1]), key(sys.argv[2])
+if a is None or b is None: print("x"); sys.exit(0)
+print("-1" if a < b else ("0" if a == b else "1"))
+' "$1" "$2"
+}
+
+# ---------------------------------------------------------------- health checks --
+_service_pid() {
+  if _have launchctl; then
+    launchctl print "gui/$(id -u)/${AGW_SERVICE_LABEL}" 2>/dev/null \
+      | sed -n 's/^[[:space:]]*pid = \([0-9]*\).*/\1/p' | head -1
+  elif _have systemctl; then
+    systemctl --user show -p MainPID --value "${AGW_SERVICE_LABEL}" 2>/dev/null
+  fi
+}
+
+_restart_service() {
+  if _have launchctl; then
+    launchctl kickstart -k "gui/$(id -u)/${AGW_SERVICE_LABEL}" >/dev/null 2>&1
+  elif _have systemctl; then
+    systemctl --user restart "${AGW_SERVICE_LABEL}" >/dev/null 2>&1
+  else
+    _err "no launchctl or systemctl — cannot restart ${AGW_SERVICE_LABEL}"
+    return 1
+  fi
+}
+
+# Wait for readiness. Returns 0 when the endpoint reports ready in time.
+_await_ready() {
+  local deadline=$(( $(date +%s) + AGW_HEALTH_TIMEOUT )) body code
+  while [ "$(date +%s)" -lt "$deadline" ]; do
+    code="$(curl -fsS -m 5 -o /dev/null -w '%{http_code}' "$AGW_READY_URL" 2>/dev/null)"
+    if [ "$code" = "200" ]; then
+      body="$(curl -fsS -m 5 "$AGW_READY_URL" 2>/dev/null | tr -d '[:space:]')"
+      [ "$body" = "ready" ] && return 0
+    fi
+    sleep 1
+  done
+  return 1
+}
+
+# Guarded ports must still REJECT unauthenticated traffic. A 200 means the authz
+# layer failed open — for a governance gateway that is worse than being down.
+_check_guarded_ports() {
+  local port code failures=""
+  for port in $AGW_GUARDED_PORTS; do
+    code="$(curl -sS -m 5 -o /dev/null -w '%{http_code}' \
+             "http://localhost:${port}/" 2>/dev/null)"
+    case "$code" in
+      401|403) : ;;                                     # authz loaded, as expected
+      000)     failures="${failures} port:${port}=unreachable" ;;
+      200)     failures="${failures} port:${port}=AUTHZ-OPEN(200)" ;;
+      *)       failures="${failures} port:${port}=unexpected(${code})" ;;
+    esac
+  done
+  [ -z "$failures" ] && return 0
+  printf '%s' "${failures# }"
+  return 1
+}
+
+# Full post-restart verification. $1 = expected version ("" to skip the check).
+# $2 = previous PID ("" to skip the restart check).
+_verify_deployment() {
+  local want="${1:-}" prev_pid="${2:-}" problems="" cur_pid cur_ver ports
+  if ! _await_ready; then
+    problems="${problems} readiness:not-ready-within-${AGW_HEALTH_TIMEOUT}s"
+  fi
+  cur_ver="$(_installed_version)"
+  if [ -n "$want" ] && [ "v${cur_ver#v}" != "v${want#v}" ]; then
+    problems="${problems} version:got-${cur_ver}-want-${want}"
+  fi
+  cur_pid="$(_service_pid)"
+  if [ -z "$cur_pid" ] || [ "$cur_pid" = "0" ]; then
+    problems="${problems} service:no-running-pid"
+  elif [ -n "$prev_pid" ] && [ "$cur_pid" = "$prev_pid" ]; then
+    problems="${problems} service:pid-unchanged(${cur_pid})-restart-did-not-happen"
+  fi
+  if ! ports="$(_check_guarded_ports)"; then
+    problems="${problems} ${ports}"
+  fi
+  [ -z "$problems" ] && return 0
+  printf '%s' "${problems# }"
+  return 1
+}
+
+# ----------------------------------------------------------------- download ----
+# $1 = tag, $2 = dest dir. Downloads + sha256-verifies both binaries.
+_download_release() {
+  local tag="$1" dest="$2" platform base name url
+  platform="$(_os_arch)"
+  base="https://github.com/${AGW_REPO}/releases/download/${tag}"
+  mkdir -p "$dest" || return 1
+
+  for name in agentgateway agctl; do
+    local asset="${name}-${platform}" out="$dest/$name"
+    url="${base}/${asset}"
+    _say "  fetching ${asset} ($tag)"
+    if ! curl -fsSL -m 300 --retry 2 --retry-delay 3 -o "$out" "$url"; then
+      _err "download failed: $url"
+      return 1
+    fi
+    if ! curl -fsSL -m 60 --retry 2 -o "${out}.sha256" "${url}.sha256"; then
+      _err "checksum download failed: ${url}.sha256"
+      return 1
+    fi
+    # The .sha256 asset may be bare or "<sum>  <filename>" — take the first field.
+    local want got
+    want="$(tr -d '\r' < "${out}.sha256" | awk 'NF{print $1; exit}')"
+    got="$(shasum -a 256 "$out" | awk '{print $1}')"
+    if [ -z "$want" ] || [ "$want" != "$got" ]; then
+      _err "CHECKSUM MISMATCH for ${asset}: want=${want:-<empty>} got=${got}"
+      return 1
+    fi
+    _say "  sha256 ok  ${asset}"
+    chmod +x "$out"
+    # curl downloads are not quarantined, but be explicit on macOS.
+    _have xattr && xattr -d com.apple.quarantine "$out" 2>/dev/null || true
+  done
+  return 0
+}
+
+# ------------------------------------------------------------------ commands ---
+cmd_check() {
+  local installed latest_stable latest_any picked target status rc
+  installed="$(_installed_version)"
+  local releases
+  if ! releases="$(_fetch_releases)"; then
+    _die "could not reach the GitHub releases API for ${AGW_REPO}"
+  fi
+  IFS=$'\t' read -r latest_stable latest_any <<<"$(printf '%s' "$releases" | _pick_versions)"
+  [ -n "$latest_stable$latest_any" ] || _die "no parseable releases found for ${AGW_REPO}"
+
+  if [ -n "$PIN_TAG" ]; then
+    target="$PIN_TAG"
+  elif [ "$ALLOW_PRE" -eq 1 ]; then
+    target="$latest_any"
+  else
+    target="$latest_stable"
+  fi
+
+  rc=0
+  if [ "$installed" = "none" ]; then
+    status="not-installed"; rc=10
+  else
+    case "$(_vcmp "v${installed#v}" "$target")" in
+      -1) status="upgrade-available"; rc=10 ;;
+       0) status="current"; rc=0 ;;
+       1) status="ahead-of-target"; rc=0 ;;
+       *) status="unknown"; rc=1 ;;
+    esac
+  fi
+  # No stable upgrade, but a newer prerelease exists → informational signal.
+  if [ "$rc" -eq 0 ] && [ "$ALLOW_PRE" -eq 0 ] && [ -n "$latest_any" ] \
+     && [ "$(_vcmp "v${installed#v}" "$latest_any")" = "-1" ]; then
+    status="current-prerelease-available"; rc=11
+  fi
+
+  if [ "$JSON" -eq 1 ]; then
+    _py -c '
+import json, sys
+print(json.dumps({"installed": sys.argv[1], "target": sys.argv[2],
+                  "latest_stable": sys.argv[3], "latest_prerelease": sys.argv[4],
+                  "status": sys.argv[5], "channel": sys.argv[6],
+                  "repo": sys.argv[7]}))
+' "$installed" "$target" "$latest_stable" "$latest_any" "$status" \
+  "$([ "$ALLOW_PRE" -eq 1 ] && echo prerelease || echo stable)" "$AGW_REPO"
+  else
+    local chan; chan="$([ "$ALLOW_PRE" -eq 1 ] && echo prerelease || echo stable)"
+    _say "installed          : ${installed}"
+    _say "latest stable      : ${latest_stable:-<none>}"
+    _say "latest prerelease  : ${latest_any:-<none>}"
+    _say "target (${chan})   : ${target}"
+    _say "status             : ${status}"
+  fi
+  return "$rc"
+}
+
+cmd_apply() {
+  local installed target releases latest_stable latest_any
+  installed="$(_installed_version)"
+  if ! releases="$(_fetch_releases)"; then
+    _ledger apply error "$installed" "" "github-api-unreachable"
+    _die "could not reach the GitHub releases API for ${AGW_REPO}"
+  fi
+  IFS=$'\t' read -r latest_stable latest_any <<<"$(printf '%s' "$releases" | _pick_versions)"
+
+  if [ -n "$PIN_TAG" ]; then target="$PIN_TAG"
+  elif [ "$ALLOW_PRE" -eq 1 ]; then target="$latest_any"
+  else target="$latest_stable"; fi
+  [ -n "$target" ] || _die "no target release resolved"
+
+  if [ "$installed" != "none" ] && [ "$(_vcmp "v${installed#v}" "$target")" != "-1" ]; then
+    _say "already at ${installed} (target ${target}) — nothing to do"
+    _ledger apply noop "$installed" "$target" "already-current"
+    return 0
+  fi
+
+  _say "upgrading agentgateway: ${installed} -> ${target}"
+  [ -f "$AGW_CONFIG" ] || _die "live config not found: $AGW_CONFIG"
+
+  # ---- stage ----
+  rm -rf "$STAGE_DIR"; mkdir -p "$STAGE_DIR" || _die "cannot create $STAGE_DIR"
+  # Staging lives beside the binary so the final swap is an atomic same-fs rename.
+  if ! _download_release "$target" "$STAGE_DIR"; then
+    _ledger apply error "$installed" "$target" "download-or-checksum-failed"
+    rm -rf "$STAGE_DIR"
+    _die "download/verify failed — deployment untouched"
+  fi
+
+  # ---- gate 1: the new binary must run and report the version we asked for ----
+  local staged_ver
+  staged_ver="$("$STAGE_DIR/agentgateway" -V 2>/dev/null | tr -d '[:space:]')"
+  if [ -z "$staged_ver" ]; then
+    _ledger apply error "$installed" "$target" "staged-binary-will-not-run"
+    rm -rf "$STAGE_DIR"; _die "staged binary does not execute — deployment untouched"
+  fi
+  if [ "v${staged_ver#v}" != "v${target#v}" ]; then
+    _ledger apply error "$installed" "$target" "staged-version-mismatch:${staged_ver}"
+    rm -rf "$STAGE_DIR"
+    _die "staged binary reports ${staged_ver}, expected ${target} — deployment untouched"
+  fi
+  _say "  staged binary self-check ok (${staged_ver})"
+
+  # ---- gate 2: the new binary must accept the LIVE config ----
+  # This is the schema-drift gate. agentgateway ships a `migrate` subcommand for
+  # deprecated fields, so a new version genuinely can reject a working config.
+  local vout
+  if ! vout="$("$STAGE_DIR/agentgateway" -f "$AGW_CONFIG" --validate-only 2>&1)"; then
+    _err "the ${target} binary REJECTS the live config — refusing to swap."
+    _err "validate-only output:"
+    printf '%s\n' "$vout" | sed 's/^/    /' >&2
+    _err "next step (human): copy the config aside and try"
+    _err "  ${STAGE_DIR}/agentgateway migrate -f <copy>   # then re-validate"
+    _ledger apply blocked "$installed" "$target" "config-rejected-by-new-version"
+    rm -rf "$STAGE_DIR"
+    exit 1
+  fi
+  _say "  live config validates against ${target}"
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    _say "dry-run: all pre-swap gates passed; stopping before the swap"
+    _ledger apply dry-run "$installed" "$target" "gates-passed"
+    rm -rf "$STAGE_DIR"
+    return 0
+  fi
+
+  # ---- backup ----
+  local backup_dir="$VERSIONS_DIR/${installed}"
+  mkdir -p "$backup_dir"
+  if [ -x "$AGW_BIN" ]; then cp -p "$AGW_BIN" "$backup_dir/agentgateway" || _die "backup failed"; fi
+  if [ -x "$AGW_CTL_BIN" ]; then cp -p "$AGW_CTL_BIN" "$backup_dir/agctl" 2>/dev/null || true; fi
+  cp -p "$AGW_CONFIG" "$backup_dir/config.yaml" 2>/dev/null || true
+  _say "  backed up ${installed} -> ${backup_dir}"
+
+  local prev_pid; prev_pid="$(_service_pid)"
+
+  # ---- swap (atomic rename, same filesystem) ----
+  mv -f "$STAGE_DIR/agentgateway" "$AGW_BIN" || {
+    _ledger apply error "$installed" "$target" "swap-failed"
+    _die "swap failed — deployment untouched"
+  }
+  _say "  swapped binary"
+
+  # ---- restart + verify ----
+  if ! _restart_service; then
+    _warn "restart command failed; verifying anyway"
+  fi
+  _say "  restarting ${AGW_SERVICE_LABEL} (was pid ${prev_pid:-?})"
+  sleep 2
+
+  local problems
+  if problems="$(_verify_deployment "$target" "$prev_pid")"; then
+    # healthy — finish by moving agctl into place (best-effort; not serving-path)
+    if [ -x "$STAGE_DIR/agctl" ]; then
+      mv -f "$STAGE_DIR/agctl" "$AGW_CTL_BIN" 2>/dev/null \
+        && _say "  agctl updated to ${target}" \
+        || _warn "agctl update failed (gateway is fine; CLI left at old version)"
+    fi
+    rm -rf "$STAGE_DIR"
+    _prune_versions
+    _say "OK  agentgateway ${installed} -> ${target}, healthy (pid $(_service_pid))"
+    _ledger apply ok "$installed" "$target" "healthy"
+    return 0
+  fi
+
+  # ---- auto-rollback ----
+  _err "post-upgrade verification FAILED: ${problems}"
+  _err "rolling back to ${installed}"
+  if [ -x "$backup_dir/agentgateway" ]; then
+    # COPY, never move — the backup must survive so a second attempt (or the
+    # `rollback` command) still has a known-good binary to fall back to.
+    cp -p "$backup_dir/agentgateway" "$AGW_BIN" || _err "restore copy failed"
+    _restart_service || true
+    sleep 2
+    local rb_problems
+    if rb_problems="$(_verify_deployment "$installed" "")"; then
+      _err "ROLLED BACK to ${installed}; deployment is healthy again."
+      _ledger apply rolled-back "$installed" "$target" "verify-failed:${problems}"
+    else
+      _err "ROLLBACK DID NOT RESTORE HEALTH: ${rb_problems}"
+      _err "MANUAL INTERVENTION REQUIRED on this host."
+      _ledger apply rollback-failed "$installed" "$target" \
+        "verify-failed:${problems}|rollback-failed:${rb_problems}"
+    fi
+  else
+    _err "no backup binary at ${backup_dir}/agentgateway — CANNOT ROLL BACK."
+    _ledger apply rollback-impossible "$installed" "$target" "verify-failed:${problems}"
+  fi
+  rm -rf "$STAGE_DIR"
+  exit 20
+}
+
+_prune_versions() {
+  [ -d "$VERSIONS_DIR" ] || return 0
+  local keep="$AGW_KEEP_VERSIONS" n=0 d
+  # newest first; drop everything past the keep count
+  for d in $(ls -1t "$VERSIONS_DIR" 2>/dev/null); do
+    n=$((n + 1))
+    [ "$n" -gt "$keep" ] && rm -rf "$VERSIONS_DIR/$d"
+  done
+  return 0
+}
+
+cmd_rollback() {
+  [ -d "$VERSIONS_DIR" ] || _die "no retained versions at $VERSIONS_DIR"
+  local target_dir installed prev_pid
+  target_dir="$(ls -1t "$VERSIONS_DIR" 2>/dev/null | head -1)"
+  [ -n "$target_dir" ] || _die "no retained versions to roll back to"
+  [ -x "$VERSIONS_DIR/$target_dir/agentgateway" ] \
+    || _die "retained $target_dir has no executable agentgateway"
+  installed="$(_installed_version)"
+  _say "rolling back ${installed} -> ${target_dir}"
+  prev_pid="$(_service_pid)"
+  cp -p "$VERSIONS_DIR/$target_dir/agentgateway" "$AGW_BIN" || _die "restore failed"
+  [ -x "$VERSIONS_DIR/$target_dir/agctl" ] \
+    && cp -p "$VERSIONS_DIR/$target_dir/agctl" "$AGW_CTL_BIN" 2>/dev/null || true
+  _restart_service || _warn "restart command failed"
+  sleep 2
+  local problems
+  if problems="$(_verify_deployment "$target_dir" "$prev_pid")"; then
+    _say "OK  rolled back to ${target_dir}, healthy"
+    _ledger rollback ok "$installed" "$target_dir" "healthy"
+    return 0
+  fi
+  _err "rolled back to ${target_dir} but verification failed: ${problems}"
+  _ledger rollback degraded "$installed" "$target_dir" "$problems"
+  exit 1
+}
+
+cmd_verify() {
+  local problems installed
+  installed="$(_installed_version)"
+  if problems="$(_verify_deployment "" "")"; then
+    if [ "$JSON" -eq 1 ]; then
+      _py -c 'import json,sys; print(json.dumps({"healthy":True,"version":sys.argv[1],"pid":sys.argv[2]}))' \
+        "$installed" "$(_service_pid)"
+    else
+      _say "healthy — agentgateway ${installed}, pid $(_service_pid), $AGW_READY_URL ready"
+    fi
+    return 0
+  fi
+  if [ "$JSON" -eq 1 ]; then
+    _py -c 'import json,sys; print(json.dumps({"healthy":False,"version":sys.argv[1],"problems":sys.argv[2]}))' \
+      "$installed" "$problems"
+  else
+    _err "UNHEALTHY: $problems"
+  fi
+  return 1
+}
+
+cmd_status() {
+  _say "== agentgateway deployment =="
+  _say "host            : $(hostname)"
+  _say "binary          : $AGW_BIN ($(_installed_version))"
+  _say "agctl           : $AGW_CTL_BIN"
+  _say "config          : $AGW_CONFIG"
+  _say "service         : $AGW_SERVICE_LABEL (pid $(_service_pid))"
+  _say "readiness       : $AGW_READY_URL"
+  _say "guarded ports   : $AGW_GUARDED_PORTS"
+  _say ""
+  cmd_verify || true
+  _say ""
+  _say "== retained versions (rollback targets) =="
+  if [ -d "$VERSIONS_DIR" ]; then ls -1t "$VERSIONS_DIR" | sed 's/^/  /'; else _say "  (none)"; fi
+  _say ""
+  _say "== last 5 ledger entries =="
+  if [ -f "$LEDGER" ]; then tail -5 "$LEDGER" | sed 's/^/  /'; else _say "  (none)"; fi
+  _say ""
+  cmd_check || true
+}
+
+cmd_versions() {
+  if [ -d "$VERSIONS_DIR" ]; then ls -1t "$VERSIONS_DIR"; else _say "(none)"; fi
+}
+
+usage() {
+  sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-2}"
+}
+
+# ---------------------------------------------------------------------- main ---
+while [ $# -gt 0 ]; do
+  case "$1" in
+    check|apply|rollback|status|verify|versions) CMD="$1" ;;
+    --json)             JSON=1 ;;
+    --dry-run)          DRY_RUN=1 ;;
+    --allow-prerelease) ALLOW_PRE=1 ;;
+    --yes|-y)           ASSUME_YES=1 ;;
+    --to)               shift; PIN_TAG="${1:-}"; ALLOW_PRE=1
+                        [ -n "$PIN_TAG" ] || _die "--to needs a release tag" ;;
+    --to=*)             PIN_TAG="${1#--to=}"; ALLOW_PRE=1 ;;
+    -h|--help)          usage 0 ;;
+    *) _err "unknown argument: $1"; usage 2 ;;
+  esac
+  shift
+done
+
+_have curl || _die "curl is required"
+_have shasum || _die "shasum is required"
+mkdir -p "$AGW_STATE" 2>/dev/null || true
+
+case "${CMD:-}" in
+  check)    cmd_check ;;
+  apply)    cmd_apply ;;
+  rollback) cmd_rollback ;;
+  status)   cmd_status ;;
+  verify)   cmd_verify ;;
+  versions) cmd_versions ;;
+  "")       usage 2 ;;
+esac
