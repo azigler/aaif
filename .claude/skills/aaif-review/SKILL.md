@@ -50,14 +50,17 @@ never by underselling a piece that genuinely is the higher type.
 | `conference_talk` | 30 | a talk at a conference (verifiable session page) |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
-| `project_contribution` | 5 / 10 / 15 / 25 | code/artifact contribution — **scope ladder below** |
+| `project_contribution` | 5 / 10 / 15 / 20 / 25 | code/artifact contribution — **scope ladder below** |
 
 > Firmness note: `blog_post`, `short_technical_video`, `tutorial`, `conference_talk`,
-> `organizing_meetup`, and `social_thread` are grounded in observed scorecards. The
-> `project_contribution` ladder was **refined to 5 / 10 / 15 / 25 in the W28 radar scan**,
-> which added the `10` rung (a substantive bug-report / small-fix, above a trivial
-> one-liner) between the trivial-fix and example/demo rungs. `community_help`,
-> `meetup_talk`, `podcast`, `livestream`, `workshop`, `course` are from the program point
+> `organizing_meetup`, `social_thread`, `meetup_talk`, and `course` are grounded in
+> observed scorecards. The `project_contribution` ladder was refined to 5 / 10 / 15 / 25
+> in the W28 radar scan (adding the `10` bug-report rung), and **again in W30 to
+> 5 / 10 / 15 / 20 / 25** — the new `20` rung is a merged upstream PR with clear developer
+> impact but fix/cleanup scope, sitting below the substantive-artifact `25`.
+> **W30 also confirmed `meetup_talk` = 20 and `course` = 50 at their program-table values
+> on first observation** — which raises confidence in the still-unobserved rungs.
+> `community_help`, `podcast`, `livestream`, `workshop` remain from the program point
 > table but not yet seen scored — treat their exact value as provisional and confirm on
 > first use.
 
@@ -69,13 +72,19 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
 - **10** — a substantive **bug report / small fix**, a rung above a trivial one-liner.
 - **15** — a self-authored, AAIF-relevant **example/demo repo** that is *not* a merged
   upstream PR.
-- **25** — a substantial self-authored **skill / feature artifact** (the top rung
-  observed so far).
-- **50** — a presumed higher ceiling (a major merged feature / large body of upstream
-  work), **not yet observed** in a scorecard — treat as provisional.
+- **20** — a **merged upstream PR with clear developer/user impact**, but scoped as a
+  *fix or cleanup* rather than a new capability (e.g. fixing a crash, removing stale
+  naming across code/tests/logs). Added in the W30 radar scan.
+- **25** — a substantial self-authored **artifact**: a whole tool/repo/library, or a merged
+  PR that adds a meaningful **feature** with tests + docs. The top rung observed for this
+  type, and by far the most populated.
+- **50** — a presumed higher ceiling for this type, **still not observed** on a
+  `project_contribution` scorecard — treat as provisional. (Note 50 *is* now confirmed
+  as the base for `course`, so the overall ladder does reach it.)
 
 So a merged non-trivial upstream PR beats a demo repo; a demo repo beats a docs typo.
-If the goal is points, **merge it upstream** and make the merge visible.
+If the goal is points, **merge it upstream** and make the merge visible — and if the
+change is a fix, the gap between the `20` and `25` rungs is *feature + tests + docs*.
 
 ## The conformance checklist (bank `confidence: high`, `human_review: false`)
 
