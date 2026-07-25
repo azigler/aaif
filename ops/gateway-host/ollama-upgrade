@@ -24,7 +24,15 @@ export LC_ALL=C LANG=C   # `shasum`/`tar` are noisy about locale over SSH
 OLL_REPO="${OLL_REPO:-ollama/ollama}"
 OLL_ROOT="${OLL_ROOT:-$HOME}"                       # where ollama-<ver>/ dirs live
 OLL_CURRENT="${OLL_CURRENT:-$HOME/ollama-current}"  # the symlink the service execs
-OLL_SERVICE_LABEL="${OLL_SERVICE_LABEL:-com.zig.ollama-serve}"
+OLL_SERVICE_LABEL="${OLL_SERVICE_LABEL:-com.zig.ollama}"
+# launchd domain holding the job. Ollama is commonly run as a system LaunchDaemon
+# (/Library/LaunchDaemons/...) so it starts at boot independent of login — that
+# domain requires sudo for kickstart/print. Set to "gui/<uid>" for a LaunchAgent.
+# ALWAYS confirm with `launchctl print <domain>/<label>`: a job in the system
+# domain is invisible from gui/<uid>, where bootout reports "No such process"
+# while the daemon keeps happily respawning. That mismatch will send you hunting
+# a phantom.
+OLL_SERVICE_DOMAIN="${OLL_SERVICE_DOMAIN:-system}"
 # The API base the FLEET uses. Ollama is bound to the tailnet address on purpose;
 # a localhost probe would report a false failure. Must match OLLAMA_HOST.
 OLL_API="${OLL_API:-http://localhost:11434}"
@@ -132,9 +140,18 @@ print("-1" if a < b else ("0" if a == b else "1"))
 }
 
 # ---------------------------------------------------------------- service ops --
+# System-domain launchd operations need root. Passwordless sudo is required for
+# unattended runs; `sudo -n` fails loudly rather than hanging on a prompt.
+_launchctl() {
+  case "$OLL_SERVICE_DOMAIN" in
+    system*) sudo -n launchctl "$@" ;;
+    *)       launchctl "$@" ;;
+  esac
+}
+
 _service_pid() {
   if _have launchctl; then
-    launchctl print "gui/$(id -u)/${OLL_SERVICE_LABEL}" 2>/dev/null \
+    _launchctl print "${OLL_SERVICE_DOMAIN}/${OLL_SERVICE_LABEL}" 2>/dev/null \
       | grep -oE '^[[:space:]]*pid = [0-9]+' | grep -oE '[0-9]+$' | head -1
   elif _have systemctl; then
     systemctl --user show -p MainPID --value "${OLL_SERVICE_LABEL}" 2>/dev/null
@@ -152,7 +169,7 @@ _service_pid() {
 # whole health window. That cost one real failed upgrade on 2026-07-25.
 _restart_service() {
   if _have launchctl; then
-    launchctl kickstart -k "gui/$(id -u)/${OLL_SERVICE_LABEL}" >/dev/null 2>&1
+    _launchctl kickstart -k "${OLL_SERVICE_DOMAIN}/${OLL_SERVICE_LABEL}" >/dev/null 2>&1
   elif _have systemctl; then
     systemctl --user restart "${OLL_SERVICE_LABEL}" >/dev/null 2>&1
   else

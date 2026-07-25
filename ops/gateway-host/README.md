@@ -2,14 +2,18 @@
 
 The gateway host runs two **off-the-shelf, hand-installed** services the fleet depends on:
 
-| Service | What it is | Updater |
-|---|---|---|
-| **agentgateway** (+ `agctl`) | the AAIF gateway — MCP + LLM proxy, authz, request log | `agentgateway-upgrade` |
-| **ollama** | the local-inference server the gateway's LLM provider proxies to | `ollama-upgrade` |
+| Service | What it is | Supervised by | Updater |
+|---|---|---|---|
+| **agentgateway** (+ `agctl`) | the AAIF gateway — MCP + LLM proxy, authz, request log | user LaunchAgent | `agentgateway-upgrade` |
+| **ollama** | the local-inference server the gateway's LLM provider proxies to | **system LaunchDaemon** | `ollama-upgrade` |
 
 Both were installed once by hand and had **no upgrade path whatsoever** — no package
 manager, no periodic job, no update script. agentgateway is a fast-moving project, so
 that guaranteed silent rot. These scripts are the fix.
+
+Both are, however, **properly supervised** (`RunAtLoad` + `KeepAlive`, restart on exit,
+start at boot). The gap was upgrades, not supervision — see gotcha 5 below for how easy
+it is to mistake one for the other when the job lives in the `system` domain.
 
 > Host specifics (which machine, service labels, tailnet addresses) are **not** in this
 > repo — it's public. Both scripts are parameterized by environment variables; the real
@@ -175,6 +179,38 @@ an upgrade never edits the plist, and a rollback is one symlink swap.
 ppid 1. Use `XPC_SERVICE_NAME` in the process environment to find which job spawned
 something.
 
+**5. A job in the `system` domain is INVISIBLE from `gui/<uid>` — and this will send you
+hunting a phantom.** `launchctl print gui/<uid>/<label>` says `Bad request`, `bootout`
+says `No such process`, and `~/Library/LaunchAgents/` holds nothing — while the daemon
+happily respawns the process every few seconds. It looks exactly like a stuck, unkillable
+ghost job.
+
+Before concluding anything about a service's supervision, check **every** domain and the
+system plist directories:
+
+```bash
+for d in "gui/$(id -u)" "user/$(id -u)" system; do
+  printf '%-12s ' "$d"; sudo launchctl print "$d/<label>" 2>&1 | head -1
+done
+ls -la /Library/LaunchDaemons/ /Library/LaunchAgents/ ~/Library/LaunchAgents/ | grep -i <name>
+```
+
+System-domain jobs need **sudo** for `print` and `kickstart`; a LaunchDaemon with
+`UserName` set still runs as that user, so the process looks like a user process. Hence
+`OLL_SERVICE_DOMAIN` defaults to `system` in `ollama-upgrade`.
+
+**Corollary — a zsh glob with no match aborts the whole command.** This is how the
+system plist got missed here:
+
+```zsh
+$ ls /opt/homebrew/Library/LaunchDaemons/*ollama* /Library/LaunchDaemons/*ollama*
+zsh: no matches found: /opt/homebrew/Library/LaunchDaemons/*ollama*
+```
+
+zsh never evaluated the second path — the one that existed. The output read as "no
+system-level plists" when the answer was "your first pattern didn't match." Check paths
+one at a time, or use `ls <dir> | grep`.
+
 ## Portability notes
 
 - Targets **bash 3.2** — macOS ships 3.2.57 and that is what `/usr/bin/env bash` resolves
@@ -210,10 +246,26 @@ launchd label; the live gateway was never touched (PID 48645 unchanged throughou
 | `check` | 0.30.8 installed, v0.32.3 stable, correctly ignored `v0.32.4-rc0`, exit 10 ✅ |
 | `verify` incl. real inference | healthy ✅ |
 | `apply --dry-run` | downloaded, sha256 ok, extracted, staged self-check 0.32.3, symlink untouched, 10.4 s ✅ |
-| **first real `apply`** | health check failed (nothing serving — the `SuccessfulExit` bug above), **auto-rolled back to a healthy 0.30.8**, exit 20, ledger `rolled-back` ✅ |
 | 0.32.3 standalone on a spare port | binds in <1 s, Metal GPU discovered, `/api/version` 200 — the release itself is fine ✅ |
-| supervision: SIGTERM | restarted in 1 s ✅ |
-| supervision: SIGKILL | restarted in 22 s ✅ |
+| **two real `apply` attempts against a contended port** | both correctly refused to declare success and **auto-rolled back to a healthy 0.30.8** (exit 20, ledger `rolled-back` / `rollback-failed`) ✅ |
+| `apply` after the contention was removed | see the ledger — this is the run that matters |
 
-The auto-rollback firing on a *genuine* upgrade rather than a synthetic test is the most
-valuable result here: the safety net worked before anyone was watching.
+### What the two failed applies actually proved
+
+Both failures were **environmental, not release problems**, and they were caused by a
+mistake made while investigating: a duplicate user LaunchAgent was created for ollama
+while a **system LaunchDaemon was already supervising it** (gotcha 5). The two jobs then
+fought over port 11434, so the new version could never bind and the old one kept
+answering. 32 `bind: address already in use` errors accumulated.
+
+The updater's behavior through all of that is the real result:
+
+- It never reported success it couldn't observe. Version-match + new-PID + real-inference
+  all had to hold, and they didn't.
+- It rolled back to a known-good version both times, and when rollback *also* couldn't be
+  verified it said so loudly (`MANUAL INTERVENTION REQUIRED`) rather than exiting 0.
+- The service was left serving throughout.
+
+A blind `curl -o` updater — which is what `ubuntu.upgrade.sh` did before this work —
+would have swapped the binary, exited 0, and reported success while the fleet's inference
+backend was down. That contrast is the point of the whole gate sequence.
