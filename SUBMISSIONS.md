@@ -35,7 +35,7 @@ Zig's, never automated**; the public URL is the live thread/interaction permalin
 
 | Month | Type | Summary | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
-| — | — | _None logged yet_ | — | — | — | — |
+| 2026-07 | social thread | Removing MCP's protocol session *promoted* cross-call state — a handle the model can see and reason over, vs. transport metadata it never could | MCP | _TBD — LinkedIn permalink_ | posted | 5 |
 
 <!--
 Row template (copy when a standalone thread / community-help interaction ships):
@@ -47,7 +47,7 @@ Row template (copy when a standalone thread / community-help interaction ships):
 | Metric | Value |
 |---|---|
 | Contributions shipped (ledger) | 1 |
-| Pulse contributions logged | 0 |
+| Pulse contributions logged | 1 |
 | Months with ≥1 contribution | 1 |
 | Approved points — ledger | 20 |
 | Approved points — pulse | 0 |
