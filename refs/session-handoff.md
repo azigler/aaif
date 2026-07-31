@@ -101,8 +101,8 @@ session handling, and spec references.
    are deprecated with a 12-month window, but `logging/setLevel`,
    `notifications/roots/list_changed`, and `ping` were **removed outright**. Logging
    goes silently dark on upgrade unless the new per-request `_meta` log-level field is set.
-6. **Unresolved and not actioned:** Zig is not credited on the published article, and
-   AAIF's social copy doesn't name him either, despite the contributing-author credit
-   discussed at the start of the review arc. Raised twice; he moved past it both
-   times. Recorded here (not in any tracked file) so it isn't silently lost — but
-   treat it as his call to reopen, not a task to push.
+6. **One unresolved item from the review arc is recorded privately**, not here — see
+   the "Unresolved" section of `.local/review-steve-mcp-production-r2.md`. It was
+   raised with Zig twice this session and he moved past it both times, so treat it
+   as his to reopen, not a task to push. Kept out of this file for the same reason
+   as watch-out 2: the handoff note is tracked in a public repo.
