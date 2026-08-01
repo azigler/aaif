@@ -65,10 +65,13 @@ in [`.claude/skills/`](.claude/skills/):
 | `research-paper` | The heavy long-form branch — a venue-neutral paper / whitepaper loop where every claim gets a grep-able test case, gated by a human review note. |
 | `aaif-review` | Score-checks a finished piece (type, points, conformance) and drafts the exact submission issue — then stops at the human gate. |
 | `camp-publish` | Lands a finished piece into my personal-site publish pipeline. |
+| `amplify` | Drafts the announcement and community-help copy for a shipped contribution, and judges whether it stands alone as its own small contribution. Drafting only — posting is always mine. |
+| `storybook-header` | Makes the header image for a post, in the running watercolour series (a white goose in a red aviator scarf, somewhere pastoral). |
 | `aaif-radar` | A read-only weekly scan of the submissions landscape for trends and under-served lanes. Its report is private; nothing about other people is ever committed. |
 | `agentgateway` | Read-only observability for a self-hosted agent gateway: audit, cost, trace, and human-gated hardening suggestions. |
 | `aaif-blog-guidelines` | AAIF's own editorial + intake guidelines for blog content (authored by AAIF). |
 | `aaif-brand-guidelines` | AAIF's own brand system for any branded visual or asset (authored by AAIF). |
+| `housekeeping` | Project-local mechanical hygiene — mostly a lint that catches these indexes drifting out of sync with what's actually on disk. |
 
 ### The loop state
 

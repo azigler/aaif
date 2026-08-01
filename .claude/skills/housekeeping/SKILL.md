@@ -17,6 +17,14 @@ added or removed:
 
 - `refs/README.md` — the index of the `refs/` archive
 - `CLAUDE.md` — the `.claude/skills/` list (routing table + file-layout tree)
+- `README.md` — the public-facing skills table
+
+⚠️ **`README.md` was added to this lint on 2026-08-01 after it drifted unnoticed.**
+The check covered `CLAUDE.md` only, so a skill added to disk *and* to CLAUDE.md still
+went missing from the public README — and the lint reported `clean` while three
+(`amplify`, `storybook-header`, `housekeeping`) were absent. A lint with a blind spot
+is worse than no lint, because `clean` gets believed. Every hand-maintained index of
+the same on-disk set belongs in the loop; if a fourth index appears, add it here too.
 
 Run this from anywhere in the repo to flag drift. It exits non-zero if any file
 on disk is missing from its index (the common failure).
@@ -34,10 +42,12 @@ while IFS= read -r f; do
   grep -qF "$rel" refs/README.md || { echo "DRIFT: refs/$rel on disk, missing from refs/README.md"; drift=1; }
 done < <(find refs -type f \( -name '*.md' -o -name '*.jsonl' \) ! -name README.md)
 
-# 2. .claude/skills/ vs CLAUDE.md
+# 2. .claude/skills/ vs CLAUDE.md AND README.md (both are hand-maintained indexes
+#    of the same on-disk set; checking only one is how README.md silently drifted)
 for d in .claude/skills/*/; do
   s=$(basename "$d")
-  grep -qF "$s" CLAUDE.md || { echo "DRIFT: skill '$s' on disk, missing from CLAUDE.md"; drift=1; }
+  grep -qF "$s" CLAUDE.md   || { echo "DRIFT: skill '$s' on disk, missing from CLAUDE.md"; drift=1; }
+  grep -qF "\`$s\`" README.md || { echo "DRIFT: skill '$s' on disk, missing from README.md skills table"; drift=1; }
 done
 
 [ "$drift" -eq 0 ] && echo "index-vs-disk: clean" || echo "index-vs-disk: DRIFT (fix the indexes above)"
