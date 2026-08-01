@@ -41,28 +41,49 @@ never by underselling a piece that genuinely is the higher type.
 |---|---|---|
 | `social_thread` | 5 | a substantive thread/post with developer value |
 | `community_help` | 5–15 | answering/supporting in community channels (scope-scaled) |
-| `blog_post` | 15 | a written explainer / case study / opinion piece |
+| `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below** |
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
-| `meetup_talk` / `podcast` | 20 | a talk given at a meetup / a podcast appearance |
-| `organizing_meetup` | 25 | organizing an event (docked if not tied to a specific AAIF project) |
+| `podcast_guest` | 20 | a podcast appearance |
+| `meetup_talk` | **25** | a talk given at a meetup |
 | `livestream` | 25 | a live technical stream |
 | `conference_talk` | 30 | a talk at a conference (verifiable session page) |
+| `organizing_meetup` | **35** | organizing an event (docked if not tied to a specific AAIF project) |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
-| `project_contribution` | 5 / 10 / 15 / 20 / 25 | code/artifact contribution — **scope ladder below** |
+| `project_contribution` | 5 / 10 / 15 / 20 / 25 / 40 | code/artifact contribution — **scope ladder below** |
+
+> ⚠️ **Calibration hygiene (W31).** Scorecards are **retroactively re-based**: W30 recorded
+> `meetup_talk = 20` as CONFIRMED at n=2/high-confidence, and those same two scorecards now
+> read **25**. A "confirmed" rung is therefore *not* permanent — never trust a prior ledger
+> diff; re-tabulate the whole corpus. Related: when a scorecard's `review.rationale` prose
+> disagrees with its `scoring.base_points` field (observed on the one adjusted record),
+> **trust the field** — the prose goes stale across a re-base.
 
 > Firmness note: `blog_post`, `short_technical_video`, `tutorial`, `conference_talk`,
-> `organizing_meetup`, `social_thread`, `meetup_talk`, and `course` are grounded in
-> observed scorecards. The `project_contribution` ladder was refined to 5 / 10 / 15 / 25
-> in the W28 radar scan (adding the `10` bug-report rung), and **again in W30 to
-> 5 / 10 / 15 / 20 / 25** — the new `20` rung is a merged upstream PR with clear developer
-> impact but fix/cleanup scope, sitting below the substantive-artifact `25`.
-> **W30 also confirmed `meetup_talk` = 20 and `course` = 50 at their program-table values
-> on first observation** — which raises confidence in the still-unobserved rungs.
-> `community_help`, `podcast`, `livestream`, `workshop` remain from the program point
-> table but not yet seen scored — treat their exact value as provisional and confirm on
-> first use.
+> `organizing_meetup`, `social_thread`, `meetup_talk`, `podcast_guest`, and `course` are
+> grounded in observed scorecards. The `project_contribution` ladder was refined to
+> 5 / 10 / 15 / 25 in the W28 scan (adding the `10` bug-report rung), to 5 / 10 / 15 / 20 / 25
+> in W30 (the `20` fix/cleanup rung), and **again in W31 to 5 / 10 / 15 / 20 / 25 / 40**.
+> **W31 also re-based `organizing_meetup` 25 → 35 and `meetup_talk` 20 → 25**, and observed
+> **`podcast_guest` = 20** on first sighting (note the slug is `podcast_guest`, *not*
+> `podcast` — an earlier version of this table had it wrong). `community_help`, `livestream`,
+> and `workshop` remain from the program point table but have **never been observed scored** —
+> treat their exact value as provisional and confirm on first use.
+
+### `blog_post`: the project tie decides the rung (W31)
+
+A blog post is not automatically 15. The tie to a *specific, named* AAIF project is
+load-bearing, with a three-tier consequence:
+
+| Project tie | Outcome |
+|---|---|
+| Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | `blog_post` **15** |
+| Mentions AAIF / the program generally, but no specific project | `blog_post` **5** |
+| No AAIF project reference at all | **rejected** — see rejection risks |
+
+Practical: never ship a post that gestures at "agentic AI" in general. Name the project,
+and make the technical substance concrete enough that a developer could act on it.
 
 ### `project_contribution` scope ladder
 
@@ -76,8 +97,11 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
   *fix or cleanup* rather than a new capability (e.g. fixing a crash, removing stale
   naming across code/tests/logs). Added in the W30 radar scan.
 - **25** — a substantial self-authored **artifact**: a whole tool/repo/library, or a merged
-  PR that adds a meaningful **feature** with tests + docs. The top rung observed for this
-  type, and by far the most populated.
+  PR that adds a meaningful **feature** with tests + docs.
+- **40** — a **cross-cutting merged feature**: one PR spanning backend APIs, storage
+  semantics, generated SDK code, UI, localization, *and* tests, where maintainer review
+  confirms the feature was wanted. Added in the W31 radar scan (n=1). The distance from
+  `25` to `40` is **breadth across the stack**, not just "feature + tests + docs".
 - **50** — a presumed higher ceiling for this type, **still not observed** on a
   `project_contribution` scorecard — treat as provisional. (Note 50 *is* now confirmed
   as the base for `course`, so the overall ladder does reach it.)
@@ -85,6 +109,8 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
 So a merged non-trivial upstream PR beats a demo repo; a demo repo beats a docs typo.
 If the goal is points, **merge it upstream** and make the merge visible — and if the
 change is a fix, the gap between the `20` and `25` rungs is *feature + tests + docs*.
+As of W31 the **`20` rung is the mode** (21 of 44 observed) — a merged `fix(...)` with clear
+user impact is the most-travelled path in the program.
 
 ## The conformance checklist (bank `confidence: high`, `human_review: false`)
 
@@ -104,8 +130,17 @@ Every one must be **unmissable without your help**:
 5. **Developer value** — it teaches or gives a developer something concrete to do. Not
    "agents are the future"; a specific, useful thing.
 6. **Timing eligibility** — artifact publish date is **after 2026-06-23** (your start).
-   Pre-start content is ineligible. And `recognition_month` = the artifact's month, so
-   **publish + submit inside the month** you want the leaderboard credit.
+   Pre-start content is ineligible, *regardless of which leaderboard month it would land
+   in* — W31 saw a strong conference talk (recording + deck + event page, a 30-point
+   artifact) rejected for being delivered 6 days before the ambassador's start date.
+7. **Recognition month** — ⚠️ **`recognition_month` follows the month the review is
+   APPROVED, not the artifact's month** (corrected in the W31 scan; this doc previously
+   said the opposite). Measured across 198 scorecards: 6 June artifacts approved in July
+   were recognized **July**, and 2 July artifacts approved on Aug 1 were recognized
+   **August**. So submitting in the last days of a month doesn't merely risk a late
+   recalculation — it **moves the points onto the next month's leaderboard**. Observed
+   intake→approval latency is same-day to ~2 days, so **submit with a ≥3-day buffer before
+   month end** to secure that month's credit.
 
 If any item is weak, the skill's output says **what to fix on the artifact before
 publishing** — that's the whole point of running this *before* you ship.
@@ -128,7 +163,21 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
 - **Selection / announcement / self-promotion** — "I became an ambassador" posts, or
   posts about the program itself rather than a technical contribution.
 - **No specific AAIF-project tie** — generic agent-philosophy or thought-leadership with
-  only a loose connection; anything that would land as `project:other`.
+  only a loose connection; anything that would land as `project:other`. W31 confirmed the
+  exact bar: a well-written piece was rejected for not referencing MCP or any AAIF project
+  **by name** and for lacking *"concrete technical detail (protocol specifics, code,
+  implementation guidance)."* Note the near-miss below this line is scored, not rejected —
+  a general-AAIF-but-no-project post lands `blog_post` **5** instead of 15.
+- **Increment to an already-scored parent** (new, W31) — a piece that reads as *part of* a
+  contribution that already received points earns **nothing**. Observed: a new lesson added
+  to a course that had already been awarded the full 50 was turned away as *"part of that
+  same course rather than a separate contribution."* ⚠️ **This is the trap for multi-piece
+  arcs** (whitepaper + companion blog, series parts, a talk plus its writeup): each piece
+  must carry its **own thesis and its own defensible contribution**, not be an excerpt,
+  recap, or "accessible lead" of an already-submitted artifact. If two pieces share a
+  spine, differentiate them explicitly in the Notes — or submit only one.
+- **Pre-start artifact** — delivered/published before your start date (2026-06-23). Applies
+  even to high-value, fully-verifiable work, and *regardless of leaderboard month*.
 - **Meta / self-referential** — tooling *about* the ambassador program rather than a
   contribution *to* an AAIF project.
 - **Not a scoreable type** — a format the reviewer can't map to the point table.
