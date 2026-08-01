@@ -35,7 +35,7 @@ Zig's, never automated**; the public URL is the live thread/interaction permalin
 
 | Month | Type | Summary | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
-| 2026-07 | social thread | Removing MCP's protocol session *promoted* cross-call state — a handle the model can see and reason over, vs. transport metadata it never could | MCP | _TBD — LinkedIn permalink_ | posted | 5 |
+| 2026-07 | social thread | Removing MCP's protocol session *promoted* cross-call state — a handle the model can see and reason over, vs. transport metadata it never could | MCP | https://www.linkedin.com/posts/andrewzigler_aaifambassador-activity-7489069362486902784-MCpV | posted | 5 |
 
 <!--
 Row template (copy when a standalone thread / community-help interaction ships):
