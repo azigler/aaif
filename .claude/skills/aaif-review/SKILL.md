@@ -242,6 +242,25 @@ produces the drafted issue body and the conformance verdict and **STOPS**. Zig r
 and sends it himself, every time (hard rule — see CLAUDE.md). Never assume prior
 approval carries to the next submission.
 
+### Mechanics for when the go-ahead IS given (verified 2026-08-01 on #404)
+
+- **`gh issue create --body-file` works.** The web form is NOT required. The repo's
+  `.github/workflows/label-submission-issues.yml` fires on `issues: opened` for any title
+  starting with `[Submission]:` and applies `status:needs-agent-review` itself.
+- ⚠️ **The label lands ~2s AFTER creation.** Checking immediately returns `labels: []`,
+  which looks exactly like a submission that failed to enter the queue. It is a race, not
+  a defect — re-check after a beat before concluding anything. (The template also declares
+  the label in its front-matter, but template labels only apply via the web form, which is
+  what makes the empty first read so convincing.)
+- **Ambassadors cannot self-label**: `POST /issues/{n}/labels` → `403 Must have admin
+  rights`. So if the workflow ever genuinely doesn't fire, the fix is to re-create the
+  issue with a conforming title, not to try to patch the label on.
+- **Canonical URL hygiene** — strip tracking params before they land in a public issue.
+  LinkedIn's mobile "copy link to post" yields an `lnkd.in/p/...` shortlink that 301s to a
+  `...-share-...` URL carrying `utm_*` **and an account-scoped `rcm=` token**. Resolve it
+  and submit the page's own `og:url` instead. Note LinkedIn handle (`andrewzigler`) ≠
+  GitHub handle (`azigler`); state the mapping in Notes so authorship needs no inference.
+
 ## The conformance report (this skill's output)
 
 Produce a scannable verdict:
