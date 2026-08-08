@@ -1,107 +1,98 @@
-# Session handoff — 2026-08-01 4aadd750
-
-## ⭐ STATE: The parked thread SHIPPED (#404). The whitepaper is cancelled — August's anchor is now an ideas-first blog post with no open blockers.
+# Session handoff — 2026-08-08 213fad17
 
 ## State at offboard
 - Current branch: `main`
-- Last commit: `a95955a` — beads: resolve aaif-q8q, publish gate cleared
-- Open beads: **25** (24 ready) · in-progress: **4** · deferred: **24** · closed: **64**
-- In-flight subagents: none — no dispatches this session (direct-tool work throughout)
-- Dirty files: `.claude/skills/aaif-review/SKILL.md` (Step 2.6 promotion — commits with this note)
+- Last commit: `b7efbee` :memo: submissions: default the pulse-table standalone verdict to no
+- Open beads: 25; in-progress: 4
+- In-flight subagents: none (both merged and cleaned up)
+- Dirty files: none — tree clean
 - Markers: `.offboard-pending` cleared
+- Worktrees: only `/home/ubuntu/aaif` on main; both agent worktrees removed, branches deleted
 
-## What happened this session
+## What happened this session (bullets)
 
-**1. `/aaif-radar` W31 — the biggest week the program has had.** +76 submissions (3.6× prior
-week), 63% in July's final three days. Full re-tabulation of 238 issues / 198 scorecards.
-Report `.local/radar/2026-W31.md`; participant-free learnings in closed bead `aaif-m57`.
-- **MCP 7-28 stateless wave = 24% of the week's intake** — the most saturated topic-week cell
-  the radar has measured; every framing claimed within 96h of the spec dropping.
-- `project_contribution` nearly doubled (20→44), overtaking `tutorial` — the growth engine
-  shifted from writing to code. **agentgateway is no longer under-served** (18→31);
-  **agents-md quietly re-opened** (+4, now the flattest project).
-- **Six grading-model changes**, all folded into `/aaif-review` the same run per the
-  fold-back rule — including a **corrected `recognition_month` = APPROVAL month** (both files
-  had said artifact month) and two **retroactive re-bases of rungs previously "CONFIRMED"**.
+**Ran `/aaif-radar` for 2026-W32** (interactive), then acted on what it found.
 
-**2. Submitted `aaif/ambassadors#404`** (the previously-parked MCP handle-visibility thread)
-on Zig's explicit go-ahead. `social_thread`, MCP, labeled and queued. Prediction recorded for
-calibration: 5 pts / `high` confidence / `human_review_required: false` / recognition **2026-08**.
-
-**3. The August anchor was re-scoped twice, both Zig's calls.**
-- Whitepaper **cancelled** → folded to a reproducible tutorial (20 pts) → then narrowed again
-  to a **blog post (15 pts) teaching the ideas, not the technical detail**.
-- Trigger for the second narrowing: `experiment/configs/` is **empty** — the six tool configs
-  never existed as files, only as agentgateway apiKey identities on the private host. A
-  reader-runnable path would have had to be built from scratch, against the ~Aug 28 deadline.
-- `aaif-uf3` closed as superseded (one thesis = one artifact); `aaif-7ls` closed (thesis
-  stands, whitepaper + `~/cfp` methodology superseded).
-
-**4. `/triage`** — 15 closed, 13 deferred, 1 retargeted. `br ready` went **53 → 23**. The bulk
-was the whitepaper's verify-note inventory: all carried recorded verdicts, and a note is a
-record rather than a deliverable.
-
-**5. `/housekeeping`** — skills-index drift fixed; `doc-example-lint` on `~/aaif`
-`files_scanned=14, errors=0, warnings=1, CLEAN`; memory index 25/25; no worktrees; nothing unpushed.
-
-**6. `aaif-q8q` evaluated and closed** — Digital Apprentice (`arXiv:2606.04321`, Weber &
-Taneja) and Roder both locator-verified **exactly**; NANDA dropped as irrelevant to the new scope.
+- **The scan.** 283 submission issues (max #492, was #403), 241 scorecards (was 198).
+  Full re-fetch + full re-tabulation of all 241, per the W31 meta-lesson — never diff the
+  prior ledger. Private report at `.local/radar/2026-W32.md`; `.local/radar/state.json`
+  updated; participant-free note bead `aaif-ecw` filed and closed; ledger row written to
+  `refs/pulse-ledger.jsonl` (ts `22:08:19Z`).
+- **Volume:** the W31 surge broke — 45 new submissions vs 76 (−41%). That spike was a
+  July-deadline artifact, not a new baseline. Review side is not backlogged.
+- **The structural finding:** `project_contribution` took 42% of the week's scored volume
+  and has nearly tripled in two weeks (20 → 44 → 62). The program's growth engine has
+  shifted from writing to **code**. goose surged +17, almost entirely an upstream PR stream
+  submitted as individual 20–25 pt items — the clearest repeatable high-cadence lane.
+  `agentgateway` grew only +4 after last week's +72%, so W31's "no longer under-served" call
+  was premature at the *trend* level; still the thinnest named lane at 12%.
+- **Six grading refinements, all folded back the same run** (the fold-back rule) into BOTH
+  `.local/research/aaif-review-system.md` AND the public `.claude/skills/aaif-review/SKILL.md`:
+  1. `workshop` = 35 — CONFIRMED on first observation (was provisional)
+  2. `livestream` = 25 — CONFIRMED on first observation (was provisional)
+  3. `community_help` is now the ONLY type never observed scored — 0 of 241
+  4. **Project-tie docking is CROSS-TYPE, not a `blog_post` rule.** An `organizing_meetup`
+     scored the docked rung (25 not 35) because its public page didn't substantiate a named
+     AAIF project (`projects: ["other"]`). The docking happens at type-rung selection, NOT
+     via `scoring.adjustments`. Generalized ladder for any type: named project + concrete
+     technical detail → full rung; general-AAIF-only → docked rung; no reference → rejected.
+  5. **NEW REJECTION RULE — "amplification without substance."** A social post promoting an
+     event/release with "no technical explanation, practical guidance, or another
+     developer-useful resource" is rejected outright, no scorecard.
+  6. `project_contribution` 40-rung n=1 → n=3 — no longer a fluke
+- **No re-base this week.** Every previously observed rung held at full re-tabulation.
+  Stability: adjustments still exactly 1 of 241 (unchanged since W28 while the corpus more
+  than doubled); `human_review_required` **0 of 241** — the reviewer has never escalated.
+- **Acted on refinement #5 immediately** (Zig's call), via two worktree subagents, both
+  merged with the SHA-moved + ancestor assertions and cleaned up:
+  - `aaif-yxf` (closed, merged `d8437ed`) — `/amplify`'s standalone-5pt verdict now
+    **defaults to NO**, names the rejection outright ("it's a rejection on the record",
+    not a 5-pt floor), states the bar positively ("a reader who never clicks through still
+    learned a technical thing"), gives a concrete upgrade path, and cross-references
+    `/aaif-review` rather than restating it.
+  - `aaif-onv` (closed, merged `cd6ade9` + follow-on `b7efbee`) — de-duplicated the stale
+    looser bar from `CLAUDE.md` step 8, the AMPLIFY template, and `SUBMISSIONS.md`.
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-
-**None — 0 harvested, 3 scanned** (query verified working; not a silent empty). This is
-accurate rather than a gap: every direction-changing call this session was **Zig's**, made
-through AskUserQuestion — article scope, August anchor lane, `aaif-uf3` disposition, the
-20→15 type downgrade, ideas-vs-technical, and accepting `aaif-8as`. The two judgment calls
-made autonomously were small and are recorded on their own beads rather than as ADRs:
-- Not rewriting public history to fix a wrong `Bead:` trailer → rationale on `aaif-t8x`.
-- Dropping the NANDA citation rather than chasing its locator → rationale on `aaif-q8q`.
+- None this session. (Harvest receipt: 0 hits, 3 scanned open+closed, cutoff
+  2026-08-01T23:19 which *precedes* session start 2026-08-08T22:00 — a genuine zero, no
+  warnings.) The two judgment calls that came up were Zig's, made live via AskUserQuestion:
+  skip the `community_help` lane, and clear `aaif-onv` before touching the August anchor.
+- One sub-threshold call worth a sentence, not a bead: when the `aaif-onv` subagent flagged
+  a third stale copy in `SUBMISSIONS.md` and recommended a bead, I fixed it inline instead —
+  it was a single clause in the most public file, and a bead would have cost more than the edit.
 
 ## Proposed practices — where each one landed (Step 2.6)
-
-- `br defer` syntax (both documented forms fail outright) → **written into
-  `~/dotfiles/agents/skills/triage/SKILL.md`**, bead `dotfiles-70rw`, pushed.
-- Index-vs-disk lint blind spot (README.md never checked, reported `clean` anyway) →
-  **written into `.claude/skills/housekeeping/SKILL.md`**, bead `aaif-t8x`.
-- Six grading-model changes + the calibration-hygiene rule (always full re-tabulate, never a
-  prior-ledger diff) → **written into `.claude/skills/aaif-review/SKILL.md`** and
-  `.local/research/aaif-review-system.md`.
-- Submission mechanics (`gh issue create` works; label lands ~2s later; ambassadors can't
-  self-label; strip `rcm=`/`utm_*`; handle mapping) → **promoted during this offboard into
-  `/aaif-review`'s submit-gate section**. It had been buried in `aaif-983`'s notes, which is
-  not a home.
-- "Never ship a whitepaper on this thesis later" (post-scoring, a longer version is an
-  increment, not a contribution) → **standing constraint written onto `aaif-51g`**.
+- **Skip the `community_help` lane** (Zig's call) → written into
+  `.local/radar/state.json` under a new `standing_decisions` key, which the radar reads at
+  the start of every run. Future scans will keep counting its observations for calibration
+  but will NOT re-surface it as a recommended opportunity. Not left in this note — a
+  standing instruction in a per-session snapshot is homeless by definition.
 
 ## What's next
-
-1. **Draft the August anchor** (`aaif-51g`) — **no open blockers.** Lock the five ideas
-   against evidence (`aaif-omn`), draft, `/zig-voice`, critic loop (`aaif-3v6`),
-   `/aaif-review`, `/camp-publish`, then the gated submit. **Submit by ~Aug 28** —
-   recognition follows the approval month, so later slips to September's leaderboard.
-2. **Watch for #404's scorecard** — compare against the recorded prediction and fold any
-   delta into `/aaif-review` (`aaif-ambassador-program-18o.39` is the feedback-loop bead).
-3. Optional, decision-ready: `community_help` has **zero submissions program-wide** — the
-   cheapest floor insurance available (`aaif-ambassador-program-18o.48`). Zig was asked and
-   hasn't decided; deliberately neither buried nor promoted.
+1. **The August anchor — `aaif-51g`** (with `aaif-omn` spec and `aaif-3v6` critic loop under
+   it). This is the live work and it now has a hard deadline. Radar confirmed the topic lane
+   is clean: across all 283 submission titles, `toolset` / `tool count` / `tool bloat` = 0 and
+   `context window` / `context rot` = 0; autonomy = 2, neither on the inverted-U framing. An
+   uncrowded angle inside the most crowded project (MCP, 47%).
+2. Everything else in `br ready` is behind that until the anchor ships.
 
 ## Warnings / watch-outs
-
-- ⚠️ **The ideas-first scope carries a real rejection risk.** "Teach the ideas, not the
-  technical things" is close to the shape that got a W31 submission **rejected** — *"a
-  general reflection… does not reference MCP or any AAIF project by name, and does not
-  include concrete technical detail."* The softer failure drops it to **5 pts** instead of 15.
-  Guardrail is on `aaif-51g`: **name MCP often, keep the numbers as evidence.** `aaif-3v6`'s
-  project-tie critic exists to check exactly this.
-- ⚠️ **"Earned autonomy" is a crowded term** — Roder, Weber & Taneja, Schachter, and
-  Feng/McDonald/Zhang all occupy it. The **inverted-U measurement is what's original.**
-  Recommend leading with the measurement and letting the autonomy language be a conclusion,
-  not a banner.
-- **`aaif-8as` closed as accepted risk (Zig's call):** the tailnet IP `100.72.47.4` and
-  `ssh pico` remain in tracked files of this public repo, public since 2026-07-01.
-  Non-routable, no secrets committed, harness no longer ships. **Don't re-flag it.**
-- **Grading-model staleness:** any point prediction made before the W31 run is stale. Two
-  rungs previously recorded as "CONFIRMED" were retroactively re-based — treat every
-  confirmation as provisional and re-tabulate the whole corpus on each radar run.
-- Commit `3284021` carries a **wrong `Bead:` trailer** (`aaif-ambassador-program-18o.45`);
-  `aaif-t8x` is its correct referent. Not amended — shared-writer repo.
+- **⏰ The anchor submit-by is ~Aug 26–28, and it is a real cliff.** `recognition_month` is
+  the **approval** month, not the artifact month — re-confirmed hard this week by 48
+  August-recognition scorecards already existing on Aug 8. Submitting Aug 29–31 lands the
+  points on *September's* leaderboard. Budget ≥3 days of review buffer.
+- **`#404` already scored** `social_thread` 5, high confidence, recognition 2026-08. The
+  August floor is technically on the board — but at 5 pts it is a pulse, not the anchor.
+  Do not let that reads-as-covered feeling relax the anchor deadline.
+- **The `/amplify` change bites the anchor's own step 8.** When the anchor ships, its
+  announcement thread will now default to NO on the standalone-5pt verdict. That is correct
+  and intended — to earn the extra 5 pts the thread must carry a self-contained technical
+  payload, not a teaser. Plan the thread as its own artifact or skip submitting it.
+- **Calibration hygiene stands.** Scorecards are retroactively re-based in place, so the
+  radar must keep doing a full re-fetch + full re-tabulation every week. Never "optimize" it
+  into a ledger diff. This week also showed the rejection *count* re-basing: 32 rejections
+  now sit at/below the old watermark vs 31 recorded in W31, undisambiguated.
+- `/aaif-review`'s conformance checklist is now measurably load-bearing: `human_review_required`
+  is 0 across all 241 scorecards, so a submission that *forced* human review would be
+  conspicuous, not routine.
