@@ -67,22 +67,43 @@ Every post carries (from `brand-and-social.md`):
 
 > **Does this stand alone as its own 5-pt pulse contribution?**
 
-A *useful* social thread is itself a qualifying **5-pt** contribution when it
-delivers real developer value tied to an AAIF project — **not just promotion**
-(`brand-and-social.md`; `ambassador-program.md` scoring table). Score it:
+**Default to NO.** The 5 points on `social_thread` are for **developer value, not
+for posting** — and a post that promotes an event, release, or piece while
+carrying *"no technical explanation, practical guidance, or another
+developer-useful resource"* is **rejected outright, with no scorecard**:
+*"Social submissions need more than event promotion or general amplification to
+qualify."* That is exactly the shape of the default announcement thread ("I
+published X, here's the link, @AgenticAIFdn #AAIFAmbassador"), so submitting one
+is not a zero-value move — **it's a rejection on the record.** The rule lives in
+`/aaif-review`'s rejection-risk section under **"Amplification without
+substance"**; read it there and don't restate it elsewhere, so the two skills
+can't drift.
 
-- **YES** — the post teaches a concept, shows a workflow, or shares a real lesson
-  that stands on its own beyond linking the anchor piece. → It earns its **own
-  row in the SUBMISSIONS.md pulse-contributions table** and its **own gated
-  submission** (a distinct contribution URL: the thread permalink).
-- **candidate — Zig's call** — borderline (announcement + teaching hybrid). Mark
-  it and let Zig decide after it posts and he sees it land.
-- **no** — pure promotion / a bare "I published X" link. Amplification only; no
-  standalone credit.
+The bar, stated positively: **a reader who never clicks through still learned a
+technical thing.** Score it:
+
+- **NO (the default)** — the payload is the link. Announcement, teaser,
+  "thrilled to share", a summary that only makes sense once you've read the
+  anchor piece. Amplification only; no standalone credit, and **do not submit
+  it** — it's a rejection, not a 5-pt floor.
+- **candidate — Zig's call** — it carries a real hook but leans on the linked
+  piece to land. Mark it, name what's missing, and let Zig decide after it posts.
+- **YES** — the post carries a **self-contained technical payload**: the specific
+  finding, the code shape, the config, the gotcha and how you got past it —
+  legible on its own, with the link as *further reading* rather than the point.
+  → It earns its **own row in the SUBMISSIONS.md pulse-contributions table** and
+  its **own gated submission** (a distinct contribution URL: the thread
+  permalink).
+
+**The upgrade path** when the verdict is NO and Zig wants a standalone
+contribution: don't reword the announcement — **move one concrete thing out of
+the artifact and into the thread.** Lift the exact snippet, the failing
+error and its fix, the number you measured, the shape of the config that
+finally worked. If deleting the link would gut the post, it isn't there yet.
 
 Community help scores **5–15** by depth — draft the reviewable write-up
 (what was asked, how you unblocked them, the link/screenshot as evidence) and
-score it the same way.
+score it against the same bar: the help itself must be the substance.
 
 ### 4. Record it in AMPLIFY.md
 
@@ -118,8 +139,11 @@ draft + verdict are surfaced to Zig. **Nothing is posted.**
 
 - ❌ **Posting anything.** The cardinal rule — this skill drafts and stops.
 - ❌ **Inventing a posted URL / date / engagement count.** Unknown = `TBD`.
-- ❌ **Bare "I published X" promo** with no teaching payload — doesn't qualify as
-  a standalone contribution and barely amplifies. Give it a real hook.
+- ❌ **Bare "I published X" promo** with no teaching payload — barely amplifies,
+  and submitted as a contribution it is **rejected**, not merely unscored
+  (`/aaif-review`, "Amplification without substance"). Give it a real payload.
+- ❌ **Treating 5 pts as a floor for any post** — the standalone verdict defaults
+  to NO; YES is earned with a self-contained technical payload.
 - ❌ **Skipping the tags/badge** — that's the free AAIF repost/newsletter boost.
 - ❌ **Naming/ranking other ambassadors** in any drafted copy (CLAUDE.md hard
   rule) — frame around the opportunity + developer value, not peers.
