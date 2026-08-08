@@ -60,30 +60,37 @@ never by underselling a piece that genuinely is the higher type.
 > disagrees with its `scoring.base_points` field (observed on the one adjusted record),
 > **trust the field** — the prose goes stale across a re-base.
 
-> Firmness note: `blog_post`, `short_technical_video`, `tutorial`, `conference_talk`,
-> `organizing_meetup`, `social_thread`, `meetup_talk`, `podcast_guest`, and `course` are
-> grounded in observed scorecards. The `project_contribution` ladder was refined to
-> 5 / 10 / 15 / 25 in the W28 scan (adding the `10` bug-report rung), to 5 / 10 / 15 / 20 / 25
-> in W30 (the `20` fix/cleanup rung), and **again in W31 to 5 / 10 / 15 / 20 / 25 / 40**.
-> **W31 also re-based `organizing_meetup` 25 → 35 and `meetup_talk` 20 → 25**, and observed
-> **`podcast_guest` = 20** on first sighting (note the slug is `podcast_guest`, *not*
-> `podcast` — an earlier version of this table had it wrong). `community_help`, `livestream`,
-> and `workshop` remain from the program point table but have **never been observed scored** —
-> treat their exact value as provisional and confirm on first use.
+> Firmness note: every type in the table above is now grounded in observed scorecards
+> **except `community_help`** — `workshop` (35) and `livestream` (25) were both confirmed on
+> first observation in W32, at exactly their program-table values. `community_help` 5–15 has
+> **never been observed scored in 241 scorecards**; treat its rung as provisional and confirm
+> on first use. The `project_contribution` ladder was refined to 5 / 10 / 15 / 25 in the W28
+> scan (adding the `10` bug-report rung), to 5 / 10 / 15 / 20 / 25 in W30 (the `20`
+> fix/cleanup rung), and **again in W31 to 5 / 10 / 15 / 20 / 25 / 40** (the `40` rung now has
+> 3 observations, W32 — it is reachable, not a fluke). **W31 re-based `organizing_meetup`
+> 25 → 35 and `meetup_talk` 20 → 25**, and observed **`podcast_guest` = 20** on first sighting
+> (note the slug is `podcast_guest`, *not* `podcast` — an earlier version of this table had it
+> wrong). W32 re-tabulated the full corpus and **every rung above held** — no re-base.
 
-### `blog_post`: the project tie decides the rung (W31)
+### The project tie decides the rung — on *any* type (W31 blog / W32 generalized)
 
-A blog post is not automatically 15. The tie to a *specific, named* AAIF project is
-load-bearing, with a three-tier consequence:
+A blog post is not automatically 15, and **this is not a blog-post rule.** The tie to a
+*specific, named* AAIF project is load-bearing across types:
 
 | Project tie | Outcome |
 |---|---|
-| Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | `blog_post` **15** |
-| Mentions AAIF / the program generally, but no specific project | `blog_post` **5** |
+| Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | **full rung** (e.g. `blog_post` 15) |
+| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5, `organizing_meetup` 25 instead of 35) |
 | No AAIF project reference at all | **rejected** — see rejection risks |
 
-Practical: never ship a post that gestures at "agentic AI" in general. Name the project,
-and make the technical substance concrete enough that a developer could act on it.
+W32 confirmed the generalization empirically: an `organizing_meetup` scored **25 instead of
+35** because its event page *"does not substantiate MCP as a material focus, so the
+contribution is classified under other AAIF work."* Same shape as the blog 15-vs-5 tier.
+
+Practical: never ship anything that gestures at "agentic AI" in general — including an
+**event listing or a talk abstract**. Name the project *in the artifact itself* (the reviewer
+reads the public page, not your Notes), and make the technical substance concrete enough that
+a developer could act on it.
 
 ### `project_contribution` scope ladder
 
@@ -162,6 +169,14 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
 
 - **Selection / announcement / self-promotion** — "I became an ambassador" posts, or
   posts about the program itself rather than a technical contribution.
+- **Amplification without substance** (new, W32) — a social post that *promotes* an event,
+  release, or announcement but carries **"no technical explanation, practical guidance, or
+  another developer-useful resource"** is rejected outright. Observed on a post promoting the
+  MCP 7-28 release parties: *"Social submissions need more than event promotion or general
+  amplification to qualify."* ⚠️ **This is the trap for the `/amplify` step**: the
+  announcement thread for your own shipped piece is **not** automatically a 5-pt
+  `social_thread`. The 5 points are for **developer value**, not for posting — the thread has
+  to teach something that stands on its own.
 - **No specific AAIF-project tie** — generic agent-philosophy or thought-leadership with
   only a loose connection; anything that would land as `project:other`. W31 confirmed the
   exact bar: a well-written piece was rejected for not referencing MCP or any AAIF project
