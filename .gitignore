@@ -29,3 +29,6 @@ scratch/
 # the /research-paper pipeline + this scaffold are shared in the open on purpose.
 submissions/*
 !submissions/2026-mcp-governance-whitepaper/
+
+# archived working set from a finished AAI article, folded in from ~/work (dotfiles-mktv/ojwk)
+archive-work-aai-article/
