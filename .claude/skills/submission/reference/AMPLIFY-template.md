@@ -21,12 +21,14 @@ Three jobs, one file:
 1. **Prove the piece was amplified.** Announce → tag → boost is step 8 of every
    submission. Without a record, a shipped piece can silently skip the free
    engagement (and AAIF's repost/newsletter boost).
-2. **Track the standalone-contribution question.** A *useful* social thread is
-   itself a **qualifying 5-pt contribution** when it delivers real developer
-   value tied to an AAIF project — not just promotion. Each amplification post
-   must be assessed: *does this stand alone as its own 5-pt pulse contribution?*
-   If yes, it earns its own row in the **pulse-contributions table** in
-   `SUBMISSIONS.md` and its own (gated) submission.
+2. **Track the standalone-contribution question.** Every amplification post gets
+   assessed — *does this stand alone as its own 5-pt pulse contribution?* — and
+   the answer **defaults to NO**. A post that only promotes is not an unscored
+   post, it's a rejection (`/aaif-review`, rejection risks →
+   **"Amplification without substance"**). `/amplify` step 3 owns the ladder and
+   the bar; record its verdict here rather than re-deriving one. A YES earns its
+   own row in the **pulse-contributions table** in `SUBMISSIONS.md` and its own
+   (gated) submission.
 3. **Capture engagement.** A lightweight snapshot (reactions / comments /
    reposts) after posting — evidence for the contribution and a signal of what
    lands.
@@ -41,7 +43,7 @@ Three jobs, one file:
 | Tags applied | Platform handle + hashtag actually used (see the tag table below) |
 | Badge included | Whether the ambassador badge was attached (`refs/brand/`) |
 | Engagement snapshot | reactions · comments · reposts, with an as-of date — `TBD` until captured |
-| Stands alone? | `no` (pure announcement) · `YES → pulse row` · `candidate — Zig's call` |
+| Stands alone? | The verdict from `/amplify` step 3 — **defaults to `no`**; `YES → pulse row` is earned, not assumed. Run the ladder there, record it here |
 
 **Tags (from `refs/program/brand-and-social.md`, applied on every post):**
 X/Twitter **@AgenticAIFdn** · LinkedIn **Agentic AI Foundation** · Bluesky
@@ -78,15 +80,14 @@ the folder's records actually prove; everything else stays `TBD` for Zig to fill
 - Tags applied: <@AgenticAIFdn / Agentic AI Foundation / @aaif.io> · #AAIFAmbassador (+#AAAmbassador)
 - Badge included: <yes | no | TBD>
 - Engagement snapshot (as of <YYYY-MM-DD>): reactions <n> · comments <n> · reposts <n>  | TBD
-- Stands alone as its own contribution? <no — announcement | YES, 5-pt pulse thread → SUBMISSIONS.md pulse table | candidate — Zig's call>
+- Stands alone as its own contribution? (verdict from /amplify step 3 — default no) <no — announcement | candidate — Zig's call | YES, 5-pt pulse thread → SUBMISSIONS.md pulse table>
 
 ## Standalone determination
-<Does any post carry enough independent developer value to count as a 5-pt
-social thread on its own (teaches a concept / shows a workflow / shares a real
-lesson tied to an AAIF project), beyond linking the anchor piece? If YES: it
-earns its own row in the SUBMISSIONS.md pulse-contributions table and its own
-gated submission. If it's pure promotion: no standalone credit. Borderline: mark
-`candidate` and let Zig decide.>
+<Record the verdict from /amplify step 3 and why — the default is NO. Name what
+the post carries on its own, or what's missing. Pure promotion is not a 5-pt
+floor; it's a rejection (see /aaif-review, "Amplification without substance"),
+so it is not submitted at all. If YES: its own row in the SUBMISSIONS.md
+pulse-contributions table and its own gated submission.>
 ```
 
 ## See also

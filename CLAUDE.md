@@ -110,8 +110,9 @@ bead = one folder under `submissions/`.
    scheduler/collector — IDs + convention in `.local/private-notes.md`). Close the
    bead. Capture the scorecard/points when AAIF approves it.
 8. **Amplify** — announce per `refs/program/brand-and-social.md` (tag
-   **@AgenticAIFdn**, **#AAIFAmbassador**, badge). A useful thread is itself a
-   5-pt contribution.
+   **@AgenticAIFdn**, **#AAIFAmbassador**, badge). A thread earns its own 5 pts
+   only when it carries a self-contained technical payload — **`/amplify`** runs
+   that verdict (it defaults to NO); a promo-only post is rejected, not scored.
 
 ## Cadence (portfolio, not heroics)
 
