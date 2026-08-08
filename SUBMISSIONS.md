@@ -30,7 +30,8 @@ distinct from the anchor/tentpole ledger above. Sustained, this is the program's
 **largest annual points line** (`refs/program/strategy-top-ambassador.md`).
 
 Each row starts life in a submission's `AMPLIFY.md` (drafted by `/amplify`), where
-the "does this stand alone as its own 5-pt contribution?" call is made. **Posting is
+the "does this stand alone as its own 5-pt contribution?" call is made — that verdict
+**defaults to no**, and a promo-only post is rejected rather than scored. **Posting is
 Zig's, never automated**; the public URL is the live thread/interaction permalink.
 
 | Month | Type | Summary | Project(s) | Public URL | Status | Points |
