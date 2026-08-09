@@ -6,11 +6,17 @@
 # so pulling from the VPS is the reliable direction. It also means results land
 # where the agent can see them (ledger + notification + a bead on failure).
 #
-# Per-class policy (decided 2026-07-25):
+# Per-class policy (decided 2026-07-25; tailscale added 2026-08-09, dotfiles-6384):
 #   agentgateway  auto-apply new STABLE immediately; prereleases notify-only
 #   ollama        same
 #   uv tools      auto-upgrade (isolated venvs, trivially reversible)
-#   brew          auto-upgrade all, in the spirit of ~/dotfiles/ubuntu.upgrade.sh
+#   brew          auto-upgrade all EXCEPT the formulas in BREW_PIN, in the spirit of
+#                 ~/dotfiles/ubuntu.upgrade.sh
+#   tailscale     held out of the blanket brew sweep (BREW_PIN) but upgraded on its
+#                 own, deliberately: unpin -> brew upgrade -> re-pin -> verify the
+#                 tailnet backend is still Running before declaring success. See
+#                 _update_tailscale — this is the one component whose own health
+#                 gates the loop's ability to reach the host at all next time.
 #
 # The two service updaters carry their own staged/validated/auto-rollback gates —
 # this script only decides WHEN to call them and reports what happened. It never
@@ -189,6 +195,57 @@ _update_uv_tools() {
   fi
 }
 
+# tailscale is deliberately excluded from the blanket `brew upgrade` sweep below
+# (BREW_PIN) — this loop reaches the gateway host over the tailnet, so a botched
+# unattended tailscaled upgrade could sever the only remote path back in. Give it
+# its own guarded step instead of leaving it permanently stuck: unpin, upgrade,
+# re-pin (so the blanket sweep still leaves it alone), then verify the tailnet
+# backend actually came back before calling it a success.
+_update_tailscale() {
+  local out rc before after status
+  if [ "$CHECK_ONLY" -eq 1 ]; then
+    out="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_ENV_HINTS=1; brew list --versions tailscale; brew outdated tailscale' 2>&1)"
+    _log "  tailscale (check): $(printf '%s' "$out" | tr '\n' ' ')"
+    _ledger tailscale check ok ""
+    return 0
+  fi
+
+  before="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH; tailscale version 2>/dev/null | head -1' 2>&1)"
+
+  _log "  tailscale: upgrading (unpin -> brew upgrade -> re-pin)"
+  out="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH HOMEBREW_NO_ENV_HINTS=1
+    brew unpin tailscale 2>/dev/null
+    brew upgrade tailscale; rc=$?
+    brew pin tailscale 2>/dev/null
+    exit $rc' 2>&1)"; rc=$?
+  _log "$(printf '%s' "$out" | sed 's/^/      /')"
+
+  if [ "$rc" -ne 0 ]; then
+    _ledger tailscale upgrade error "rc=${rc} (was ${before})"
+    _add "tailscale upgrade failed (rc=${rc}) — still pinned at ${before}, needs a human"
+    NEEDS_HUMAN=1
+    return 1
+  fi
+
+  # The whole loop rides on this: verify the tailnet backend is Running before
+  # declaring victory, not just that `brew upgrade` exited 0.
+  status="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH; tailscale status --json 2>/dev/null | python3 -c "import json,sys
+try: print(json.load(sys.stdin).get(\"BackendState\",\"\"))
+except Exception: print(\"\")"' 2>&1)"
+  after="$(_rsh 'export PATH=/opt/homebrew/bin:$PATH; tailscale version 2>/dev/null | head -1' 2>&1)"
+
+  if [ "$status" = "Running" ]; then
+    _log "  tailscale: OK now ${after} (tailnet backend Running)"
+    _ledger tailscale upgrade ok "${before} -> ${after}"
+    _add "tailscale: upgraded ${before} -> ${after}, tailnet healthy"
+  else
+    _log "  tailscale: WARNING backend state '${status}' after upgrade (was ${before}, now ${after})"
+    _ledger tailscale upgrade degraded "${before} -> ${after} state=${status}"
+    _add "tailscale upgraded to ${after} but tailnet backend state is '${status}' — needs a human, may have dropped the fleet's remote path"
+    NEEDS_HUMAN=1
+  fi
+}
+
 _update_brew() {
   local out rc
   if [ "$CHECK_ONLY" -eq 1 ]; then
@@ -269,6 +326,7 @@ fi
 if [ "$DO_PACKAGES" -eq 1 ]; then
   _log "-- packages --"
   _update_uv_tools
+  _update_tailscale
   _update_brew
 fi
 

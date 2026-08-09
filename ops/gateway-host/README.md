@@ -70,13 +70,19 @@ per IP and every scheduler in the world fires on :00.
 | agentgateway | auto-apply new **stable** immediately; prereleases surfaced, never installed |
 | ollama | same |
 | uv tools | auto-upgrade (isolated venvs, trivially reversible); the phoenix service is verified afterward |
-| brew | auto-upgrade **all**, then verify no service came back in `error` |
+| tailscale | auto-upgrade via its own guarded step (unpin → `brew upgrade tailscale` → re-pin), then verify the tailnet backend is `Running` before declaring success |
+| brew | auto-upgrade **everything else**, then verify no service came back in `error` |
 
-**`tailscale` is pinned** (`BREW_PIN`, default `tailscale`). This loop reaches the gateway
-host over the tailnet, and the gateway's own LLM provider targets ollama by tailnet
-address — so a botched unattended `tailscaled` upgrade at 04:17 would take the fleet's
-gateway offline *and* remove the only remote way to fix it. Reversible with
-`brew unpin tailscale` (or `BREW_PIN=""`), and visible in `brew list --pinned`.
+**`tailscale` is pinned from the blanket brew sweep** (`BREW_PIN`, default `tailscale`)
+but is no longer stuck there — added 2026-08-09 (`dotfiles-6384`). This loop reaches the
+gateway host over the tailnet, and the gateway's own LLM provider targets ollama by
+tailnet address, so a botched unattended `tailscaled` upgrade at 04:17 could take the
+fleet's gateway offline *and* remove the only remote way to fix it. `_update_tailscale`
+handles it deliberately instead: unpin, `brew upgrade tailscale`, re-pin immediately (so
+the blanket sweep still leaves it alone), then check `tailscale status --json
+.BackendState == Running` before calling it healthy — a degraded backend files the same
+P1-bead escalation as any other failure. `BREW_PIN=""` still disables the pin
+entirely if you'd rather it ride the blanket sweep; `brew list --pinned` shows current state.
 
 Reporting: a JSONL ledger plus a log at `~/.local/state/host-update/`. A clean run is
 **silent** — no notification. Anything needing a human becomes a **P1 bead** so it can't
