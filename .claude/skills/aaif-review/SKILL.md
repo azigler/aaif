@@ -45,7 +45,7 @@ never by underselling a piece that genuinely is the higher type.
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
 | `podcast_guest` | 20 | a podcast appearance |
-| `meetup_talk` | **25** | a talk given at a meetup |
+| `meetup_talk` | **25** (⚠️ one 20 observed) | a talk given at a meetup — W33 saw a single **20** with a *named* project and high confidence, so the dock wasn't the project tie and isn't explained by virtual delivery (a webinar scored 25 the same month). Unexplained, n=1, provisional — predict 25 but flag the risk on community-event sessions |
 | `livestream` | 25 | a live technical stream |
 | `conference_talk` | 30 | a talk at a conference (verifiable session page) |
 | `organizing_meetup` | **35** | organizing an event (docked if not tied to a specific AAIF project) |
@@ -71,6 +71,17 @@ never by underselling a piece that genuinely is the higher type.
 > 25 → 35 and `meetup_talk` 20 → 25**, and observed **`podcast_guest` = 20** on first sighting
 > (note the slug is `podcast_guest`, *not* `podcast` — an earlier version of this table had it
 > wrong). W32 re-tabulated the full corpus and **every rung above held** — no re-base.
+> **W33 re-tabulated all 301 and every rung held again** — `workshop` solidified (n=1 → 3),
+> the `project_contribution` 40-rung reached n=4, and its 20/25 rungs are the twin modes of
+> the whole program (33 and 32 observations). `community_help` is still **never observed**
+> (0 of 301). One new provisional cell: a single `meetup_talk` at **20** (see the table row).
+
+> ✅ **Co-presenter full credit (W33, n=2 pairs).** Two ambassadors who co-present the
+> **same session** (same public session URL) each score the **full rung** — observed twice
+> in one week at `conference_talk` 30 apiece, no split, both high-confidence. A co-presented
+> talk is a legitimate full-value contribution for each presenter. Related but distinct: the
+> same talk delivered at **different venues** (different session pages) also scores as
+> separate submissions per venue.
 
 ### The project tie decides the rung — on *any* type (W31 blog / W32 generalized)
 
@@ -193,6 +204,15 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   spine, differentiate them explicitly in the Notes — or submit only one.
 - **Pre-start artifact** — delivered/published before your start date (2026-06-23). Applies
   even to high-value, fully-verifiable work, and *regardless of leaderboard month*.
+  **Sharpened W33:** *updating* a pre-start artifact does **not** re-qualify it — a course
+  published pre-start was rejected with *"later presentation updates do not establish a new
+  post-start course contribution."* The reviewer checks the **repo history** for the true
+  publication date (and, notably, also verified the license and counted the lessons). The
+  eligible move is a genuinely **new** post-start artifact, not a refresh of an old one.
+- **Evidence inconsistency** (W33) — the reviewer genuinely reads the whole artifact (all
+  slides of a 28-slide deck) and cross-checks it against the submission: a deck labeled for
+  a *different event* than the submitted session was called out in a rejection. Make sure
+  the artifact, the URL, and the Notes all describe the same thing.
 - **Meta / self-referential** — tooling *about* the ambassador program rather than a
   contribution *to* an AAIF project.
 - **Not a scoreable type** — a format the reviewer can't map to the point table.
