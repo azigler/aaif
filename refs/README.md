@@ -37,7 +37,8 @@ notes, not AAIF's documents verbatim.
 > the authoritative source PDFs live in `.local/program-pdfs/`, and the Asana
 > planning-hub IDs + private notes in `.local/private-notes.md`. Consult it for
 > grounding; never copy its contents into tracked files. (Harness rule in
-> `../CLAUDE.md`.) The project briefs (`projects/`) were researched 2026-06-24
-against the live repos via web fetch + the GitHub API; each carries its own
-sources + accuracy flags. **Re-verify before publishing** — these projects move
-fast.
+> `../CLAUDE.md`.)
+
+The project briefs (`projects/`) were researched 2026-06-24 against the live
+repos via web fetch + the GitHub API; each carries its own sources + accuracy
+flags. **Re-verify before publishing** — these projects move fast.

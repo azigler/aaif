@@ -190,6 +190,8 @@ aaif/
 │   ├── aaif-overview.md
 │   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the /agentgateway skill
 │   ├── research-paper-pipeline.md  ← the venue-neutral research-paper/whitepaper cookbook (the /research-paper skill's deep reference)
+│   ├── pulse-ledger.jsonl  ← append-only record of autonomous loop ticks (e.g. aaif-radar) + their proof
+│   ├── session-handoff.md  ← the rotating handoff note written by /offboard
 │   ├── program/          ← program mechanics, strategy, brand/social, ship gates, voice (distilled; source PDFs stay in .local/)
 │   ├── projects/         ← per-project contribution-surface briefs
 │   └── brand/            ← badge kit + Credly badge + header
