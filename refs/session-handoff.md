@@ -1,98 +1,78 @@
-# Session handoff — 2026-08-08 213fad17
+# Session handoff — 2026-08-16 · 850d8a91 (The Envoy)
 
 ## State at offboard
-- Current branch: `main`
-- Last commit: `b7efbee` :memo: submissions: default the pulse-table standalone verdict to no
-- Open beads: 25; in-progress: 4
-- In-flight subagents: none (both merged and cleaned up)
-- Dirty files: none — tree clean
-- Markers: `.offboard-pending` cleared
-- Worktrees: only `/home/ubuntu/aaif` on main; both agent worktrees removed, branches deleted
+- Branch `main`, clean after this commit; all pushed (aaif → a5f042b+, az3 → 61b5bd8)
+- In-flight subagents: none (all merged/cleaned); no live background tasks
+- **STAYS RUNNING: systemd user unit `aaif-stage-review`** — serves az3's built
+  client dir on the tailnet (http://zig-computer.tailfb4637.ts.net:18271/).
+  Zig's review page: `/feed/meet-your-top-spender/`. Keep it up until his
+  review lands; stop with `systemctl --user stop aaif-stage-review` after.
+- Open work: **`aaif-qex` is the continuation bead — start there.** It indexes
+  everything (files to read, az3 beads, the acceptance path to publish).
 
-## What happened this session (bullets)
+## What happened (the short version of a very long day)
+1. **W33 radar** ran (report `.local/radar/2026-W33.md`, note bead aaif-7mq,
+   3 grading refinements folded into /aaif-review; co-presenter full credit;
+   context-budget whitespace breached → anchor urgency).
+2. **Triage + housekeeping**: aaif-983 closed (July thread APPROVED, 5pt,
+   recognition 2026-08 — the floor is on the board), aaif-5cv/ntx closed,
+   drift-lint merged; then Zig's aaif-7gs rulings executed (4 closed, 8
+   deferred to Sept incl. the o11y gist arc, anchor rescoped).
+3. **The August anchor (aaif-51g) went through EIGHT drafts.** The surviving
+   shape: "Meet your top spender" — per-seat token receipts via agentgateway,
+   built on Yegge's seats + model welfare, tokenmaxxing/minimizing referenced
+   via Zig's own Dev Interrupted piece, mechanics-and-benefits middle, "four
+   readers of one number" arrival (operator / seat / machinery / the
+   un-editable record), beads_rust-credited beads intro, close on the join
+   teaser + "who else gets to see it". Register learnings are DURABLE:
+   memory `feedback_positive_voice_register` + FEEDBACK-ZIG-v2.md (the
+   whole correction history — READ IT before writing a word in his voice).
+4. **Expert audits** (consul + dotfiles seats, via SendMessage) fixed real
+   errors — seats ALREADY read the shared meter (wake + band crossings);
+   the genuine build is the seat's OWN ledger line; machinery-as-reader;
+   bead-id header specced as dotfiles-n1om (per-task cost, "achievable
+   pre-publish").
+5. **The preview loop** (Zig's standing format, notated in /camp-publish
+   Step 2.5): lexicon MDX note → az3 local build (SKIP_CAMP_FETCH=1) → rm
+   from in/camp → serve out client dir → screenshot-verify → alert desk.
+6. **az3 MDX componentry shipped** (bd-xatl, commits 0747503→61b5bd8):
+   renderBodyHtml strips mdx nodes (graceful static fallback),
+   MdxArticleBody island (gated on MDX tag), and **BeadGraph** — the organic
+   force-directed bead pool (physics + calm-on-hover + world-sleep + drag,
+   bidirectional builds-on/unblocks, cost-READY rows awaiting dotfiles-n1om).
+   Playwright-verified. Header image locked (tree-rings variant C, /randomize
+   provenance in images/RANDOMIZE.md; style skill /aaif-line-art created).
 
-**Ran `/aaif-radar` for 2026-W32** (interactive), then acted on what it found.
-
-- **The scan.** 283 submission issues (max #492, was #403), 241 scorecards (was 198).
-  Full re-fetch + full re-tabulation of all 241, per the W31 meta-lesson — never diff the
-  prior ledger. Private report at `.local/radar/2026-W32.md`; `.local/radar/state.json`
-  updated; participant-free note bead `aaif-ecw` filed and closed; ledger row written to
-  `refs/pulse-ledger.jsonl` (ts `22:08:19Z`).
-- **Volume:** the W31 surge broke — 45 new submissions vs 76 (−41%). That spike was a
-  July-deadline artifact, not a new baseline. Review side is not backlogged.
-- **The structural finding:** `project_contribution` took 42% of the week's scored volume
-  and has nearly tripled in two weeks (20 → 44 → 62). The program's growth engine has
-  shifted from writing to **code**. goose surged +17, almost entirely an upstream PR stream
-  submitted as individual 20–25 pt items — the clearest repeatable high-cadence lane.
-  `agentgateway` grew only +4 after last week's +72%, so W31's "no longer under-served" call
-  was premature at the *trend* level; still the thinnest named lane at 12%.
-- **Six grading refinements, all folded back the same run** (the fold-back rule) into BOTH
-  `.local/research/aaif-review-system.md` AND the public `.claude/skills/aaif-review/SKILL.md`:
-  1. `workshop` = 35 — CONFIRMED on first observation (was provisional)
-  2. `livestream` = 25 — CONFIRMED on first observation (was provisional)
-  3. `community_help` is now the ONLY type never observed scored — 0 of 241
-  4. **Project-tie docking is CROSS-TYPE, not a `blog_post` rule.** An `organizing_meetup`
-     scored the docked rung (25 not 35) because its public page didn't substantiate a named
-     AAIF project (`projects: ["other"]`). The docking happens at type-rung selection, NOT
-     via `scoring.adjustments`. Generalized ladder for any type: named project + concrete
-     technical detail → full rung; general-AAIF-only → docked rung; no reference → rejected.
-  5. **NEW REJECTION RULE — "amplification without substance."** A social post promoting an
-     event/release with "no technical explanation, practical guidance, or another
-     developer-useful resource" is rejected outright, no scorecard.
-  6. `project_contribution` 40-rung n=1 → n=3 — no longer a fluke
-- **No re-base this week.** Every previously observed rung held at full re-tabulation.
-  Stability: adjustments still exactly 1 of 241 (unchanged since W28 while the corpus more
-  than doubled); `human_review_required` **0 of 241** — the reviewer has never escalated.
-- **Acted on refinement #5 immediately** (Zig's call), via two worktree subagents, both
-  merged with the SHA-moved + ancestor assertions and cleaned up:
-  - `aaif-yxf` (closed, merged `d8437ed`) — `/amplify`'s standalone-5pt verdict now
-    **defaults to NO**, names the rejection outright ("it's a rejection on the record",
-    not a 5-pt floor), states the bar positively ("a reader who never clicks through still
-    learned a technical thing"), gives a concrete upgrade path, and cross-references
-    `/aaif-review` rather than restating it.
-  - `aaif-onv` (closed, merged `cd6ade9` + follow-on `b7efbee`) — de-duplicated the stale
-    looser bar from `CLAUDE.md` step 8, the AMPLIFY template, and `SUBMISSIONS.md`.
-
-## Decisions made this session (autonomous decide-and-proceed calls)
-- None this session. (Harvest receipt: 0 hits, 3 scanned open+closed, cutoff
-  2026-08-01T23:19 which *precedes* session start 2026-08-08T22:00 — a genuine zero, no
-  warnings.) The two judgment calls that came up were Zig's, made live via AskUserQuestion:
-  skip the `community_help` lane, and clear `aaif-onv` before touching the August anchor.
-- One sub-threshold call worth a sentence, not a bead: when the `aaif-onv` subagent flagged
-  a third stale copy in `SUBMISSIONS.md` and recommended a bead, I fixed it inline instead —
-  it was a single clause in the most public file, and a bead would have cost more than the edit.
-
-## Proposed practices — where each one landed (Step 2.6)
-- **Skip the `community_help` lane** (Zig's call) → written into
-  `.local/radar/state.json` under a new `standing_decisions` key, which the radar reads at
-  the start of every run. Future scans will keep counting its observations for calibration
-  but will NOT re-surface it as a recommended opportunity. Not left in this note — a
-  standing instruction in a per-session snapshot is homeless by definition.
-
-## What's next
-1. **The August anchor — `aaif-51g`** (with `aaif-omn` spec and `aaif-3v6` critic loop under
-   it). This is the live work and it now has a hard deadline. Radar confirmed the topic lane
-   is clean: across all 283 submission titles, `toolset` / `tool count` / `tool bloat` = 0 and
-   `context window` / `context rot` = 0; autonomy = 2, neither on the inverted-U framing. An
-   uncrowded angle inside the most crowded project (MCP, 47%).
-2. Everything else in `br ready` is behind that until the anchor ships.
+## What's next (aaif-qex owns the list)
+- Build az3 **bd-nyub** (SeatSpend organic viz — seats as floating circles
+  sized by tokens, hover/click; data + privacy mapping in DATA.md), embed as
+  v9 ABOVE the beads section; fold **bd-dszm** (closing seat per bead);
+  **bd-dwv8** is the future combined component (beads nested in seat circles).
+- Zig's pending rulings: title / appendix keep-cut / publish date; imagery
+  DONE. Submit gate 8/24-25 (recognition cliff 8/26-28).
+- az3 skill-encoding of the MDX pattern awaits Zig's explicit word.
 
 ## Warnings / watch-outs
-- **⏰ The anchor submit-by is ~Aug 26–28, and it is a real cliff.** `recognition_month` is
-  the **approval** month, not the artifact month — re-confirmed hard this week by 48
-  August-recognition scorecards already existing on Aug 8. Submitting Aug 29–31 lands the
-  points on *September's* leaderboard. Budget ≥3 days of review buffer.
-- **`#404` already scored** `social_thread` 5, high confidence, recognition 2026-08. The
-  August floor is technically on the board — but at 5 pts it is a pulse, not the anchor.
-  Do not let that reads-as-covered feeling relax the anchor deadline.
-- **The `/amplify` change bites the anchor's own step 8.** When the anchor ships, its
-  announcement thread will now default to NO on the standalone-5pt verdict. That is correct
-  and intended — to earn the extra 5 pts the thread must carry a self-contained technical
-  payload, not a teaser. Plan the thread as its own artifact or skip submitting it.
-- **Calibration hygiene stands.** Scorecards are retroactively re-based in place, so the
-  radar must keep doing a full re-fetch + full re-tabulation every week. Never "optimize" it
-  into a ledger diff. This week also showed the rejection *count* re-basing: 32 rejections
-  now sit at/below the old watermark vs 31 recorded in W31, undisambiguated.
-- `/aaif-review`'s conformance checklist is now measurably load-bearing: `human_review_required`
-  is 0 across all 241 scorecards, so a submission that *forced* human review would be
-  conspicuous, not routine.
+- **⛔ Never touch AAIF surfaces without Zig** — submit gate is absolute.
+- **Voice**: /zig-voice false-passes; generate FROM the positive register
+  (memory + FEEDBACK file). No epigrams (≤1), no comparisons with Yegge, no
+  diary/delight framing, mechanics-and-benefits, markdown-native.
+- **Imagery**: never frontload, never the obvious literalization; /aaif-line-art
+  is the lane skill. Zig picks compositions.
+- **Privacy**: DATA.md carries the seat-name mapping; T7 grep pattern in
+  SPEC.md must pass on anything staged; pre-approval assets NEVER on the
+  public CDN (tailnet unit only).
+- **az3 hygiene**: nothing left in in/camp (verified); out/ carries preview
+  artifacts the nightly build regenerates; the `refs/now-agent-gateway-cache.json`
+  modification in az3 is ANOTHER WRITER'S — never touch/commit it.
+- **Headless-pointer caveat**: BeadGraph's calm-on-hover has two triggers but
+  headless Playwright never fires enter/move — test clicks with force:true;
+  Zig judges the feel on a real mouse.
+- **Desk/mail**: the seneschal holds pending-review state; alert it via
+  `socket-registry.sh spool seneschal` (one-bell rule: no direct push unless
+  no ack ~15min). Expert seats reachable via SendMessage (consul=demesne,
+  works=dotfiles sessions) — both already know this work.
+
+## Decisions harvested
+- aaif-v5k (open): orchestrator drafts voice work inline — carried into the
+  article's own bead-pool data as a story node; keep open until the piece ships.
