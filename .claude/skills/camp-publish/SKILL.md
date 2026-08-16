@@ -91,7 +91,33 @@ A bad note **fails the whole www build and skips the deploy**, so gate on two ch
    `SKIP_CAMP_FETCH=1` stops fetch:camp from clobbering the local note; `in/`+`out/` are gitignored, so
    this has no lasting/tracked effect (the real 8pm fetch re-pulls from the vault).
 
-## Step 3 — Land it in the vault (before the build window)
+## Step 2.5 — The PREVIEW LOOP (tailnet review page, Zig's standing format — 2026-08-16)
+
+**Zig reviews drafts as the rendered az3 page, never raw markdown or a hand-built HTML
+page.** ("Make the artifact you'll actually deliver.") The loop, verified end-to-end:
+
+1. Transform the working draft into a lexicon-valid note (Step 1 shape). Placeholder
+   `published:` date + working-title are fine for preview; note them in the review message.
+2. MDX-compile check (Step 2.1), then the safe local build (Step 2.2 — `SKIP_CAMP_FETCH=1`,
+   no vault touch, no deploy; `in/` + `out/` are gitignored so az3's normal build is
+   untouched).
+3. **Remove the note from `in/camp/` immediately after the build** — the 8pm timer's own
+   fetch would clobber it anyway, but never leave a draft where a build might see it.
+4. Serve the built site on the tailnet-only review port: a systemd user unit
+   (`aaif-stage-review`) running `python3 -m http.server 18271 --bind $(tailscale ip -4)`
+   with working dir `~/andrewzigler3/out/www-andrewzigler-com/client`, and hand Zig the
+   plain URL `http://zig-computer.tailfb4637.ts.net:18271/feed/<slug>/`. Never bind
+   0.0.0.0 (this box carries the public edge); never put pre-approval content on the
+   public CDN. Verify with a headless-Chrome screenshot before alerting.
+5. On re-drafts, repeat 1-4 (same unit restarts with the same port). Tear the unit down
+   after Zig signs off (`systemctl --user stop aaif-stage-review`).
+
+Gotchas paid for while building this loop: `stage.sh`-style nohup serving leaves orphan
+python children whose pidfile lies (a dead subshell + a live child = false "not-running",
+then a port-occupied systemd unit fails while the stale server answers your verification
+curl) — use the supervised unit from the start. And a review page hand-built as custom
+HTML/plain markdown was rejected twice: the deliverable's own pipeline is the only
+honest preview.
 Write `PUBLISH.md` to the vault's `camp/` as `YYYYMMDD <slug>.md` (space after the date; the path has
 spaces → quote it). Exact SSH target + path + command: **`.local/camp-publish-infra.md`**. Then verify
 the landed file's frontmatter + line count over SSH. Land **before 03:00 UTC (8pm PT)** to catch that
