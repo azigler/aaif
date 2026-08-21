@@ -103,6 +103,17 @@ page.** ("Make the artifact you'll actually deliver.") The loop, verified end-to
    untouched).
 3. **Remove the note from `in/camp/` immediately after the build** — the 8pm timer's own
    fetch would clobber it anyway, but never leave a draft where a build might see it.
+   (The build may RENAME the note `.md` → `.mdx` when it carries MDX components —
+   match by slug, not the exact filename you copied in.)
+3.5. **Re-place hand-copied assets after EVERY rebuild** — `out/` is regenerated
+   wholesale, so a hero referenced as `image: "/preview-hero.png"` (a file that exists
+   only hand-copied into `out/…/client/`) is silently deleted by each rebuild and the
+   staged page loses its image (bitten twice: v8 review 8/16, v9 review 8/21). After
+   `vite build`, always:
+   `cp <submission>/images/<locked-hero>.png ~/andrewzigler3/out/www-andrewzigler-com/client/preview-hero.png`
+   then probe it (`curl -s -o /dev/null -w '%{http_code}' <url>/preview-hero.png` → 200).
+   Pre-approval assets stay OFF the public CDN — this local copy is the only sanctioned
+   serving path for preview imagery.
 4. Serve the built site on the tailnet-only review port: a systemd user unit
    (`aaif-stage-review`) running `python3 -m http.server 18271 --bind $(tailscale ip -4)`
    with working dir `~/andrewzigler3/out/www-andrewzigler-com/client`, and hand Zig the
