@@ -114,12 +114,25 @@ page.** ("Make the artifact you'll actually deliver.") The loop, verified end-to
    then probe it (`curl -s -o /dev/null -w '%{http_code}' <url>/preview-hero.png` → 200).
    Pre-approval assets stay OFF the public CDN — this local copy is the only sanctioned
    serving path for preview imagery.
-4. Serve the built site on the tailnet-only review port: a systemd user unit
-   (`aaif-stage-review`) running `python3 -m http.server 18271 --bind $(tailscale ip -4)`
-   with working dir `~/andrewzigler3/out/www-andrewzigler-com/client`, and hand Zig the
-   plain URL `http://zig-computer.tailfb4637.ts.net:18271/feed/<slug>/`. Never bind
-   0.0.0.0 (this box carries the public edge); never put pre-approval content on the
-   public CDN. Verify with a headless-Chrome screenshot before alerting.
+4. **Copy the built client dir to a protected staging path, and serve THAT** —
+   never the live `out/`:
+   ```bash
+   rsync -a --delete ~/andrewzigler3/out/www-andrewzigler-com/client/ ~/.local/share/aaif-stage/client/
+   ```
+   then a systemd user unit (`aaif-stage-review`, transient via `systemd-run --user`
+   — it does NOT survive reboot, recreate after one) running
+   `python3 -m http.server 18271 --bind $(tailscale ip -4)` with working dir
+   `~/.local/share/aaif-stage/client`, and hand Zig the plain URL
+   `http://zig-computer.tailfb4637.ts.net:18271/feed/<slug>/`. Never bind 0.0.0.0
+   (this box carries the public edge); never put pre-approval content on the public
+   CDN (a Zig-PICKED hero is post-approval — CDN is its durable home, see 3.5).
+   Verify with a headless-Chrome screenshot before alerting.
+   **Why the copy is load-bearing (paid for 2026-08-21, twice in one day):** az3's
+   own scheduled pipeline (`npm run build:az` — fetch:camp + clean-target-output +
+   full rebuild + snapshot-now) regenerates `out/` on ITS schedule, so a review
+   page served from live `out/` vanishes mid-review — first the hand-copied hero,
+   then the entire staged page (404 under Zig's cursor). The snapshot copy is
+   immune; refresh it deliberately on each re-stage.
 5. On re-drafts, repeat 1-4 (same unit restarts with the same port). Tear the unit down
    after Zig signs off (`systemctl --user stop aaif-stage-review`).
 
