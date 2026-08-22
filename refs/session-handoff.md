@@ -1,78 +1,89 @@
-# Session handoff — 2026-08-16 · 850d8a91 (The Envoy)
+# Session handoff — 2026-08-21/22 · f673ef33 (The Envoy; resumed mid-day as 245361a8 — see Warnings)
 
 ## State at offboard
-- Branch `main`, clean after this commit; all pushed (aaif → a5f042b+, az3 → 61b5bd8)
-- In-flight subagents: none (all merged/cleaned); no live background tasks
-- **STAYS RUNNING: systemd user unit `aaif-stage-review`** — serves az3's built
-  client dir on the tailnet (http://zig-computer.tailfb4637.ts.net:18271/).
-  Zig's review page: `/feed/meet-your-top-spender/`. Keep it up until his
-  review lands; stop with `systemctl --user stop aaif-stage-review` after.
-- Open work: **`aaif-qex` is the continuation bead — start there.** It indexes
-  everything (files to read, az3 beads, the acceptance path to publish).
+- Branch `main`, all pushed (aaif → 3582fc5+beads, az3 → 3f87ff4, demesne → 3bf3f5e)
+- In-flight subagents: none (5 dispatched today, all returned/merged/reaped); no background tasks
+- **STAYS RUNNING: transient unit `aaif-stage-review`** — serves the SNAPSHOT COPY at
+  `~/.local/share/aaif-stage/client` (NOT live out/ — az3's pipeline regenerates that) on
+  http://zig-computer.tailfb4637.ts.net:18271/ . Transient = does NOT survive reboot; recreate via
+  camp-publish Step 2.5 rev. Stop after Zig signs off.
+- Dirty files: only gitignored submission staging (drafts, PREVIEW, dataset — by design)
 
-## What happened (the short version of a very long day)
-1. **W33 radar** ran (report `.local/radar/2026-W33.md`, note bead aaif-7mq,
-   3 grading refinements folded into /aaif-review; co-presenter full credit;
-   context-budget whitespace breached → anchor urgency).
-2. **Triage + housekeeping**: aaif-983 closed (July thread APPROVED, 5pt,
-   recognition 2026-08 — the floor is on the board), aaif-5cv/ntx closed,
-   drift-lint merged; then Zig's aaif-7gs rulings executed (4 closed, 8
-   deferred to Sept incl. the o11y gist arc, anchor rescoped).
-3. **The August anchor (aaif-51g) went through EIGHT drafts.** The surviving
-   shape: "Meet your top spender" — per-seat token receipts via agentgateway,
-   built on Yegge's seats + model welfare, tokenmaxxing/minimizing referenced
-   via Zig's own Dev Interrupted piece, mechanics-and-benefits middle, "four
-   readers of one number" arrival (operator / seat / machinery / the
-   un-editable record), beads_rust-credited beads intro, close on the join
-   teaser + "who else gets to see it". Register learnings are DURABLE:
-   memory `feedback_positive_voice_register` + FEEDBACK-ZIG-v2.md (the
-   whole correction history — READ IT before writing a word in his voice).
-4. **Expert audits** (consul + dotfiles seats, via SendMessage) fixed real
-   errors — seats ALREADY read the shared meter (wake + band crossings);
-   the genuine build is the seat's OWN ledger line; machinery-as-reader;
-   bead-id header specced as dotfiles-n1om (per-task cost, "achievable
-   pre-publish").
-5. **The preview loop** (Zig's standing format, notated in /camp-publish
-   Step 2.5): lexicon MDX note → az3 local build (SKIP_CAMP_FETCH=1) → rm
-   from in/camp → serve out client dir → screenshot-verify → alert desk.
-6. **az3 MDX componentry shipped** (bd-xatl, commits 0747503→61b5bd8):
-   renderBodyHtml strips mdx nodes (graceful static fallback),
-   MdxArticleBody island (gated on MDX tag), and **BeadGraph** — the organic
-   force-directed bead pool (physics + calm-on-hover + world-sleep + drag,
-   bidirectional builds-on/unblocks, cost-READY rows awaiting dotfiles-n1om).
-   Playwright-verified. Header image locked (tree-rings variant C, /randomize
-   provenance in images/RANDOMIZE.md; style skill /aaif-line-art created).
+## What happened this session (the short version of another very long day)
+1. **A2A intake** (Zig's flag): refs/projects/a2a.md (verified brief) + idea aaif-j3v — headline:
+   agentgateway parses A2A telemetry but has ZERO a2a.* CEL attributes vs ~19 mcp.*.
+2. **Clare Liguori MCP episode SUBMITTED** on Zig's explicit go: aaif/ambassadors#703
+   (auto-label verified), bead aaif-xtx, SUBMISSIONS.md row. Predicted podcast_guest 20,
+   medium confidence (host-vs-guest + vendor-hosted both unobserved in the corpus).
+3. **The anchor went v9 → v11 on Zig's big feedback** (FEEDBACK-ZIG-v3.md = the contract):
+   reframed to his software-factory arc (Lloyd's equation, per-unit denominator; staged title
+   "Every task my fleet completes now carries its price"); synthetic "Brownout" dataset
+   (DATASET-brownout.json, checksummed, 24 beads/8 seats/$491.95/$8,900) walks four widget
+   states ending on the seat-ranking INVERSION; real 37-hour numbers fenced beside the
+   composite (the anti-"fan-fiction" answer); linearb-copy 25-rule two-pass discipline;
+   Fable cold-HN-read + Opus adversarial panel → 5 factual errors + 10-aphorism overrun
+   fixed in v11. Body 1,622w. All gates green; 11/11 staged checks; screenshots eyeballed.
+4. **az3 widgets shipped** (bd-m6fs, merged fa10a55, CLOSED): BeadGraph showCosts
+   (dollars on nodes, seat tint via new shared seat-accent.ts), SeatSpend view=fleet|epic,
+   FULL human copy pass (Zig's "cheesy and sloppy" fix), 5 eye-caught defects fixed,
+   backward-compat proven on the v9 arrays. NOTE: BeadGraph's DOM root class is `bead-pool`.
+5. **Hero durably fixed**: Zig's pick (hero-rings-c-og) on the CDN
+   (https://cdn.zig.computer/aaif/gateway-ledger/hero-rings-c-og.png), front-matter absolute URL.
+6. **Staging clobber class killed**: az3's own scheduled `npm run build:az` regenerates out/
+   (404'd the staged page mid-review) → review server now serves a snapshot copy; camp-publish
+   Step 2.5 hardened twice (2e9bbac, 264c701).
+7. **Hardening beads filed on Zig's direction**: dotfiles-l1dfk (session-level bead attribution —
+   top-level session bead the worked beads attach to).
+8. SPEC.md gained Act I-c (C45–C49, the live-join claims, all verify-commanded); DATA.md v2
+   (bead-id era pull, aaif-dlr closed) landed earlier same session.
 
-## What's next (aaif-qex owns the list)
-- Build az3 **bd-nyub** (SeatSpend organic viz — seats as floating circles
-  sized by tokens, hover/click; data + privacy mapping in DATA.md), embed as
-  v9 ABOVE the beads section; fold **bd-dszm** (closing seat per bead);
-  **bd-dwv8** is the future combined component (beads nested in seat circles).
-- Zig's pending rulings: title / appendix keep-cut / publish date; imagery
-  DONE. Submit gate 8/24-25 (recognition cliff 8/26-28).
-- az3 skill-encoding of the MDX pattern awaits Zig's explicit word.
+## Friction
+- az3 vike dev server unbootable (60s transport timeout; blocks its Playwright suite) → bd-tdb4
+- az3 pipeline regenerates out/ mid-review (page 404 + earlier hero deletion) → promoted into
+  camp-publish Step 2.5 (2e9bbac, 264c701)
+- build renames in/camp notes .md→.mdx (exact-name rm misses) → promoted into Step 2.5 (2e9bbac)
+- bundled skills (/dataviz) have no on-disk path for subagents → filed aaif-2ay
+- resume split the session id (system-prompt vs task-files/marker; marker id has no transcript)
+  → filed dotfiles-tweqa
+- agent's probe vite server outlived it and blocked worktree removal (guard worked; killed
+  orphans, removed clean) → one-off
+- post.sh send takes body POSITIONAL (usage error on --body) → one-off
+
+## Decisions made this session (autonomous decide-and-proceed calls)
+- `aaif-nqf` — v9/v11 numbers policy: one window per claim-set (42% narrative week for
+  prose+viz... superseded in v10+ by the Brownout composite, whose disclosure+fence framing is
+  the successor policy; bead stays as the record of the v9-era call)
+- (`aaif-v5k` remains open from the prior session — voice work drafts inline; still honored:
+  v10/v11 drafted inline)
+
+## Proposed practices — where each one landed
+- Snapshot-copy staging + CDN-for-approved-hero + .mdx-rename note → all written into
+  .claude/skills/camp-publish/SKILL.md Step 2.5/3.5 (commits 2e9bbac, 264c701)
+- Verify-skill-paths-before-dispatch → filed aaif-2ay (dispatch-discipline home TBD there)
+
+## What's next
+- NEXT: Run /aaif-review on DRAFT-v11 (submissions/2026-08-gateway-ledger) and record the scorecard + conformance verdict on aaif-qex BY 2026-08-22T20:00:00Z
+- When Zig rules (title/date/appendix/widget sign-off/composite-framing line): execute the
+  rulings → /camp-publish → GATED submit (never without his explicit go). Gate 8/24–25.
+- Watch #703 (Clare episode) for its scorecard → aaif-xtx AC (capture verdict verbatim,
+  esp. if host-vs-guest or vendor grounds bite) + Asana August log still owed.
+- Whitepaper arc HOLDS on Zig's three answers (is it live now / REPOSITIONING approval /
+  the NO-Fable experiment clause vs burn directive) — my explanation is in-transcript
+  2026-08-21; aaif-51g.2 + REPOSITIONING.md are the ground truth.
 
 ## Warnings / watch-outs
-- **⛔ Never touch AAIF surfaces without Zig** — submit gate is absolute.
-- **Voice**: /zig-voice false-passes; generate FROM the positive register
-  (memory + FEEDBACK file). No epigrams (≤1), no comparisons with Yegge, no
-  diary/delight framing, mechanics-and-benefits, markdown-native.
-- **Imagery**: never frontload, never the obvious literalization; /aaif-line-art
-  is the lane skill. Zig picks compositions.
-- **Privacy**: DATA.md carries the seat-name mapping; T7 grep pattern in
-  SPEC.md must pass on anything staged; pre-approval assets NEVER on the
-  public CDN (tailnet unit only).
-- **az3 hygiene**: nothing left in in/camp (verified); out/ carries preview
-  artifacts the nightly build regenerates; the `refs/now-agent-gateway-cache.json`
-  modification in az3 is ANOTHER WRITER'S — never touch/commit it.
-- **Headless-pointer caveat**: BeadGraph's calm-on-hover has two triggers but
-  headless Playwright never fires enter/move — test clicks with force:true;
-  Zig judges the feel on a real mouse.
-- **Desk/mail**: the seneschal holds pending-review state; alert it via
-  `socket-registry.sh spool seneschal` (one-bell rule: no direct push unless
-  no ack ~15min). Expert seats reachable via SendMessage (consul=demesne,
-  works=dotfiles sessions) — both already know this work.
-
-## Decisions harvested
-- aaif-v5k (open): orchestrator drafts voice work inline — carried into the
-  article's own bead-pool data as a story node; keep open until the piece ships.
+- **⛔ AAIF surfaces gated on Zig** — absolute, every time (#703 was his explicit go).
+- **v11 review sheet** = CHANGES-v11.md; contract = FEEDBACK-ZIG-v3.md; read BOTH plus
+  FEEDBACK-ZIG-v2.md before touching a word of the draft. Aphorism budget: ONE (spent on
+  "birth certificate").
+- **Synthetic/real fencing is load-bearing**: composite numbers never take verified/exact
+  language; real facts ($0.098559, $29.61, 1,381/16, 5.7%) stay in their own paragraphs.
+  DATASET-brownout.json _meta carries the rule.
+- **Session id split** (dotfiles-tweqa): this offboard armed the marker with the
+  system-prompt id f673ef33 (the only id passing both asserts); the resumed half ran as
+  245361a8 (no transcript JSONL). If .offboard-pending reappears naming 245361a8, it is THIS
+  conversation — retro-offboard is satisfied by this note (date-only landing if asserts refuse).
+- **Tap**: linearb 5h window was exhausted late 2026-08-21 and has reset; fable-lane burn was
+  Zig-authorized through Sun 08:00 PT reset. Re-read the wake header, not this note, for live state.
+- Expert seats: works/consul know the gateway side; desk holds the pending-review state
+  (mailed twice today, one-bell rule).
