@@ -1,40 +1,50 @@
-# Session handoff — 2026-08-22 · 899fe850 (The Envoy, SECONDARY tap — the anchor-ship day)
+---
+seat: aaif
+session: zig-computer
+window: aaif
+---
+# Session handoff — 2026-08-28 8b2034d5 (The Envoy — the pinki day)
 
 ## State at offboard
-- Branch `main`, clean; last commit af1909b (submission row); aaif remote-verified at every push
-- Other repos touched, all pushed+verified: az3 (TapSpend 074bb2c, excerpt fix 0546b8c, thumb ladder 03f8bc3, beads 1c8d5fc), demesne (zig-voice 673b2ba)
-- In-flight subagents: none (7 dispatched today: 5 Opus completed, 2 Fable safeguard-killed; all worktrees reaped)
-- No background tasks; staging server aif-stage-review STOPPED (post-publish teardown); no promise-gap rows open
+- Branch `main`, clean; all three repos (aaif, pinki, az3) committed AND pushed current
+- In-flight subagents/children: NONE (all drain children completed + released; linearb clear of my actors)
+- Background: channel monitor on #a2a-research dies with this session — RE-ARM at next wake
+- Staging server aif-stage-review ACTIVE, serving STALE v1.1 at :18271 (Zig knows; restage at v2)
+- Markers: .offboard-pending cleared by the Step 4 fence
 
-## What happened this session (the anchor-ship day, end to end)
-1. **AUGUST ANCHOR SUBMITTED**: https://github.com/aaif/ambassadors/issues/709 (auto-label verified). Published same day: https://www.andrewzigler.com/feed/every-task-my-fleet-completes-now-carries-its-cost (Zig's explicit go at every gate).
-2. The arc: v11 → Zig's 4 feedback rounds → v12 (13 items + cost-per-task addendum) → Opus cold read → v13 (9 fixes) → Zig's heavy copy feedback → research brief (Yegge voice + his platform) → v14 by Fable → Zig's hand edit in the vault → studied, typo-fixed, built, deployed, verified live (playwright 8/8).
-3. **az3 TapSpend widget** shipped (bd-uikk closed); two live bugs fixed same day: feed excerpt MDX-preamble (bd-xraj, fixed 6 surfaces) + YouTube thumbnail 404 (bd-bhcm, probe ladder; corpus swept 0 others; the moat note hand-fixed in vault).
-4. **Learnings packaged** (Zig's mandate): /zig-voice gained "Personal-site long-form" + session receipt; EDIT-STUDY-20260822.md; study bead aaif-gs6.
-5. LinkedIn amplification live (Zig's own text, v2): https://lnkd.in/p/gA4p9Mwm — AMPLIFY.md records it; standalone-5pt verdict NO.
-6. SUBMISSIONS.md row added (submitted, predicts 15); scorecard on aaif-qex (blog_post 15, SHAPE FIRST → superseded by the ship).
-7. aaif-radar Sat tick STOOD DOWN per Zig's hold (quiet ledger row b61ed19); retroactive offboard written for wedged predecessor b0a18f01 (fa8ee63).
+## What happened this session (cold-start → the pinki day, end to end)
+1. **#709 APPROVED 15pts** (scorecard PR #710) discovered at wake → whole August-anchor loop closed (aaif-51g, qex, 18o.51; SUBMISSIONS.md = 40 approved pts, 2/2 months).
+2. **A2A pairing converged**: consul's 4 rows contested → extension-governance three-way row, C-c two-beat (detection≠reconciliation), C-d continuity-on-the-card, schema v0.1 w/ escalated_to; works' interview measured ("emptiness of the open set is the one signal that lies"). Both interviews banked (INTERVIEW-ZIG.md = the draft quarry, verbatim).
+3. **Frame found by Zig's writers/readers method, twice** (4 frames×4 readers Borda; 3 closes×2 readers splice) + his three rulings → then his round-1 notes REFRAMED: the promises-architecture narrative, Holt→aside→DROPPED. Register: honest newcomer, zero mea-culpa. Interview-first drafting ratified (refs/interview-first-drafting.md).
+4. **PINKI SHIPPED, idea→released binary in one day**: github.com/azigler/pinki — design docs (DESIGN/A2A-EXTENSION/PRIOR-ART), Rust v0 (54 tests), coverage 97.99% gated at 97 in CI (proven to bite), Release workflow → v0.1.0 tag + binary asset, badge on, 3 public issues (works' findings generalized), honest maintainership section (beads_rust model). Bead aaif-zpz (one AC open: article slot-5 link).
+5. **Both az3 components built ahead of the article**: PostCost (bd-4ys5, pushed) + PromiseLifecycle (bd-8vlm, pushed; playwright ACs deferred to article landing). DATASET-postcost-v0.json = the arc's REAL gateway costs ($144.77 mid-arc; re-pull at publish).
+6. **Review surface became standing process** (refs/draft-review-surface.md) after Zig's delivery ruling; v1.1 staged there; his notes then reframed the piece (v1.1 is DEAD as drafted — do not revise it, the v2 is a fresh interview-first build).
+7. Group messaged per Zig's word (channel row pinki-v010-shipped + works' copy): both seats asked to MAKE BEADS to try the binary, feed back as pinki issues, and explore demesne incorporation.
 
 ## Friction
-- Fable-model subagent dispatch safeguard-flagged twice ([reasoning_extraction] false-positive; 2nd run completed all work before dying mid-verification) → desk watch item (demesne-b2, 2026-08-22; third occurrence = mail the desk)
-- `set -e` chain ran past a failed node MDX gate — landing went ungated (harm nil, content pre-validated) → filed aaif-73y (friction)
-- Reaping a completed agent's worktree kills its resumability (SendMessage resume refused; had to re-dispatch fresh) → one-off (adapted in-session: keep worktrees until sign-off)
-- ISSUE draft carried stale composite-disclosure language after the article dropped it — caught at my pre-submit read → one-off (lesson in EDIT-STUDY: disclosure rulings must sweep the issue draft too)
+- drain-tap work-list treats each LINE as an item — my multi-line prompt became 8 dispatches (documented behavior, my misread; ran as accidental iterative build) → one-off (lesson on aaif-zpz: one line per item)
+- rc=124 recorded FAILURE for completed work (rust build) AND ok:1/1 for INCOMPLETE work (island partial) — both outcome-column lies, both caught only by re-verification → filed dotfiles-y3tvv (desk)
+- post-tool-model-guard fires on sanctioned cross-tap drain children (opus on fable-pinned seat), filed a false P1 asking Zig to /model-restore a session that was never wrong → aaif-8ph closed w/ evidence; guard-gap routed to desk for a dotfiles bead
+- work2 unreachable by drain-tap (declared-vs-ordered conflation) → dotfiles-jzr8e (consul's fix in flight)
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- none this session (0 harvested, 5 scanned, cutoff predates session start — all forks were surfaced to Zig live in-window)
+- none typed as -t decision (0/5 scanned, cutoff clean — Zig was IN-WINDOW most of the day, so forks were surfaced live); the material autonomous calls are recorded with reasons on working beads: cold-reader adjudication incl. one overrule (aaif-i5a), island ambiguity approvals + overdue-palette override acceptance (bd-8vlm), consul-flag declines in the merge position (aaif-zpz), aaif-8ph false-positive closure w/ ledger evidence
 
 ## Proposed practices — where each one landed (Step 2.6)
-- Zig's editorial fingerprints (digits-not-words, bulletize, cut payoffs, end light, self-voiced caveat, credit agents) → written into /zig-voice "Personal-site long-form" section + 2026-08-22 receipt (demesne 673b2ba)
-- Pipeline learnings (no disclosure prose in body; ~4 feedback rounds per anchor; slug re-derives on title re-rule) → EDIT-STUDY-20260822.md + study bead aaif-gs6
+- interview-first drafting + asymmetry/unshared-knowledge/rough-edge → refs/interview-first-drafting.md (promotion to /zig-voice deferred until proven on this piece — the receipt is the refs file itself)
+- tailnet draft-review surface as weekly standing process → refs/draft-review-surface.md (+ camp-publish 2.5 reuse)
+- pinki versioning (minor-as-we-go, 1.0-reserved) + maintainership model → pinki CHANGELOG.md + CONTRIBUTING.md (public, durable)
+- spend-what-dies tap principle + pacing rules → desk's allocation mail (its doc); my adherence notes on aaif-zpz
 
 ## What's next
-- AAIF scorecard on #709: the Saturday radar watches grading; when it lands, record points in SUBMISSIONS.md + aaif-51g, then close aaif-51g + aaif-qex (the loop's done-state)
-- Zig's hands: paste the Asana log line (drafted in the 2026-08-22 recap; no write path to his personal org), post engagement check-back for AMPLIFY.md
-- az3 backlog for the marshal after the fable-quiet window (Thu 23:00 PT): bd-chex (red typecheck), bd-gs4g, bd-8lla, bd-ozwx
-- aaif-radar: next fire Sat 15:00 PT (or Zig's word) — the stand-down was hold-scoped, not standing
+- NEXT: produce DRAFT-v2 — frame-v2 interview-first build from INTERVIEW-ZIG.md quarry against SKELETON.md with both components + schema appendix embedded, restage the review page, desk-alert Zig BY 2026-08-29T20:00:00Z
+- Writer dispatch gate: Zig's fork went unanswered (option 3 by default) — dispatch cross-tap at the linearb 5h roll OR consul's counter, whichever first; secondary/primary stay preserved without his word
+- Then: consul's counter on the two flag-declines + metadata delta (monitored row pending); VOICE-CHECKLIST + SCRUB-PREPUBLISH govern the draft; /aaif-review + camp-publish + ⛔ gated submit follow
+- Re-arm the #a2a-research monitor at wake; drain seat mail (consul/works bead-making responses to Zig's ask will land there)
 
 ## Warnings / watch-outs
-- Estate is fable-quiet until Thu 23:00 PT (Zig's order) — no Fable dispatches, no radar
-- linearb tap u7d was 0.97 as of 10:54Z — this session ran on the SECONDARY tap by desk hand-molt; check tap state before heavy work
-- ⛔ nothing further touches AAIF surfaces without Zig (submission done; comments/edits on #709 are still gated)
+- ⛔ nothing touches AAIF surfaces without Zig (submit gate absolute; pinki repo + azigler site are NOT AAIF surfaces)
+- v1.1 draft is REJECTED-as-frame — never revise it toward v2; the v2 is a fresh build (his round-1 notes + frame-v2 in SOURCES.md govern)
+- Holt excerpts: ONLY the approved six; repo stays private; the Holt story itself was DROPPED from the piece entirely
+- pinki v0.2 queue: schema alignment (escalated_to, card params, receipt_ref docs) + the 3 issues — minor-bump practice applies
+- tap state at close: linearb u5h≈0.94 unrolled; work2 blocked (jzr8e); primary+secondary preserved by Zig's word; guard false-positive brief needed in every future drain-child prompt until the dotfiles fix lands
