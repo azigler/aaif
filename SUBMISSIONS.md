@@ -14,7 +14,7 @@ The substantial pieces: blogs, tutorials, videos, talks, project PRs.
 
 | Month | Title | Format | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
-| 2026-08 | Every task my fleet completes now carries its cost | blog | agentgateway | https://www.andrewzigler.com/feed/every-task-my-fleet-completes-now-carries-its-cost | submitted — https://github.com/aaif/ambassadors/issues/709 | (pending; blog_post predicts 15) |
+| 2026-08 | Every task my fleet completes now carries its cost | blog | agentgateway | https://www.andrewzigler.com/feed/every-task-my-fleet-completes-now-carries-its-cost | approved — https://github.com/aaif/ambassadors/issues/709 | 15 (approved 2026-08, `blog_post`, high confidence) |
 | 2026-08 | Agent, skill, or MCP? Which to use and when — with Clare Liguori (AWS, core MCP maintainer) | podcast episode | MCP | https://linearb.io/dev-interrupted/podcast/aws-clare-liguori-agent-skill-mcp-architecture | submitted — https://github.com/aaif/ambassadors/issues/703 | (pending; podcast_guest predicts 20) |
 | 2026-07 | If you give a Goose an MCP server | tutorial | agentgateway · goose · MCP | https://www.andrewzigler.com/feed/if-you-give-a-goose-an-mcp-server | approved | 20 |
 
@@ -49,12 +49,12 @@ Row template (copy when a standalone thread / community-help interaction ships):
 
 | Metric | Value |
 |---|---|
-| Contributions shipped (ledger) | 1 |
+| Contributions shipped (ledger) | 2 |
 | Pulse contributions logged | 1 |
-| Months with ≥1 contribution | 1 |
-| Approved points — ledger | 20 |
+| Months with ≥1 contribution | 2 |
+| Approved points — ledger | 35 |
 | Approved points — pulse | 0 |
-| Approved points (scorecard total) | 20 |
+| Approved points (scorecard total) | 40 |
 
 _Updated as submissions are approved. The AAIF scoreboard is the source of truth
 for official points; this table mirrors it for the portfolio._
