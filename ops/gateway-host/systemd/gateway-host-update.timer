@@ -5,7 +5,7 @@ Documentation=https://github.com/azigler/aaif/blob/main/ops/gateway-host/README.
 [Timer]
 # Daily at 04:17 local. Off the :00/:30 marks on purpose — every scheduler in the
 # world fires on the hour, and the GitHub releases API is rate-limited per IP.
-OnCalendar=*-*-* 04:17:00
+OnCalendar=*-*-* 21:17:00 America/Los_Angeles
 # The gateway host is a home Mac that may be asleep at 04:17; catch up on next boot
 # rather than silently skipping a day.
 Persistent=true
