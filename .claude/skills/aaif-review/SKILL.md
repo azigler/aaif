@@ -45,7 +45,7 @@ never by underselling a piece that genuinely is the higher type.
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
 | `podcast_guest` | 20 | a podcast appearance |
-| `meetup_talk` | **25** (⚠️ one 20 observed) | a talk given at a meetup — W33 saw a single **20** with a *named* project and high confidence, so the dock wasn't the project tie and isn't explained by virtual delivery (a webinar scored 25 the same month). Unexplained, n=1, provisional — predict 25 but flag the risk on community-event sessions |
+| `meetup_talk` | **20 / 25** | a talk given at a meetup — **two live rungs (W35: the 20-rung solidified n=8, alongside n=14 at 25, both active in the same month)**. Observed split: user-group / community-session / casual-online venues land **20**; established meetups and flagship community events land **25**. Predict **20** conservatively for community-event sessions; claim 25 only with strong meetup evidence |
 | `livestream` | 25 | a live technical stream |
 | `conference_talk` | 30 | a talk at a conference (verifiable session page) |
 | `organizing_meetup` | **35** | organizing an event (docked if not tied to a specific AAIF project) |
@@ -171,7 +171,9 @@ means the agent had to make a judgment call — avoid giving it one:
 - Make **authorship** obvious (same handle/byline as `azigler`; link the repo you own).
 - Anchor to **one clear project**, not a scattershot of tags.
 - For `project_contribution`, make the **merge status** obvious (link the merged PR),
-  so it isn't guessing example-vs-upstream.
+  so it isn't guessing example-vs-upstream. **An unmerged PR is rejected, not docked**
+  (W35, observed): *"project contribution submissions need to be merged before they can
+  receive points"* — resubmittable once the maintainers merge it.
 - Say the **type and project explicitly in Notes**.
 
 ## Rejection-risk check (what gets turned away)
@@ -202,6 +204,22 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   must carry its **own thesis and its own defensible contribution**, not be an excerpt,
   recap, or "accessible lead" of an already-submitted artifact. If two pieces share a
   spine, differentiate them explicitly in the Notes — or submit only one.
+- **Duplicate artifact or contribution AREA** (new, W35 — three grades observed in one
+  window): (a) resubmitting the **same artifact** under a new issue → 0 (the reviewer
+  hash-stamps reviewed content and cross-references prior issues); (b) a **different facet
+  of an already-credited artifact** (e.g. the site for a tool whose repo+CLI already
+  scored) → 0 — secondary project references "do not establish a separate contribution";
+  (c) sharpest: a **genuinely new artifact in the same contribution area** as your own
+  earlier-credited work → 0 (*"implements the same underlying contribution already
+  credited"*). ⚠️ **Each submission must claim a NEW contribution area** — a second tool,
+  writeup, or facet in an area you've already been credited for earns nothing.
+- **Unverifiable scope or date → `needs-human-review`** (new, W35 — first occurrence): a
+  deployed artifact whose **source repo is private** and whose only visible date is a
+  "last updated" footer doesn't get rejected — it stalls in a new `needs-human-review`
+  state (no scorecard, staff judgment) because the reviewer can't verify completed scope
+  or post-start timing. Prevention: keep the source public and carry a verifiable launch
+  date. Not a rejection, but treat it as one when predicting: points are indefinitely
+  deferred.
 - **Pre-start artifact** — delivered/published before your start date (2026-06-23). Applies
   even to high-value, fully-verifiable work, and *regardless of leaderboard month*.
   **Sharpened W33:** *updating* a pre-start artifact does **not** re-qualify it — a course
