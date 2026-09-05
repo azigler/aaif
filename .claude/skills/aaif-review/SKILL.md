@@ -91,7 +91,7 @@ A blog post is not automatically 15, and **this is not a blog-post rule.** The t
 | Project tie | Outcome |
 |---|---|
 | Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | **full rung** (e.g. `blog_post` 15) |
-| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5, `organizing_meetup` 25 instead of 35) |
+| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ W36: `organizing_meetup` 25 vs 35 is **not** this dock — a project-tagged 118-attendee meetup scored 25 while a `projects:["other"]` 200-attendee three-talk meetup scored 35; that split tracks event **scale/substance**, not project tie |
 | No AAIF project reference at all | **rejected** — see rejection risks |
 
 W32 confirmed the generalization empirically: an `organizing_meetup` scored **25 instead of
@@ -213,13 +213,27 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   earlier-credited work → 0 (*"implements the same underlying contribution already
   credited"*). ⚠️ **Each submission must claim a NEW contribution area** — a second tool,
   writeup, or facet in an area you've already been credited for earns nothing.
+- **Translation or cross-post of an already-submitted article → 0** (new, W36): *"Cross-posts
+  or translations of the same article count once"* — a second-language version of a credited
+  post scored nothing. Syndication (own site + aaif.io + LinkedIn Pulse) is ONE submission;
+  submit the canonical URL once.
+- **Project mentioned only in passing → 0, in every type** (confirmed W36 across slides, a
+  social reel, and a conference talk): a talk where the project *"appears briefly… as an
+  implementation that was replaced"* is 0, not 30; a reel that *lists* projects among skills
+  is 0. The project must be a **meaningful focus** that helps a developer understand or use it.
 - **Unverifiable scope or date → `needs-human-review`** (new, W35 — first occurrence): a
   deployed artifact whose **source repo is private** and whose only visible date is a
   "last updated" footer doesn't get rejected — it stalls in a new `needs-human-review`
   state (no scorecard, staff judgment) because the reviewer can't verify completed scope
   or post-start timing. Prevention: keep the source public and carry a verifiable launch
   date. Not a rejection, but treat it as one when predicting: points are indefinitely
-  deferred.
+  deferred. **W36 added a second, process-side trigger:** a scorecard PR closed without being
+  merged parks the issue in `needs-human-review` for staff — nothing the submitter can
+  prevent, but it means a "scored" submission is not credited until the scorecard is on main.
+- **Same contribution area as your OWN earlier credit → 0** (W35 rule, n=2 as of W36 — a
+  reimplementation of an already-credited tool in a new repo scored 0). ⚠️ This bears on
+  **our** portfolio: any follow-on to a credited piece must claim a **different area** and
+  say so in the Notes (e.g. audit/forensics vs an already-credited cost-attribution piece).
 - **Pre-start artifact** — delivered/published before your start date (2026-06-23). Applies
   even to high-value, fully-verifiable work, and *regardless of leaderboard month*.
   **Sharpened W33:** *updating* a pre-start artifact does **not** re-qualify it — a course
@@ -365,8 +379,9 @@ that should stay human, and every AAIF-facing action is gated on Zig regardless.
   the table. Classify honestly *upward* too.
 - **Leaning on `project:other` / scattershot tags.** Weak project ties get docked; breadth
   doesn't add points. Anchor to one.
-- **Submitting late in the month.** Recognition month = artifact month; late entries miss
-  that month's leaderboard.
+- **Submitting late in the month.** Recognition month = the month the review is
+  **approved** (W36: measured n=421/422), so a submission approved on the 1st is next
+  month's point. Submit with a ≥3-day buffer before month end.
 - **Publishing before running this.** The value is shaping the artifact *before* it's
   public, while the date/byline/anchor are still editable.
 - **Ever posting to AAIF without Zig.** The submit gate is absolute.
