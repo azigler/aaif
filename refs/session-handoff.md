@@ -3,48 +3,49 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-08-30 6b6267bc
+# Session handoff — 2026-09-05 522054ed
 
 ## State at offboard
-- Current branch: main
-- Last commit: a8a724c :card_file_box: beads: aaif-38g — estate --evidence item landed (works g8uub shipped, both surfaces)
-- Open beads: ~50 (`br ready` owns the live list); in-progress: aaif-omn
-- In-flight subagents: none (session worked inline: draft build, one-line az3 fix, deploy)
-- Dirty files: none (aaif + az3 both pushed current)
-- Markers: `.offboard-pending` cleared
+- Current branch: main (in sync with origin after the fence commit)
+- Last commit before this note: 6fa4e0f (beads: aaif-i5a header render 5 + serial retouched onto the ribbon)
+- Open beads: 51; in-progress: 1 (aaif-omn, unchanged)
+- In-flight subagents: none (both builder worktrees harvested and reaped; 2 foreign locked worktrees remain, not mine)
+- Dirty files: none tracked (the submission folder is gitignored by design)
+- Markers: `.offboard-pending` cleared by the fence
+- Staged review surface: `aaif-stage-review` transient unit still serving tailnet-only on :18271; hero = `images/header-og-f.png`. Tear down after Zig signs off.
 
 ## What happened this session (bullets)
-- **DRAFT-v2 DELIVERED** (the molt-kick's whole point): frame-v2 interview-first build from INTERVIEW-ZIG.md against the ratified outline; both components embedded (PromiseLifecycle §3, PostCost w/ DATASET-postcost-v0 at bottom); schema appendix from pinki's shipped A2A-EXTENSION.md. 2,357 words. Battery clean (banned vocab 0, negative parallelism 0, magic adverbs 0, em-dash 10, privacy grep 0, close final line locked verbatim). File: `submissions/2026-09-a2a-promises/DRAFT-v2.md`; staged MDX kept at `submissions/2026-09-a2a-promises/STAGED-v2.mdx`.
-- **Review page staged + verified**: http://zig-computer.tailfb4637.ts.net:18271/feed/what-my-agents-owe-each-other/ (transient systemd unit `aaif-stage-review` serves `~/.local/share/aaif-stage/client`; unit survives this session). DOM-verified hydrated (150 island elements, working stepper, 0 errors).
-- **Found + fixed a LIVE PRODUCTION REGRESSION**: MdxArticleBody derived its module key from `published` (serializes as ISO datetime) so every MDX article's islands silently degraded to static prose — including published #709 on www.andrewzigler.com. One-line fix (az3 `bd-f05q`, commit 2efca80). Zig then authorized a manual deploy (desk-relayed): ran `./scripts/deploy.sh az`, production DOM-verified fixed. Draft MDX was moved OUT of `in/camp` before the deploy build so the unreviewed article could not ship (verified 404 on prod).
-- **Promise bookkeeping per the desk's two-pass ruling**: promise 1 (produce DRAFT-v2) RESOLVED with evidence; promise 2 declared as its own conditional row (see NEXT below).
-- **ZIG'S PARK RULING (via desk)**: rest for the weekend; he reads DRAFT-v2 when it suits him; notes arrive THROUGH THE DESK; round 3 is expected ("no revise needed" was on his menu and he did not pick it).
-- 6fl4m third-party comment posted (awareness is not a control → guard must be mechanical); g8uub landing recorded on aaif-38g; postsh heads-up + retraction + habit-retirement absorbed (net habit: never end a post.sh call on a bare flag).
+- **W36 radar tick ran** (Sat 15:00 PT timer): 45 new subs, +35 scorecards (Aug closed at 208, Sept opened at 21); a2a tags 5→12 in one week, the deep task-lifecycle piece landed; MCP 7-28 explainers saturated; social_thread flat a third window. Private report `.local/radar/2026-W36.md`, state.json rewritten, participant-free note bead aaif-t3a (closed), ledger row committed, grading drift folded back to the public `/aaif-review` SKILL.md same run (recognition=approval month n=421/422 — a stale contradiction fixed; translation/cross-post counts once; mention-only → 0 in every type; needs-human-review process trigger; organizing_meetup 25-rung tracks event scale not project tie; same-area dedup n=2).
+- **Routing**: W36 sharpened W35's open P1 aaif-1oh rather than filing a second P1 (decision aaif-66v, closed). Desk put both calls to Zig; both RULED: (1) aaif-i5a — "Foreground the extensions axis"; (2) o11y gist — NOT folded; qualifies on an explicit AREA claim; Zig accepted the full recommendation: gist = governance/authorization (tutorial 20), field-research = its own blog_post (15), audit stays with aaif-omn (15), cost = one link to #709. Recorded on aaif-1oh (AC updated) and 18o.28. **Park lifted for i5a ONLY**; gist/field-research/51g stay parked until Mon 2026-09-07.
+- **aaif-i5a DRAFT-v3 re-lead shipped and staged**: Opus worktree builder retitled ("My agents' promises ride in 1 metadata key", runners-up in TITLE-ROUND.md) and re-led on the extensions axis; new H2 "What A2A cannot express yet"; close byte-locked (re-diffed); battery re-run by me (privacy/banned/adverbs/negpar 0; 2,569 words). Staged via camp-publish Step 2.5 (MDX OK, build exit 0, page 200) at http://zig-computer.tailfb4637.ts.net:18271/feed/my-agents-promises-ride-in-1-metadata-key/ — the v2 slug is gone by rename (tailnet-only, never public). **Zig read it: "im very impressed… excellent first pass… the cost recap is great."** The 3 draft questions (title pick vs runner-up 1; keep the rough-edge line; restore the cut seat line) are OPEN pending his closer read.
+- **Header arc, five rounds, all recorded in `images/RANDOMIZE.md`**: render 1 (hands, $0.07) → render 2 (3 refs, 2K, $0.10) → programmatic isometric scene + iteration D (free; `images/scene/`; rejected as a medium: "looks like svg art") → render 4, Zig's own concept, a **kite festival** in the goose-and-biplane storybook lane ($0.10) → render 5 image-to-image edit (all geese actively flying, $0.10) + a **retouch** (floating ZIG-07 inpainted out via OpenCV Telea; lettered onto the shaka kite's ribbon in Comic Neue). Cumulative $0.38. Staged as hero (`header-og-f.png`, 200, bytes match). Serial = ZIG-07 (00 biplane, 01–06 whitepaper motifs). **Awaiting Zig's accept.**
+- **Pre-publish flags closed**: Cupid citation verified (Chopra & Singh, AAAI 2015); PostCost renders client-side only site-wide (the live #709 TapSpend does the same) — not an i5a defect. SCRUB-PREPUBLISH.md gained the `postCostData._meta` privacy item (machine/tap names in the MDX export must be stripped before /camp-publish).
+- Co-author consul notified on #a2a-research (spooled, non-blocking); its appendix shapes untouched.
 
 ## Friction
-- `br comment` is not a verb (it's `br comments add`) → one-off
-- az3 bead-create gate killed the first bug-bead create (missing ## Steps to Reproduce) — known heredoc shape → one-off
-- Inline `TSIP=$(…) npx playwright … "http://$TSIP…"` expands $TSIP before the assignment → empty host, silent no-file → one-off
-- MdxArticleBody's silent island degradation (the "graceful degradation" contract hid a production regression from every reader incl. text greps — only a DOM query caught it) → filed az3 `bd-f05q` (fixed + deployed this session)
-- stop-declared-work-guard vs a PARKED seat with armed channel monitors: every informational channel row forced a fresh desk ack the desk had explicitly asked me to stop sending (6 near-empty acks in one parked evening) → filed `dotfiles-acsme` (labeled friction; works owns the hook)
+- `pre-bash-cd-relative-guard` refused three calls including /offboard's own Step 2.5 block (`stat -c %Y` read as a relative path after a leading `cd`) and the /camp-publish Step 2.1 recipe as written → filed aaif-0dd (label `friction`, discovered-from aaif-i5a; owner works).
+- `pre-bash-variable-rm-guard` refused `rm -rf $S/amb` twice until `${S:?}` — my shape, the guard is right → one-off.
+- nano-banana declined "paint the serial ON the ribbon" twice (renders 4 and 5) even with the ribbon as the subject of its own clause; a retouch was the fix, and the storybook skill already sanctions that post-overlay → one-off (noted in RANDOMIZE.md for the next header).
+- I reaped the first scene builder's worktree after harvest, then needed an iteration — the resume path was gone, so iteration D was dispatched cold from the harvested files (worked, ~cold-start cost). Editorial dispatches whose output is gitignored are safe to reap only once the reviewer's verdict is in → one-off, but see Warnings.
+- The pulse-surface notice asked for a P1 `human:` bead per tick; I appended to the open P1 instead (aaif-66v records why; desk endorsed) → one-off.
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- none as `-t decision` beads (harvest: 0 of 5 scanned, cutoff = session start); decide-and-proceed records live where they act:
-  - fix the az3 island regression INLINE rather than dispatch (one line, root-caused, verification loop in hand) → recorded on az3 `bd-f05q`
-  - move the unreviewed draft MDX out of `in/camp` before the authorized production deploy (deploy covered the fix, not the article) → recorded in desk report `aaif-deploy-island-fix-done`
-  - close adapted with the 2 ratified frame-v2 light edits (DSL clause reworded; Holt-by-name dropped with §6) → flagged in DRAFT-v2's header + aaif-i5a comment
+- `aaif-66v` — radar findings that sharpen an OPEN human bead are appended to it, not filed as a second P1 _(closed this session)_
+- (recorded as bead comments, not decision beads, because the desk offered the options and Zig's notes implied them: retouch-over-re-render for the serial placement on aaif-i5a; ZIG-07 as the next serial; keep the thumb up in render 2.)
 
 ## Proposed practices — where each one landed (Step 2.6)
-- none this session (the post.sh habits were desk-published and desk-retired, not this seat's proposals)
+- "Retouch a declined text-placement instruction rather than re-rolling" → already sanctioned in `/storybook-header` ("clean it with a small post-overlay"); nothing to promote, noted in `images/RANDOMIZE.md`.
+- "Strip `postCostData._meta` before publish" → written into `submissions/2026-09-a2a-promises/SCRUB-PREPUBLISH.md` (one-piece checklist; if a second PostCost post appears, promote to /camp-publish).
+- "Format tokens are not paths" → filed as `aaif-0dd`.
 
 ## What's next
-- NEXT: revise DRAFT-v2 on Zigs feedback (round-2 notes) and restage — CONDITIONAL on the feedback arriving: if no feedback has landed by the horizon, resolve --abandoned citing the unmet precedent condition (antecedent never satisfied), not a miss BY 2026-09-01T18:00:00Z
-- At revise/publish time: re-pull PostCost numbers (DATASET is the mid-arc snapshot); offer the /randomize title round (title "What my agents owe each other" is provisional); restage from STAGED-v2.mdx (copy into `in/camp`, build, rsync to `~/.local/share/aaif-stage/client` — and NEVER leave it in `in/camp` through a production deploy).
-- Re-arm the two channel Monitors (pgrep first): `tail -n 0 -F ~/.local/state/harness/post/channels/{pinki-incorporation,a2a-research}.jsonl` — monitors are process-scoped and die with this session.
+- NEXT: run SCRUB-PREPUBLISH.md against DRAFT-v3.md + STAGED-v3.mdx for aaif-i5a (header-comment removal, privacy grep, `_meta` strip, close byte-check, slug-from-final-title) and record the result on the bead BY 2026-09-07T20:00:00Z
+- On Zig's header ACCEPT: `/cdn up` `images/header-og-f.png` → `image:` frontmatter → re-stage; on his 3 draft answers: apply, re-battery, re-stage; then `/aaif-review` conformance → ⛔ submit gate (September window; recognition = approval month).
+- Monday (park lifts): o11y gist assembly under the GOVERNANCE/AUTHORIZATION area claim (18o.28; screenshots + article.md staged in `submissions/2026-07-harness-loop-gateway/`), field-research piece as its own blog_post, aaif-51g ship-or-concede still uncarried (radar next tick, or desk on request).
 
 ## Warnings / watch-outs
-- **The NEXT: line above re-declares pr-20260830005252-736ea53f's EXACT text deliberately** (extends the one clock). Do NOT write a different NEXT — that mints a SECOND promise (dotfiles-4iz0). Zig's park ruling: do not re-horizon, do not pre-emptively abandon; abandoned-at-horizon-on-no-notes is a CORRECT outcome the desk will defend on the record.
-- Zig's notes arrive THROUGH THE DESK — do not poll, watch, or ask again (his ruling, relayed twice).
-- `post.sh read --seat` (the onboard verb) is still a bare-flag-hang carrier until works' 9xa6n wave lands — keep values after every flag. The `</dev/null` habit is formally retired.
-- The seat's only timer wake is radar, Sat 2026-09-05 22:00Z — AFTER the promise horizon. If notes haven't arrived by Monday, the desk kick (or the watchdog) is the wake path, not the timer.
-- Production az3 is now ahead of the last nightly build (manual deploy 2026-08-30); the 03:00Z scheduled build rebuilds over the same commit harmlessly.
+- **The submission folder is gitignored** — every artifact this session (DRAFT-v3, STAGED-v3.mdx, TITLE-ROUND, RE-LEAD-NOTES, images/, images/scene/, RANDOMIZE.md, PROMPT-*.txt) exists ONLY on this box's disk. Nothing to merge; nothing to lose unless the folder is.
+- **Reap discipline for editorial builders**: harvest, then keep the worktree until the reviewer (Zig) has ruled — a FIX-FIRST after a reap costs a cold re-dispatch (paid once this session on the scene builder).
+- The desk's standing "two registers / identical seam" critique is RETIRED (its own call) — do not re-serve the dyad framing for this header.
+- `aaif-stage-review` is a transient unit; a reboot drops it. Re-create per refs/draft-review-surface.md step 4.
+- Header spend is per-render and priced before firing; Zig's notes are cheap in the storybook lane only as image-to-image edits of the accepted render (render 4 → 5 preserved everything he liked).
