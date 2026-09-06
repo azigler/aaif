@@ -284,11 +284,12 @@ Fill this exact template (`.github/ISSUE_TEMPLATE/ambassador-submission.md`), ti
 
 Check all that apply:
 
-- [ ] agentgateway
-- [ ] AGENTS.md
 - [ ] goose
 - [ ] MCP
-- [ ] Other AAIF project
+- [ ] AGENTS.md
+- [ ] agentgateway
+- [ ] A2A
+- [ ] Other AAIF Project
 
 ## Notes
 
