@@ -26,9 +26,10 @@ AGENTS.md, and other projects that help developers build with agents."
   neutrality, interoperability, and practical developer enablement. We are not
   here to hype agents as magic."*
 
-## Founding contributions (the seed projects)
+## Hosted projects
 
-Three flagship projects were contributed by their originators when AAIF formed:
+The first three were contributed by their originators when AAIF formed; the rest
+joined later, newest last:
 
 | Project | Contributed by | One-liner |
 |---|---|---|
@@ -36,9 +37,12 @@ Three flagship projects were contributed by their originators when AAIF formed:
 | **goose** | Block | Open-source, extensible, local-first AI agent (install/run/edit/test with any LLM). |
 | **AGENTS.md** | OpenAI | Universal standard giving AI coding agents project-specific guidance (a markdown file at repo root; read by 20+ agents, adopted by 60k+ repos). |
 | **agentgateway** | (proposed/added) | Unified high-performance gateway for agentic AI, MCP, LLM, and service traffic. |
+| **A2A** | Google → LF (joined AAIF 2026-08-17) | Open standard for agent-to-agent discovery, delegation, and result-sharing. Brief: `refs/projects/a2a.md`. |
+| **Agent Router** | Bloomberg + Tetrate, in the Envoy community (joined AAIF **2026-09-09**, as the rename of Envoy AI Gateway) | Control plane for AI/agent traffic with Envoy as the data plane: one OpenAI-compatible API across providers plus MCP routing. Brief: `refs/projects/agent-router.md`. |
 
-These four are the **current submission options** for ambassador contributions
-(plus "Other AAIF Project — we'll be adding more often").
+Which of these the submission form offers as checkboxes is its own live fact —
+read the current template (and `/aaif-review`) rather than this table; a hosted
+project without a checkbox goes under "Other AAIF Project", named in the Notes.
 
 ## Membership (signal of seriousness)
 
