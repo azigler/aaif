@@ -41,14 +41,14 @@ never by underselling a piece that genuinely is the higher type.
 |---|---|---|
 | `social_thread` | 5 | a substantive thread/post with developer value |
 | `community_help` | 5–15 | answering/supporting in community channels (scope-scaled) |
-| `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below** |
+| `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below**. Also the landing type for a **whitepaper** (W37: an aaif.io authz whitepaper scored 15 — *"explanatory rather than step-by-step"*) and for a **newsletter issue** with one substantive project section (W37: 15 per issue, scored on the AAIF section only) |
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
 | `podcast_guest` | 20 | a podcast appearance |
 | `meetup_talk` | **20 / 25** | a talk given at a meetup — **two live rungs (W35: the 20-rung solidified n=8, alongside n=14 at 25, both active in the same month)**. Observed split: user-group / community-session / casual-online venues land **20**; established meetups and flagship community events land **25**. Predict **20** conservatively for community-event sessions; claim 25 only with strong meetup evidence |
 | `livestream` | 25 | a live technical stream |
-| `conference_talk` | 30 | a talk at a conference (verifiable session page) |
-| `organizing_meetup` | **35** | organizing an event (docked if not tied to a specific AAIF project) |
+| `conference_talk` | 30 | a talk at a conference (verifiable session page). A listed **panel seat** is 30 (W36); **co-speakers** on one session are each credited 30; the **same talk repeated at a different verifiable conference is a new 30** (W37) |
+| `organizing_meetup` | **25 / 35** | organizing an event — **two live rungs and the split is UNEXPLAINED** (W37: n=4 at 25, n=9 at 35; project tie, event scale/substance, and organize-plus-talk-bundled each have counterexamples — a 116-registrant, three-talk, five-project chapter event scored 25 for each of two co-hosts). **Predict 25**; treat 35 as upside. Co-organizers of one event are each credited |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
 | `project_contribution` | 5 / 10 / 15 / 20 / 25 / 40 | code/artifact contribution — **scope ladder below** |
@@ -91,7 +91,8 @@ A blog post is not automatically 15, and **this is not a blog-post rule.** The t
 | Project tie | Outcome |
 |---|---|
 | Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | **full rung** (e.g. `blog_post` 15) |
-| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ W36: `organizing_meetup` 25 vs 35 is **not** this dock — a project-tagged 118-attendee meetup scored 25 while a `projects:["other"]` 200-attendee three-talk meetup scored 35; that split tracks event **scale/substance**, not project tie |
+| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ `organizing_meetup` 25 vs 35 is **not** this dock (W36/W37: the split is unexplained — see the type table) |
+| Names a **hosted AAIF project that has no template checkbox** (e.g. **Agent Router**, joined 2026-09-09) — tick *Other AAIF Project* and name it in Notes | **full rung** (W37: a Korean Agent Router guide tagged `mcp+other` scored `blog_post` **15**, rationale *"the AAIF-hosted Agent Router project"*). `other` is a dock only when there is no specific project |
 | No AAIF project reference at all | **rejected** — see rejection risks |
 
 W32 confirmed the generalization empirically: an `organizing_meetup` scored **25 instead of
@@ -175,6 +176,10 @@ means the agent had to make a judgment call — avoid giving it one:
   (W35, observed): *"project contribution submissions need to be merged before they can
   receive points"* — resubmittable once the maintainers merge it.
 - Say the **type and project explicitly in Notes**.
+- For **video / livestream** types, a YouTube link alone is not verifiable (W37): the
+  reviewer asked for *"a dated public page or transcript that shows the title, publication
+  date, creator"* and whether you are the presenter, then rejected when the content did not
+  hold up. Ship with a **transcript** and a dated page, and be named in the intro/description.
 
 ## Rejection-risk check (what gets turned away)
 
@@ -203,7 +208,10 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   arcs** (whitepaper + companion blog, series parts, a talk plus its writeup): each piece
   must carry its **own thesis and its own defensible contribution**, not be an excerpt,
   recap, or "accessible lead" of an already-submitted artifact. If two pieces share a
-  spine, differentiate them explicitly in the Notes — or submit only one.
+  spine, differentiate them explicitly in the Notes — or submit only one. **The boundary
+  (W37, n=2):** two *standalone* treatments of one topic in different formats by the same
+  author are **both** credited (a repo pc 25 + its writeup 15; a video 15 + a blog 15 on the
+  same draft extension, same week). The trap is the excerpt/recap, not the topic.
 - **Duplicate artifact or contribution AREA** (new, W35 — three grades observed in one
   window): (a) resubmitting the **same artifact** under a new issue → 0 (the reviewer
   hash-stamps reviewed content and cross-references prior issues); (b) a **different facet
@@ -218,7 +226,8 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   post scored nothing. Syndication (own site + aaif.io + LinkedIn Pulse) is ONE submission;
   submit the canonical URL once.
 - **Project mentioned only in passing → 0, in every type** (confirmed W36 across slides, a
-  social reel, and a conference talk): a talk where the project *"appears briefly… as an
+  social reel, and a conference talk; W37 added a livestream — three ambassadors promoting
+  the program did not substitute for a project focus): a talk where the project *"appears briefly… as an
   implementation that was replaced"* is 0, not 30; a reel that *lists* projects among skills
   is 0. The project must be a **meaningful focus** that helps a developer understand or use it.
 - **Unverifiable scope or date → `needs-human-review`** (new, W35 — first occurrence): a
@@ -234,6 +243,10 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   reimplementation of an already-credited tool in a new repo scored 0). ⚠️ This bears on
   **our** portfolio: any follow-on to a credited piece must claim a **different area** and
   say so in the Notes (e.g. audit/forensics vs an already-credited cost-attribution piece).
+  **The complement (W37):** a *substantial expansion* of your own credited artifact — new
+  measurements on a newer version, revised conclusions, a new surface with its own findings
+  and tooling — scored a **new** `project_contribution` 25. New findings are a new
+  contribution; the same findings in a new wrapper are not. Enumerate what is new in Notes.
 - **Pre-start artifact** — delivered/published before your start date (2026-06-23). Applies
   even to high-value, fully-verifiable work, and *regardless of leaderboard month*.
   **Sharpened W33:** *updating* a pre-start artifact does **not** re-qualify it — a course
@@ -265,6 +278,9 @@ help you."* Always state, concisely:
 - Your **role / handle** on the artifact (authorship link).
 - The **developer value** in one line.
 - Any **evidence** the agent should check (merged-PR link, session page, repo).
+- If the project has **no checkbox yet** (Agent Router, joined AAIF 2026-09-09; any Sandbox
+  project), tick **Other AAIF Project** and **name the project here** — it scores at the full
+  rung when named (W37).
 
 ## Draft the [Submission] issue body
 
