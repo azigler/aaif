@@ -73,7 +73,9 @@ not rivals — keep the tone generous and about the work.
 The **Agentic AI Foundation** (Linux Foundation) — neutral open home for the
 standards/projects of agentic AI: **MCP** (Anthropic), **goose** (Block),
 **AGENTS.md** (OpenAI), **agentgateway** (Solo.io), **A2A** (Google; joined
-2026-08-17 — aaif.io/blog/a2a-joins-aaif), plus 7 working groups.
+2026-08-17 — aaif.io/blog/a2a-joins-aaif), **Agent Router** (Bloomberg + Tetrate,
+in the Envoy community; the renamed Envoy AI Gateway, joined 2026-09-09 —
+aaif.io/blog/agent-router-joins-aaif), plus 7 working groups.
 Contributions must tie directly to one of these. Deep dive: `refs/aaif-overview.md`.
 
 ## The submission pipeline (the core loop)
