@@ -96,6 +96,23 @@ counts) → the 6 analyses above → an "inspiration / opportunities for us" sec
 may reference specific submissions since it's private) → calibration notes → update
 `.local/radar/state.json`.
 
+**Live-state tag rule (aaif-1bw):** every bead id the report (or the Notify section's
+human bead, below) names carries that id's store status, resolved **at generation time**, as a bracketed
+tag right after the id — `aaif-51g [CLOSED]`, `aaif-i5a [OPEN]`, `aaif-omn [IN_PROGRESS]`,
+`aaif-xyz [TOMBSTONE]`. This is the DERIVE rung, not editorial care: the motivating instance
+is aaif-51g, which shipped 2026-08-28, then got rendered as an unclaimed "ship or concede"
+ask in aaif-1oh the very next day and again in the W36 radar — because the generator never
+checked the store.
+
+### Output 1.5 — live-state lint gate (must exit 0 before the note bead + the human bead)
+```bash
+python3 bin/radar-live-state-lint.py .local/radar/<YYYY-Www>.md
+```
+Fix every reported line (tag it, correct a wrong tag, or resolve an unknown id) and re-run
+until it exits 0. **Neither the note bead (Output 2) nor the Notify section's human bead is
+written until this passes** — a report that fails this gate has an unresolved live-state
+claim in it.
+
 ### Output 2 — closed `note` bead (participant-FREE)
 ```bash
 br create -t note -p 3 "radar: <YYYY-Www> AAIF landscape learnings" \
