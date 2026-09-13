@@ -144,6 +144,15 @@ resolves from the aaif root. A run with nothing new still logs `"outcome":"quiet
 proof needed). First run creates the file.
 
 ## Notify (only when it matters)
+
+**Shape of the `human:` bead when you do file one (W37 lesson, 2026-09-12):** offer a MENU,
+not a situation — two or three concrete options with their predicted type/points, the
+project's own stated asks where they exist, the coverage gap measured rather than asserted,
+and an explicit *none-for-now* on the menu. Zig ruled on the Agent Router bead in one pass
+with no follow-up question because it was shaped that way; a bead that only reports a
+situation gets a conversation instead of a ruling. And every bead id the bead names carries
+its store-status tag (the live-state lint rule above).
+
 File a **P1 `human:` bead + push notification** if the week shows: a clear **new opportunity**
 in Zig's lane, meaningful **over-rotation** worth steering around, a **grading-model drift**
 (so `/aaif-review` predictions stay honest), or a **rejection pattern** worth avoiding.
