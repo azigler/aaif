@@ -3,49 +3,50 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-09-05 522054ed
+# Session handoff — 2026-09-13 48437022
 
 ## State at offboard
-- Current branch: main (in sync with origin after the fence commit)
-- Last commit before this note: 6fa4e0f (beads: aaif-i5a header render 5 + serial retouched onto the ribbon)
-- Open beads: 51; in-progress: 1 (aaif-omn, unchanged)
-- In-flight subagents: none (both builder worktrees harvested and reaped; 2 foreign locked worktrees remain, not mine)
-- Dirty files: none tracked (the submission folder is gitignored by design)
-- Markers: `.offboard-pending` cleared by the fence
-- Staged review surface: `aaif-stage-review` transient unit still serving tailnet-only on :18271; hero = `images/header-og-f.png`. Tear down after Zig signs off.
+- Current branch: main
+- Last commit: 26ab22c `:card_file_box: beads: pinki #6 POSTED on Zig's fresh GO — PR azigler/pinki#13 …` (plus this offboard's two commits: radar skill menu-shape note, friction bead)
+- Open beads: 64; in-progress: 4 (aaif-omn, aaif-rsi.1, aaif-rsi.2, aaif-rsi.3 — the three pinki fixes stay in_progress until their PRs merge)
+- In-flight subagents: none (every builder/scrutineer/re-read worktree this session dispatched is reaped; the 2 remaining trees under `.claude/worktrees/` belong to another session — leave them)
+- Dirty files: none
+- Markers: `.offboard-pending` cleared (Step 4)
+- Other repos this session touched: `~/pinki` checkout resting on `main` (d46b050), clean; three fix branches tracking origin (`fix/9-amend-event`, `fix/5-foreign-ids`, `fix/6-meta`); installed `~/.cargo/bin/pinki` is the v0.1.0 BASELINE (reinstalled from main after an accidental branch install — see Friction). `~/demesne` bead store: dotfiles-3zh8p (superseded stage-0 shape, works/consul close) and the dotfiles-6sjlt discharge comment, both already swept into demesne main by the desk.
 
 ## What happened this session (bullets)
-- **W36 radar tick ran** (Sat 15:00 PT timer): 45 new subs, +35 scorecards (Aug closed at 208, Sept opened at 21); a2a tags 5→12 in one week, the deep task-lifecycle piece landed; MCP 7-28 explainers saturated; social_thread flat a third window. Private report `.local/radar/2026-W36.md`, state.json rewritten, participant-free note bead aaif-t3a (closed), ledger row committed, grading drift folded back to the public `/aaif-review` SKILL.md same run (recognition=approval month n=421/422 — a stale contradiction fixed; translation/cross-post counts once; mention-only → 0 in every type; needs-human-review process trigger; organizing_meetup 25-rung tracks event scale not project tie; same-area dedup n=2).
-- **Routing**: W36 sharpened W35's open P1 aaif-1oh rather than filing a second P1 (decision aaif-66v, closed). Desk put both calls to Zig; both RULED: (1) aaif-i5a — "Foreground the extensions axis"; (2) o11y gist — NOT folded; qualifies on an explicit AREA claim; Zig accepted the full recommendation: gist = governance/authorization (tutorial 20), field-research = its own blog_post (15), audit stays with aaif-omn (15), cost = one link to #709. Recorded on aaif-1oh (AC updated) and 18o.28. **Park lifted for i5a ONLY**; gist/field-research/51g stay parked until Mon 2026-09-07.
-- **aaif-i5a DRAFT-v3 re-lead shipped and staged**: Opus worktree builder retitled ("My agents' promises ride in 1 metadata key", runners-up in TITLE-ROUND.md) and re-led on the extensions axis; new H2 "What A2A cannot express yet"; close byte-locked (re-diffed); battery re-run by me (privacy/banned/adverbs/negpar 0; 2,569 words). Staged via camp-publish Step 2.5 (MDX OK, build exit 0, page 200) at http://zig-computer.tailfb4637.ts.net:18271/feed/my-agents-promises-ride-in-1-metadata-key/ — the v2 slug is gone by rename (tailnet-only, never public). **Zig read it: "im very impressed… excellent first pass… the cost recap is great."** The 3 draft questions (title pick vs runner-up 1; keep the rough-edge line; restore the cut seat line) are OPEN pending his closer read.
-- **Header arc, five rounds, all recorded in `images/RANDOMIZE.md`**: render 1 (hands, $0.07) → render 2 (3 refs, 2K, $0.10) → programmatic isometric scene + iteration D (free; `images/scene/`; rejected as a medium: "looks like svg art") → render 4, Zig's own concept, a **kite festival** in the goose-and-biplane storybook lane ($0.10) → render 5 image-to-image edit (all geese actively flying, $0.10) + a **retouch** (floating ZIG-07 inpainted out via OpenCV Telea; lettered onto the shaka kite's ribbon in Comic Neue). Cumulative $0.38. Staged as hero (`header-og-f.png`, 200, bytes match). Serial = ZIG-07 (00 biplane, 01–06 whitepaper motifs). **Awaiting Zig's accept.**
-- **Pre-publish flags closed**: Cupid citation verified (Chopra & Singh, AAAI 2015); PostCost renders client-side only site-wide (the live #709 TapSpend does the same) — not an i5a defect. SCRUB-PREPUBLISH.md gained the `postCostData._meta` privacy item (machine/tap names in the MDX export must be stripped before /camp-publish).
-- Co-author consul notified on #a2a-research (spooled, non-blocking); its appendix shapes untouched.
+- **W37 radar tick** (the session's actual job): 36 new submissions, +39 scorecards; program news = **Agent Router (ex-Envoy AI Gateway) joined AAIF 2026-09-09** and an AAIF Sandbox tier; grading refinements folded into `/aaif-review` + private model same-run (other=full rung for hosted project, own-expansion dedup boundary, organizing_meetup 25/35 retracted to unexplained, newsletter/whitepaper=blog_post 15, video verifiability). Report `.local/radar/2026-W37.md`, note bead aaif-ogd, ledger row, P1 aaif-rzt → **Zig ruled none-for-now on Agent Router**; groundwork `refs/projects/agent-router.md` landed (aaif-et7, merged ee94fc6).
+- **aaif-1bw fixed**: `bin/radar-live-state-lint.py` + negative-control fixtures + gate in the radar skill; W37 report tagged and green.
+- **Pinki ownership moved to aaif** (Zig, twice: creditor field/adoption, then "aaif owns pinki"). aaif-ih0 AC1–AC3 answered with measurements (pinki is multi-open + chain-native; the real blocker was the re-declare refusal, #9); stage-0 dual-write ruled (a) then SUPERSEDED same night by "fix 9, go direct, drop the 14-day window"; aaif-38g amended twice accordingly; epic **aaif-rsi** strings upstream issues #1–#10 into 9 children + go-direct + outcomes beads; rbs export and the blog-update stub aaif-9c7 linked under it.
+- **Three PRs shipped to azigler/pinki on Zig's word, each with a GitHub read-back**: #11 (amend event, closes #9; 2 scrutiny rounds), #12 (opaque ids + Default_Ignorable rule, closes #5; 2 rounds incl. independent re-derivation of the 4,174-code-point table), #13 (opaque meta on record+events, closes #6; 2 rounds + a targeted re-read that FAILED on one wrapped line → fixed, byte-verified, routed back to Zig for a fresh GO rather than self-cleared). All three gate beads (rsi.10/.11/.12) closed citing URLs. Compatibility was MEASURED on the installed v0.1.0 for each and gave three different geometries (refuse-all / read-fine-can't-declare / read-with-silent-loss) — recorded on aaif-9c7 for the blog update, with Zig's three "thought leadership" angles.
+- **Rationing**: primary tap crossed 0.8 of its week; seat stood down after #6's build (recorded on aaif-rsi, agreed with the desk). Zig's morning rulings were executed under that same budget.
 
 ## Friction
-- `pre-bash-cd-relative-guard` refused three calls including /offboard's own Step 2.5 block (`stat -c %Y` read as a relative path after a leading `cd`) and the /camp-publish Step 2.1 recipe as written → filed aaif-0dd (label `friction`, discovered-from aaif-i5a; owner works).
-- `pre-bash-variable-rm-guard` refused `rm -rf $S/amb` twice until `${S:?}` — my shape, the guard is right → one-off.
-- nano-banana declined "paint the serial ON the ribbon" twice (renders 4 and 5) even with the ribbon as the subject of its own clause; a retouch was the fix, and the storybook skill already sanctions that post-overlay → one-off (noted in RANDOMIZE.md for the next header).
-- I reaped the first scene builder's worktree after harvest, then needed an iteration — the resume path was gone, so iteration D was dispatched cold from the harvested files (worked, ~cold-start cost). Editorial dispatches whose output is gitignored are safe to reap only once the reviewer's verdict is in → one-off, but see Warnings.
-- The pulse-surface notice asked for a P1 `human:` bead per tick; I appended to the open P1 instead (aaif-66v records why; desk endorsed) → one-off.
+- Backticks inside a double-quoted `br comments add` body executed as commands, twice; the second time reinstalled pinki from an unmerged branch (corrected in-minute; errata on aaif-ih0 and aaif-rsi). → filed aaif-l49q (labeled `friction`)
+- `pre-worktree-remove-guard` blocked a removal whose path came through a shell variable, falling back to a listing that included other sessions' trees; naming the literal path passed. → one-off (command shape, guard behaved correctly)
+- `pre-bash-cd-relative-guard` refused two calls that used relative paths after `cd`; absolute paths fixed it. → one-off (known convention)
+- Bead-close template gate required `## Steps to Reproduce` on a bug-type bead filed by the desk; patched the description before closing. → one-off
+- Radar report carried a stale live-state claim in W35/W36 (the aaif-51g "unclaimed" ask) → aaif-1bw, fixed this session.
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- `aaif-66v` — radar findings that sharpen an OPEN human bead are appended to it, not filed as a second P1 _(closed this session)_
-- (recorded as bead comments, not decision beads, because the desk offered the options and Zig's notes implied them: retouch-over-re-render for the serial placement on aaif-i5a; ZIG-07 as the next serial; keep the thumb up in render 2.)
+- none filed as `-t decision` beads (harvest: 0 of 6 scanned, cutoff 2026-09-06 < session start). The decide-and-proceed calls were recorded as comments on the beads they concerned, with rationale: SHIP-by-orchestrator-reproduction on #9's first fix (aaif-rsi.1 — later superseded by an independent round 2); the rationing stand-down (aaif-rsi); declining to self-clear the failed #6 conditional and routing it to Zig (aaif-rsi.12); using the ruled PR title over the draft's own title line (#12, on aaif-rsi.3).
 
 ## Proposed practices — where each one landed (Step 2.6)
-- "Retouch a declined text-placement instruction rather than re-rolling" → already sanctioned in `/storybook-header` ("clean it with a small post-overlay"); nothing to promote, noted in `images/RANDOMIZE.md`.
-- "Strip `postCostData._meta` before publish" → written into `submissions/2026-09-a2a-promises/SCRUB-PREPUBLISH.md` (one-piece checklist; if a second PostCost post appears, promote to /camp-publish).
-- "Format tokens are not paths" → filed as `aaif-0dd`.
+- "A radar `human:` bead offers a MENU (scored options + explicit none-for-now), not a situation" → written into `.claude/skills/aaif-radar/SKILL.md` (Notify section) this offboard.
+- "Every bead id in a radar report carries its store-status tag at generation time" → `bin/radar-live-state-lint.py` + radar SKILL.md Output 1.5 (aaif-1bw, closed).
+- "Transcripts into markdown are produced by redirecting real output, never hand-wrapped; PR title lives in ONE place (the gate bead's outward-act block); pre-post cmp of fenced lines and title" → note on aaif-rsi.3 with a rule to file its own bead on a third instance.
+- "My ACs govern when I call work done, not when a decision at rest reaches Zig; fork beads carry no pre-bell gate" → recorded on aaif-jf7 (closed) and in the desk's record; estate doctrine, not aaif-local.
+- "Quoted heredoc is the only way to pass a bead body containing backticks" → aaif-l49q (friction bead) asks for the mechanical guard.
 
 ## What's next
-- NEXT: run SCRUB-PREPUBLISH.md against DRAFT-v3.md + STAGED-v3.mdx for aaif-i5a (header-comment removal, privacy grep, `_meta` strip, close byte-check, slug-from-final-title) and record the result on the bead BY 2026-09-07T20:00:00Z
-- On Zig's header ACCEPT: `/cdn up` `images/header-og-f.png` → `image:` frontmatter → re-stage; on his 3 draft answers: apply, re-battery, re-stage; then `/aaif-review` conformance → ⛔ submit gate (September window; recognition = approval month).
-- Monday (park lifts): o11y gist assembly under the GOVERNANCE/AUTHORIZATION area claim (18o.28; screenshots + article.md staged in `submissions/2026-07-harness-loop-gateway/`), field-research piece as its own blog_post, aaif-51g ship-or-concede still uncarried (radar next tick, or desk on request).
+- NEXT: write aaif-ih0 AC4 (what the estate LOSES on direct adoption — lapse/abandoned vocabulary, prose reason beside evidence, deadline moves now covered by #9's amend, the provenance set now covered by #6's meta, and the evidence requirement as a GAIN) as a comment on aaif-ih0 from the AC1/AC2 field table, then tick AC4 BY 2026-09-14T23:00:00Z
+- Then (not owed, budget-gated): watch PRs #11/#12/#13 (`gh pr view -R azigler/pinki 11|12|13`); once all three merge AND Zig cuts + tags the minor release, `cargo install --path ~/pinki --locked` from main, verify `pinki --help` shows amend/--meta, and file the works-facing go-direct shape bead for aaif-rsi.8 (replaces dotfiles-3zh8p).
+- aaif-ih0 AC5 (GitHub-issue feedback channel) and aaif-rsi.9 (draft the lapsed/refused outcomes issue — post only on Zig's word) remain aaif's, unblocked, cheap.
+- Next radar tick is Sat 2026-09-19 15:00 PT: run the live-state lint before the note/human beads; check whether the submissions template gained an Agent Router checkbox.
 
 ## Warnings / watch-outs
-- **The submission folder is gitignored** — every artifact this session (DRAFT-v3, STAGED-v3.mdx, TITLE-ROUND, RE-LEAD-NOTES, images/, images/scene/, RANDOMIZE.md, PROMPT-*.txt) exists ONLY on this box's disk. Nothing to merge; nothing to lose unless the folder is.
-- **Reap discipline for editorial builders**: harvest, then keep the worktree until the reviewer (Zig) has ruled — a FIX-FIRST after a reap costs a cold re-dispatch (paid once this session on the scene builder).
-- The desk's standing "two registers / identical seam" critique is RETIRED (its own call) — do not re-serve the dyad framing for this header.
-- `aaif-stage-review` is a transient unit; a reboot drops it. Re-create per refs/draft-review-surface.md step 4.
-- Header spend is per-render and priced before firing; Zig's notes are cheap in the storybook lane only as image-to-image edits of the accepted render (render 4 → 5 preserved everything he liked).
+- **Outward gate on azigler/pinki is Zig's word every time** — even after three GOs. Nothing else in aaif-rsi (rsi.4–.7, .9) is dispatched until a fresh ruling or the tap recovers; the epic carries the rationing note.
+- **`~/pinki` must rest on `main`** between builders; a cross-repo dispatch gives no isolation there, one writer at a time, and the accidental-install incident is why the checkout is left on main.
+- **Never put backticks in a double-quoted bead body** — quoted heredoc only (aaif-l49q).
+- The `pinki` binary on PATH is the v0.1.0 baseline used for all compat measurements; do not reinstall until Zig's release exists.
+- Zig's calibration this morning: he took the stricter gate over the desk's read three times, but priced formatting-fidelity of already-verified content LOWER than never-checked docs — scope gates by that distinction, not by "stricter is safer".
