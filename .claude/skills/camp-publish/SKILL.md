@@ -148,8 +148,18 @@ the landed file's frontmatter + line count over SSH. Land **before 03:00 UTC (8p
 day's publish.
 
 ## Step 4 — Verify after publish
-After the build runs, load `https://andrewzigler.com/feed/<slug>` and confirm the title, hero image, and
-figures render. Then keep any review gist in sync, and proceed to the (separate, gated) `/aaif-review`
+After the build runs, load `https://andrewzigler.com/feed/<slug>` (the bare host 308s to `www.`; verify
+the final URL) and confirm the title, `published` date, hero image, and figures render — at phone
+width (390px) as well as desktop, with `scrollWidth <= viewport` as the clipping check.
+
+**Verify by the ABSENCE of the superseded text, not the presence of the new.** Every review round
+cuts or rewords something; grep the live HTML for each cut phrase (a sentence removed, an old
+number, an old H2) and require zero hits. The presence of the new text proves only that *a* build
+ran; the absence of the old proves it ran on the version you landed (learned 2026-09-13 over four
+same-day rounds). Re-run the pre-publish privacy battery on the live HTML too — the build can
+render exports the body-only greps never reached.
+
+Then keep any review gist in sync, and proceed to the (separate, gated) `/aaif-review`
 + AAIF submission with the now-public URL.
 
 ## Gotchas (learned building this)
