@@ -3,46 +3,47 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-09-13 56544d9c
+# Session handoff — 2026-09-15 de2bbda9
 
 ## State at offboard
 - Current branch: main
-- Last commit before this note: 7aa775f (beads: aaif-i5a.1 LANDED)
-- Open beads: `br ready` is the source; in-progress: aaif-omn (unchanged all day)
-- In-flight subagents: none. Worktrees: only the two FOREIGN locked trees (agent-a51e8785c7e2bb0f2, agent-a770a7ae4bace6230) remain — not ours, leave them. All four of this seat's blog worktrees (v4 writer, v6/v7 writer, component builder, cost re-pull) reaped after SHIP.
+- Last commit: 8049269 (beads: aaif-i5a.1 — #1030 APPROVED, 15 pts, September 2026); remote = local
+- Open beads: `br ready` is the source; in-progress: aaif-omn (unchanged, untouched this session)
+- In-flight subagents: none. Worktrees: only the two FOREIGN locked trees (agent-a51e8785c7e2bb0f2, agent-a770a7ae4bace6230) — not ours, leave them.
 - Dirty files: none
 - Markers: `.offboard-pending` cleared (Step 4)
-- Other repos: `~/andrewzigler3` main = **436e134** (component branch fast-forwarded in + pushed; the other writer's two dirty files untouched). `~/demesne` bead store pushed (a2787e3). Tap: linearb u5h ~0.75 at close; this seat spent the day on it.
+- Stage unit `aaif-stage-review` still ACTIVE by Zig's hold (sign-off not given). Promise ledger: none open for aaif.
 
 ## What happened this session (bullets)
-- **THE SEPTEMBER ANCHOR SHIPPED TO THE VAULT** on Zig's confirmed go ("Ship on the go I gave"): `PUBLISH-v7.mdx` landed as `camp/20260913 i-taught-my-agents-how-to-keep-a-promise.md` on the vault host (SSH-verified: 663 lines, sha256 f94f04c3 identical). It goes LIVE at the 20:00 PT (03:00Z) daily build → https://andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise. Title "I taught my agents how to keep a promise" (his), `published: 2026-09-13`, `status: featured`, hero https://cdn.zig.computer/aaif/a2a-promises/header-og-f.png.
-- Four review rounds in one day, each on his verbatim feedback via the desk: v5 (title runner-up / cut keep-that / restore seat paragraph) → v6 (teach-the-primitive thesis, skimmable, examples at the bottom, components reshaped for 390px + pinki v0.2.0) → v7 (A2A posture, linearb-copy slop + parallelism, census numbers, Yegge register, BeadGraph + further-reading) → v7.3 (his 5-item ship list). Fresh sonnet scrutiny each round; the v7 HIGH (graph deps not the store's) was fixed by recording 9 stated edges in the store and regenerating.
-- Final cost pull: `DATASET-postcost-v1.json` (4,175 requests, $646.68 floor — fable-5-1 rows unpriced; 4 real-arc phases). Graph nodes priced by an even split of each phase's cost across its beads, LABELED in the graph caption (the log stamps no bead id — see Warnings).
-- Also: promise pr-20260913184355-12629806 resolved — go-direct shape filed as dotfiles-i5byh; dotfiles-9jegl (40%-context friction) filed; az3 component branch merged.
+- **THE SEPTEMBER ANCHOR IS LIVE, SUBMITTED AND APPROVED.** Live at https://www.andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise (200 at 2026-09-14T03:49Z; the 20:00 PT build took ~49 min; bare host 308s to www). Verified by battery: title, published 2026-09-13, CDN hero, six superseded phrases ABSENT, BeadGraph allocation caption visibly rendered, $646.68 on page, privacy 0 in the article (site-wide author JSON-LD is the only employer hit; ruled not a finding), Playwright 390/1280 unclipped. Proofs: `.local/live-verify-20260913/`.
+- Step 7 logged: SUBMISSIONS.md 2026-09 row; logged onto the September recurring task in Zig's Asana planning hub via the connector (URL in notes + comment) — the private-notes "Asana write path not wired" item is RESOLVED (connector reaches his workspace, posts as him).
+- /amplify on Zig's GO: LINKEDIN-POST.md (deep on ONE insight, the A2A deadline gap; /randomize seed e4c22d5ae9a8fbbb → 3/2/3), X-THREAD.md (standalone CANDIDATE), AMPLIFY.md. On his order the LinkedIn draft was landed VERBATIM as an Asana comment on the September task for his review; he posted it 2026-09-15: https://www.linkedin.com/feed/update/urn:li:activity:7505636103551459328/
+- On his verbatim order (via the desk, ~07:4x PT 09-15): SUBMITTED https://github.com/aaif/ambassadors/issues/1030 — `[Submission]: I taught my agents how to keep a promise`, A2A box, Notes brief, LinkedIn post as social evidence. Reviewer scored it 17:07Z (blog_post, A2A, 15, high); scorecard PR #1035 MERGED; issue CLOSED `status:approved`. **15 points, September 2026. Portfolio: 3 ledger pieces, 50 ledger pts, 55 total approved** (Clare episode #703 still pending).
+- camp-publish Step 4 now carries the verify-by-ABSENCE practice + 390px render + live-HTML privacy battery (81063eb).
+- Session was restarted 3x by the desk (pool corrections onto linearb); each time: re-arm channel watcher, drain spool, idle flag once.
 
 ## Friction
-- `pre-bash-cd-relative-guard` refused 5 calls (any `cd … && cmd <relative-or-numeric-arg>`) → one-off each; absolute paths fix it (`aaif-0dd` already open for the /offboard block) → `aaif-0dd`
-- `br create --description-file` is not recognised by `pre-bead-create.sh` as a description → two beads born EMPTY, repaired with `br update -d` → one-off (use `-d "$(cat file)"`)
-- zsh backticks inside a `br comments add "…"` argument ran as command substitution and dropped the comment silently → one-off (use a quoted heredoc)
-- The Gateway request log's `bead_id` attribute is the literal "none" on all 165,513 fleet rows 08-28→09-13 → **file in dotfiles** (per-task stamping the August post described is off fleet-wide) → filed by successor (see NEXT)
-- linearb 5h ceiling held the v5 deploy ~2h (12:00–14:00 PT); the desk's tap tooling cannot say when a 5h window clears (desk filed it) → one-off here
+- `pre-bash-cd-relative-guard` refused compound `cd … && cmd <relative>` twice → absolute paths → `aaif-0dd`
+- Channel-watch Monitors are capped at 30 min in this client build, and every expiry is a new turn to `stop-declared-work-guard.sh`; the desk's first steer ("tell the desk nothing on re-arm") tripped the guard, the corrected rule is ONE short desk line without the idle literal → `dotfiles-cgpbk` (desk-filed; guard to treat a monitor-expiry boundary as a non-work turn)
+- The claude.ai Asana MCP tools were present at first, then removed from the session mid-day after a resume (used for step 7 + the comment landing; not needed after) → one-off
+- Playwright `getByText(...).innerText()` threw "Node is not an HTMLElement" because the caption text also lives in an SVG `<title>`; the visible caption is `.bead-pool__footer` → one-off
+- A `works\b` privacy grep matched "the join works" in prose; the shipped battery needs word-boundary care around seat names that are common words → one-off (noted in verify-live.sh in the scratchpad)
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- none filed as `-t decision` beads (harvest: 0 of 6 scanned, cutoff = session start). Recorded where they bind instead: direct application of ruled edits over a builder dispatch (aaif-9c7 comment); recording bead-text-stated edges in the store rather than dropping the graph's narrative (REVISION-NOTES-v7 §(i)); labeled even-split allocation of phase costs to graph nodes (§(k), reported to the desk before landing, Zig declined a further look).
+- none filed as `-t decision` beads (harvest: 0 of 6 scanned; cutoff = session start, genuine zero). Calls made inline and recorded where they bind: the submission gate was opened on Zig's VERBATIM order relayed by the desk (recorded on aaif-i5a.1 + AMPLIFY.md); the site JSON-LD employer hit ruled not a privacy finding (desk agreed, on the bead).
 
 ## Proposed practices — where each one landed (Step 2.6)
-- "Test visual components at phone width as much as desktop" → Zig's standing rule; the desk filed the fleet-wide bead (desk-owned; id not relayed to this seat).
-- "Verify a rendered page by the ABSENCE of the superseded text, not the presence of the new" → practice used all day; no home yet → successor: fold into `/camp-publish` Step 2.5 or `/scrutinize` as one line (cheap, mechanical).
+- "Verify a rendered page by the ABSENCE of superseded text" → written into `/camp-publish` Step 4 (81063eb).
+- "Routine Monitor re-arm → one short desk line without the idle literal; real flag only on state change" → memory `feedback_idle_flag_only_on_state_change.md`; mechanical fix is the desk's `dotfiles-cgpbk`.
 
 ## What's next
-- NEXT: verify the PUBLISHED page https://andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise after the 20:00 PT build (200, title, published Sep 13, CDN hero, privacy greps on the live HTML, graph costs rendered at 390/1280 via Playwright) and report to the desk; then add the SUBMISSIONS.md row + Asana log (step 7) BY 2026-09-14T04:30:00Z
-- File the dotfiles bead: gateway `bead_id` stamping is "none" fleet-wide (evidence in DATASET-postcost-v1 method note / aaif-i5a.1 comment).
-- Then, on Zig's separate go only: `/aaif-review` → the ⛔ AAIF submit gate; `/amplify` drafts.
+- NEXT: close bead aaif-i5a.1 with its evidence chain and file the stage-review teardown as its own bead gated on Zig's sign-off BY 2026-09-16T18:00:00Z
+- On Zig's sign-off of the live page (via the desk): `systemctl --user stop aaif-stage-review`, then close that teardown bead and consider closing the parent aaif-i5a.
+- X-THREAD.md stays parked unless Zig asks; if he posts it, it is a standalone CANDIDATE → its own /aaif-review + gated submission.
 - Next radar tick Sat 2026-09-19 15:00 PT (run `bin/radar-live-state-lint.py` first).
 
 ## Warnings / watch-outs
-- ⛔ Publishing to his blog is NOT submitting to AAIF. The submit gate has no go.
-- The two old slugs redirect ONLY on the tailnet stage; the public site never carried them. The stage unit `aaif-stage-review` still serves the land-state page; tear it down after Zig signs off on the live page (`systemctl --user stop aaif-stage-review`).
-- The blog folder is gitignored: DRAFT/STAGED/PUBLISH-v7, REVISION-NOTES-v7, DATASET-postcost-v1, BEADS-GRAPH.export.mjs exist ONLY on this disk (+ the vault copy of PUBLISH). `.local/component-shots-v6/` has the render proofs.
-- The FOLD-close byte-lock is broken by Zig's own edit (Smalltalk/"old people" cut) — do not "restore" it.
-- Graph costs are an allocation, labeled as such in the caption; if Zig wants the graph unpriced, it is the tag + 42 cost lines in PUBLISH-v7 and a re-land.
+- ⛔ The submit gate is CLOSED again. #1030 was opened on ONE verbatim order for ONE piece; nothing about it carries to the next submission.
+- The blog folder is gitignored: LINKEDIN-POST/X-THREAD/AMPLIFY/PUBLISH-v7/DATASET-postcost-v1 exist only on this disk (+ the vault copy of PUBLISH). Do not "restore" the FOLD-close byte-lock (Zig's own cut).
+- `.local/private-notes.md` holds the Asana comment GIDs — never echo them into tracked files.
+- The stage unit still serves the land-state page on the tailnet; it is Zig's to release.
