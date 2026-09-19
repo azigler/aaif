@@ -39,12 +39,12 @@ never by underselling a piece that genuinely is the higher type.
 
 | Type (`detected_type`) | Points | What it is |
 |---|---|---|
-| `social_thread` | 5 | a substantive thread/post with developer value |
+| `social_thread` | 5 | a substantive thread/post with developer value W38: a post with a short embedded screen recording of a concrete first-use workflow clears the *more-than-promotion* bar. |
 | `community_help` | 5–15 | answering/supporting in community channels (scope-scaled) |
 | `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below**. Also the landing type for a **whitepaper** (W37: an aaif.io authz whitepaper scored 15 — *"explanatory rather than step-by-step"*) and for a **newsletter issue** with one substantive project section (W37: 15 per issue, scored on the AAIF section only) |
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
-| `podcast_guest` | 20 | a podcast appearance |
+| `podcast_guest` | 20 | a podcast appearance **W38: the HOST of an interview with a project maintainer also scores 20** (n=1, high confidence) — the host-vs-guest risk did not bite. |
 | `meetup_talk` | **20 / 25** | a talk given at a meetup — **two live rungs (W35: the 20-rung solidified n=8, alongside n=14 at 25, both active in the same month)**. Observed split: user-group / community-session / casual-online venues land **20**; established meetups and flagship community events land **25**. Predict **20** conservatively for community-event sessions; claim 25 only with strong meetup evidence |
 | `livestream` | 25 | a live technical stream |
 | `conference_talk` | 30 | a talk at a conference (verifiable session page). A listed **panel seat** is 30 (W36); **co-speakers** on one session are each credited 30; the **same talk repeated at a different verifiable conference is a new 30** (W37) |
@@ -121,9 +121,22 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
   semantics, generated SDK code, UI, localization, *and* tests, where maintainer review
   confirms the feature was wanted. Added in the W31 radar scan (n=1). The distance from
   `25` to `40` is **breadth across the stack**, not just "feature + tests + docs".
+  **W38 (n=8):** the reviewer's own band language is *"the top of the 15–25 point examples
+  and tooling range"* vs *"a 40–50 point major-feature award"*, and the stated gate for the
+  upper band is **upstream maintainer confirmation** (a maintainer-reviewed merge or
+  documented maintainer collaboration in the PR thread). An **own-repo** change can also reach
+  40 when it is architecture-scale and merged via PR with every layer visible (guardrails,
+  deployment assets, tests, CI, docs, AGENTS.md, gateway config) — the reviewer reads
+  *structure*, never runs code.
 - **50** — a presumed higher ceiling for this type, **still not observed** on a
   `project_contribution` scorecard — treat as provisional. (Note 50 *is* now confirmed
   as the base for `course`, so the overall ladder does reach it.)
+- **Article + apparatus are credited SEPARATELY (W38, n=3).** A measured article scores
+  `blog_post` 15 and the **pinned public harness behind it** (harness code + raw results +
+  reproduction docs, authored by you, submitted as its **own** issue) scores a separate
+  `project_contribution` 25 — *"credits the reusable technical apparatus rather than the
+  article."* A measured study is therefore a 15 + 25 = **40-point shape** when the apparatus
+  is published as its own artifact.
 
 So a merged non-trivial upstream PR beats a demo repo; a demo repo beats a docs typo.
 If the goal is points, **merge it upstream** and make the merge visible — and if the

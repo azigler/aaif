@@ -67,6 +67,18 @@ Schema (v1.0) fields that matter: `contribution.detected_type`, `contribution.pr
 (For a batch tabulation, loop the paths and `base64 -d | jq` each — a small fleet of
 `gh api` calls; if the shell environment fights you, fetch paths first then decode.)
 
+### 2.5. Our OWN issues + scorecards (the W38 blind spot)
+```bash
+gh api --paginate 'repos/aaif/ambassadors/issues?state=all&creator=azigler&per_page=100' \
+  --jq '.[] | select(.pull_request==null) | "\(.number) \(.state) \([.labels[].name]|map(select(startswith("status:")))|join(",")) \(.title)"'
+grep -i azigler <scorecard-path-list>   # then decode each and read type / base / recognition_month
+```
+Diff every azigler card against `SUBMISSIONS.md` and the open `submission:` beads. The scorecard
+*count* delta cannot see a card that landed before the previous baseline — W38 found our #703
+(`podcast_guest` 20, approved 2026-08-22) still carried as "pending" four weeks later. A mismatch
+is fixed **in this run** (row + totals + bead close with the scorecard as evidence), then reported
+to the desk as a record. `state.json` keeps `own_scorecards` for the next diff.
+
 ### 3. Delta vs last run (the ledger makes it a *radar*, not a snapshot)
 State lives at `.local/radar/state.json` — last-seen max issue number, scorecard count, and
 the prior type/project distribution. Compute **what changed this week**: new submissions, new
