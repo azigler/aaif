@@ -3,6 +3,10 @@
 > Researched 2026-06-24, cross-verified against official sources. One of four
 > AAIF submission targets — and the connective tissue across all of them (goose,
 > agentgateway, and AGENTS.md tooling all touch MCP).
+>
+> **2026-09-26 — re-verified at Final:** `2026-07-28` shipped Final on
+> 2026-07-28 and is now the Current revision; RC-era wording updated, accuracy
+> flags resolved, claims annex added → [Verified claims annex](#verified-claims-annex-2026-07-28-final).
 
 ## What MCP is
 
@@ -37,7 +41,7 @@ rust/`rmcp` (~3.6k, Tier 2) · java (~3.5k, Spring AI) · php (~1.5k) · kotlin
 - `mcpb` (~2k★) — **MCP Bundles** (renamed from DXT, Nov 2025): `.mcpb` + `manifest.json` one-click install.
 - `quickstart-resources`, `example-remote-server`.
 
-**Extensions** (reverse-DNS-namespaced, formalized in the RC): official `ext-apps`
+**Extensions** (reverse-DNS-namespaced, formalized in `2026-07-28`): official `ext-apps`
 (MCP Apps — sandboxed HTML UIs via `ui://`), `ext-auth`, ext-tasks; experimental
 `experimental-ext-skills` (Skills over MCP, `skill://`), interceptors,
 triggers-events, etc. Working groups: transports-wg, agents-wg + Registry/
@@ -45,11 +49,12 @@ Inspector/Security/Auth interest groups.
 
 ## Maturity & current state (mid-2026)
 
-- **Current Final spec: `2025-11-25`** (date-versioned). Adds OIDC Discovery,
+- **Previous revision: `2025-11-25`** (date-versioned). Added OIDC Discovery,
   tool/resource/prompt icons, incremental scope consent, `ElicitResult`/
   `EnumSchema` redesign + URL-mode elicitation, tool-calling inside sampling,
   experimental **Tasks** (durable ops), JSON Schema 2020-12 default, SDK tiering.
-- **`2026-07-28` is a RELEASE CANDIDATE** (locked 2026-05-21, not yet final):
+- **Current revision: `2026-07-28`, Final since 2026-07-28** (RC locked 2026-05-21;
+  `/specification/latest` now resolves to `/specification/2026-07-28`):
   "largest revision since launch" — a **stateless protocol core** (drops the
   `initialize` handshake + `Mcp-Session-Id`; adds method/name routing + caching),
   W3C Trace Context, the Extensions framework formalized, MCP Apps + Tasks
@@ -101,7 +106,7 @@ Kotlin (#2512), Ruby (docs lag two spec versions).
    amplifies. Points 15→30.
 4. **"Elicitation, sampling, and roots — the primitives nobody finished
    documenting (with a live client-support matrix)"** — tutorial + maintained
-   matrix PR + screencast. "Use-it-and-migrate" given the RC deprecations. He runs
+   matrix PR + screencast. "Use-it-and-migrate" given the 7-28 deprecations. He runs
    many clients + local models → can actually test each cell. Points 20.
 5. **"Wiring MCP into local models: serving qwen3-coder over MCP on a Mac
    Studio"** — tutorial + video. Zero first-party "MCP + local models" content;
@@ -113,7 +118,8 @@ Kotlin (#2512), Ruby (docs lag two spec versions).
 
 ## Accuracy flags
 
-- `2026-07-28` is a **Release Candidate** — cite `2025-11-25` as current Final.
+- `2026-07-28` went **Final on 2026-07-28** and is the Current revision (re-verified
+  2026-09-26); `2025-11-25` is the previous revision.
 - The **Registry is still in preview** (no GA as of mid-2026).
 - Adoption numbers (~110M downloads, ~9,600 servers) are Anthropic/registry-API
   snapshots via a secondary aggregator.
@@ -121,7 +127,7 @@ Kotlin (#2512), Ruby (docs lag two spec versions).
 ## Sources
 
 - https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation
-- https://blog.modelcontextprotocol.io/ (MCP-joins-AAIF, 2026 roadmap, 2026-07-28 RC, registry preview, MCPB, MCP Apps)
+- https://blog.modelcontextprotocol.io/ (MCP-joins-AAIF, 2026 roadmap, 2026-07-28 RC + Final, registry preview, MCPB, MCP Apps)
 - https://modelcontextprotocol.io/specification/2025-11-25/changelog · /community/sep-guidelines · /registry/about
 - https://github.com/orgs/modelcontextprotocol/repositories (+ inspector, conformance, mcpb, registry)
 - Security canon: Invariant Labs (tool poisoning), Trail of Bits (line jumping), Simon Willison (lethal trifecta)
@@ -142,15 +148,21 @@ Kotlin (#2512), Ruby (docs lag two spec versions).
 > Stateless Core / Extensions Framework / Authorization Hardening / Deprecation
 > Policy / JSON Schema. The three-theme split here is editorial; don't attribute
 > it to modelcontextprotocol.io.
+>
+> **Re-verified 2026-09-26 against the Final `2026-07-28` text** (changelog,
+> schema.ts at tag `2026-07-28`, SEP pages). Written during the RC; the
+> architectural shape did not change. Per-claim results: the
+> [Verified claims annex](#verified-claims-annex-2026-07-28-final).
 
 ## The headline, stated precisely
 
 The `2026-07-28` revision makes MCP **stateless at the protocol layer**. It is
 a **breaking change** (the RC post: *"This release contains breaking changes.
 We don't intend for that to be the norm"*). RC text **locked 2026-05-21**;
-**finalizes 2026-07-28**; the ~10-week window is for SDK maintainers + client
-implementers to validate against real workloads. Spec text can still shift on
-blocking issues, but **the architectural shape is final**.
+**went Final 2026-07-28** (the Final post: *"Today, we're officially pushing the
+release button on the next version of the MCP specification, 2026-07-28"*),
+after a ~10-week window for SDK maintainers + client implementers to validate
+against real workloads.
 
 Crucial nuance the hype misses: the *mechanical* blast radius is small. SEP-2567's
 own 1000-repo survey found **90.0% of open-source servers have no app-level
@@ -205,10 +217,10 @@ state" 2.5% + "sticky-routing gateway" 0.7% + "auth-binding" 0.5% rows) need a
   are replaced by a single **`subscriptions/listen`** long-lived POST-response
   stream. Clients opt into types (`toolsListChanged`, `promptsListChanged`,
   `resourcesListChanged`, `resourceSubscriptions`); server tags notifications
-  with `io.modelcontextprotocol/subscriptionId`. (Note: the changelog also
-  references `messages/listen`/`subscriptions/listen` naming across SEP-2575 —
-  cite the changelog verbatim when precision matters; the WG was still settling
-  the exact method name during RC.)
+  with `io.modelcontextprotocol/subscriptionId`. (Settled at Final: the method is
+  **`subscriptions/listen`** — 21 occurrences in the Final `schema.ts`, zero of
+  `messages/listen`. Request-scoped notifications such as `notifications/progress`
+  still ride the originating request's response stream, not this one.)
 - **SSE stream resumability removed**: no more `Last-Event-ID` / SSE event-ID
   redelivery. A broken stream loses the in-flight request; the client **MUST**
   re-issue it as a new request with a new ID.
@@ -230,8 +242,9 @@ state" 2.5% + "sticky-routing gateway" 0.7% + "auth-binding" 0.5% rows) need a
 ### A6. Error-code changes (small but will bite literal matchers)
 
 - Resource-not-found: MCP-custom **`-32002` → JSON-RPC `-32602`** (Invalid
-  Params) (SEP-2164 in some summaries; the changelog lists it under JSON Schema/
-  error cleanup). New error-code allocation policy partitions `-32000..-32019`
+  Params) — this is **SEP-2164** ("Standardize Resource Not Found Error Code",
+  Final; the changelog lists the change unnumbered). The separate, also unnumbered
+  error-code allocation policy partitions `-32000..-32019`
   (impl-defined, grandfathered) vs `-32020..-32099` (MCP-reserved); the RC's own
   new codes renumber: `HeaderMismatch` `-32001→-32020`,
   `MissingRequiredClientCapability` `-32003→-32021`,
@@ -333,9 +346,13 @@ Credentials, Enterprise-Managed Authorization).
 | **SEP-2468** | Clients **MUST** validate a present `iss` param on auth responses against the recorded issuer before redeeming the code (RFC 9207) — stops mix-up attacks; future versions will require *rejecting* responses that omit `iss`. The RC post: *"the one that should ship in every client by August."* |
 | **SEP-837** | Clients **MUST** declare an appropriate `application_type` during Dynamic Client Registration so AS defaults don't misclassify desktop/CLI as `"web"` and reject localhost redirect URIs. |
 | **SEP-2352** | Credentials are **bound to the issuing AS**: key persisted creds by issuer, **MUST NOT** reuse across AS, **MUST** re-register when the AS changes. |
-| **SEP-2207** | Guidance for requesting **refresh tokens** from OIDC-style AS. |
-| **SEP-2350** | Clarifies **scope accumulation** during step-up auth. |
-| **SEP-2351** | Standardizes the **`.well-known` discovery suffix** for AS metadata. |
+| **SEP-2207** | Guidance for requesting **refresh tokens** from OIDC-style AS (Final text: clients **MUST NOT** assume refresh tokens will be issued; **MAY** add `offline_access` when the AS advertises it). |
+| **SEP-2350** | Clarifies **scope accumulation** during step-up auth (a client-side responsibility, per the Final text). |
+| **SEP-2351** | Standardizes the **`.well-known` discovery suffix** for AS metadata (the default RFC 8414 `oauth-authorization-server` suffix). |
+
+All six SEPs are Final and their normative text is in the Final `2026-07-28`
+authorization pages; only 2468 / 837 / 2352 are enumerated in the changelog
+(2207 / 2350 / 2351 are not, so cite the spec section, not the changelog).
 
 Related (not in the six but same revision): **Dynamic Client Registration
 (RFC 7591) is now Deprecated** in favor of **Client ID Metadata Documents**
@@ -366,18 +383,20 @@ Related (not in the six but same revision): **Dynamic Client Registration
 
 ### C4. SEP process + conformance gating — SEP-2484, SEP-1850
 
-- **SEP-2484:** a Standards-Track SEP **cannot reach Final** until a matching
-  scenario lands in the **conformance suite** (`github.com/modelcontextprotocol/
-  conformance`). The suite grows exactly as fast as the spec — and it's the
+- **SEP-2484** (a Process SEP; marked Final 2026-06-03 UTC, *after* the RC lock,
+  and not in the 7-28 changelog, so it governs **future** SEPs): a Standards-Track
+  SEP that changes observable behavior **cannot move Accepted → Final** until a
+  matching scenario (plus a MUST/SHOULD traceability file) lands in the
+  **conformance suite** (`github.com/modelcontextprotocol/conformance`). The suite grows exactly as fast as the spec — and it's the
   **same suite the SDK tier system scores against**.
 - **SEP-1850:** formalizes the **PR-based SEP workflow** (markdown in `seps/`,
   PR-derived numbering, sponsor responsibilities, status via PR labels).
-- **SDK tiers** (conformance dates: tests available **2026-01-23**, tiering
+- **SDK tiers** (**SEP-1730**, merged via PR #1777; conformance dates: tests available **2026-01-23**, tiering
   published **2026-02-23**): **Tier 1** = 100% conformance, ships new features
   before spec release, 2-business-day triage, 7-day P0 fix, stable release,
   full docs; **Tier 2** = 80% / within 6 months; **Tier 3** = experimental, no
   minimums. **Relegation:** Tier 1→2 if *any* conformance test fails for 4
-  continuous weeks. Experimental features (Tasks) and extensions (MCP Apps) are
+  continuous weeks; Tier 2→3 if more than 20% fail for 4 continuous weeks. Experimental features (Tasks) and extensions (MCP Apps) are
   **not required for any tier**.
 
 ---
@@ -570,13 +589,16 @@ in his profile, and stays in the academic + engineering lanes.
     **SEP-414**; MRTR **SEP-2322**; Tasks **SEP-2663**; JSON Schema **SEP-2106**;
     extensions **SEP-2133**; MCP Apps **SEP-1865**; conformance gate **SEP-2484**;
     SEP workflow **SEP-1850**.
-- **Notification-stream method name** (`subscriptions/listen` vs
-  `messages/listen`) was still being finalized in RC text — **quote the changelog
-  verbatim** rather than paraphrasing, and re-check at Final (7-28).
-- **`2026-07-28` is still a Release Candidate** until 7-28; the changelog lives
-  at `/specification/draft/changelog` and spec text **can still change** on
-  blocking issues. **Re-verify every normative MUST/SHOULD at Final** before any
-  white-paper or demo ships. Current Final remains **`2025-11-25`**.
+- ~~Notification-stream method name~~ **Resolved at Final:** `subscriptions/listen`
+  (see annex).
+- **`2026-07-28` is Final (2026-07-28) and Current.** Its changelog now lives at
+  `/specification/2026-07-28/changelog`; `/specification/draft/` has moved on to
+  the *next* revision, so do not cite `draft` for 7-28 facts. The re-verify of the
+  load-bearing MUST/SHOULD claims was done 2026-09-26 (annex below); anything
+  not in the annex is still RC-era prose, so re-check it before a publish.
+- **SEP numbers that were wrong or unsourced in earlier notes:** the SDK tier
+  system is **SEP-1730** (PR #1777; "SEP-1777" is wrong); SEP-2164 is the
+  resource-not-found code change, **not** the error-code allocation policy.
 - **The Explicit-Handle Pattern is NOT an API** — no schema, no method. Calling
   it one is the single most likely accuracy error in downstream content.
 - **The "three themes" used here are a reader aid, not the spec's own structure.**
@@ -587,13 +609,55 @@ in his profile, and stays in the academic + engineering lanes.
 - **The RC blog groups the changes differently** than the three-theme split used
   here — that grouping is editorial, not the spec's.
 
+## Verified claims annex (2026-07-28 Final)
+
+Re-verified **2026-09-26** against primary sources, graduating the claim
+inventory from `submissions/2026-mcp-governance-whitepaper/research/p0-verified-findings.md` §1.
+Status is three-valued: CONFIRMED / CHANGED (what changed) / COULD-NOT-VERIFY (why).
+`CL` = https://modelcontextprotocol.io/specification/2026-07-28/changelog.
+
+**Final status itself — CONFIRMED.** The Final post (dated *"July 28, 2026"*,
+https://blog.modelcontextprotocol.io/posts/2026-07-28/): *"Today, we're officially
+pushing the release button on the next version of the MCP specification,
+2026-07-28"*. `/specification/latest` redirects to `/specification/2026-07-28`; the
+spec repo carries tags `2026-07-28-RC` and `2026-07-28`; the `draft` changelog is
+now empty (*"Changes since the most recent release will accumulate here."*).
+
+| Claim | Status | Primary source | Verified |
+|---|---|---|---|
+| SEP-2567: sessions + `Mcp-Session-Id` removed; server-minted handles passed as tool args; handle pattern is guidance, not an API ("There is no `handles/*` method, no handle type in the schema, no wire-level concept of a handle at all.") | CONFIRMED | CL major #1 · https://modelcontextprotocol.io/seps/2567-sessionless-mcp | 2026-09-26 |
+| SEP-2575: `initialize` handshake removed; version + capabilities per request in `_meta`; adds `server/discover` (servers MUST implement) | CONFIRMED (nuance: `clientInfo` in `_meta` is a SHOULD, not a MUST) | CL major #2-3 | 2026-09-26 |
+| SEP-2468: clients MUST validate a present `iss` against the recorded issuer (RFC 9207); AS SHOULD include `iss` | CONFIRMED | CL minor #7 | 2026-09-26 |
+| SEP-2243: `Mcp-Method` + `Mcp-Name` required on Streamable-HTTP POST; adds `x-mcp-header` | CONFIRMED | CL minor #4 | 2026-09-26 |
+| SEP-414: OTel/W3C trace-context conventions (`traceparent`/`tracestate`/`baggage`) in `_meta` | CONFIRMED | CL minor #2 | 2026-09-26 |
+| SEP-2106: `inputSchema`/`outputSchema` allow any JSON Schema 2020-12 keywords; `structuredContent` any JSON value | CONFIRMED | CL minor #10 | 2026-09-26 |
+| SEP-2549: `CacheableResult` **requires** `ttlMs` + `cacheScope` (`public`/`private`) on `tools/list`, `prompts/list`, `resources/list`, `resources/read`, `resources/templates/list` | CONFIRMED (both fields non-optional in the Final `schema.ts`) | CL minor #5 · `schema/2026-07-28/schema.ts` @ tag `2026-07-28` | 2026-09-26 |
+| SEP-2484: Standards-Track SEPs with observable behavior cannot go Accepted → Final without a merged conformance scenario + traceability file; forward-governing, not in the 7-28 changelog | CONFIRMED rule; **CHANGED date**: the SEP file's "Mark SEPs as final" commit is 2026-06-03T20:45Z (PR #2484 merged 2026-05-17). "Final 2026-06-04" is not reproducible, so write "Final in early June 2026". Still after the RC lock (2026-05-21), so the forward-governing framing holds. SEP-2484 is itself a Process SEP | https://modelcontextprotocol.io/seps/2484-conformance-tests-required-for-final-seps · repo history of `seps/2484-*.md` | 2026-09-26 |
+| SDK tiers: conformance tests available 2026-01-23; tiering published 2026-02-23; Tier 1 = 100%, Tier 2 = 80%, Tier 3 = none; Tier 1→2 if any test fails continuously 4 weeks, Tier 2→3 if >20% fail 4 weeks | CONFIRMED | https://modelcontextprotocol.io/community/sdk-tiers | 2026-09-26 |
+| SDK-tier SEP number "SEP-1777" | **CHANGED**: the SEP is **SEP-1730** ("SDKs Tiering System", Final); #1777 is the PR that merged it (2026-02-02) | https://modelcontextprotocol.io/seps/1730-sdks-tiering-system · PR #1777 | 2026-09-26 |
+| SEP-2596: Active → Deprecated → Removed; at least 12 months, measured from the release of the revision that first marks the feature Deprecated (not SEP-Final); expedited removal keeps at least 90 days, active security risk only | CONFIRMED | https://modelcontextprotocol.io/community/feature-lifecycle · CL governance #1 | 2026-09-26 |
+| SEP-2577: Roots / Sampling / Logging deprecated in 7-28, still fully functional; Logging → `stderr` / OpenTelemetry; earliest removal = first revision on or after 2027-07-28 | CONFIRMED | CL deprecated #1 · https://modelcontextprotocol.io/specification/2026-07-28/deprecated | 2026-09-26 |
+| Notification stream method: `subscriptions/listen` (not `messages/listen`) | CONFIRMED | CL major #4 · Final `schema.ts` (21 × `subscriptions/listen`, 0 × `messages/listen`) | 2026-09-26 |
+| OAuth SEPs 2207 / 2350 / 2351 are normative in 7-28 | **CHANGED (resolved)**: all three are Final SEPs and their text is in the Final authorization pages (refresh-token rules incl. `offline_access`; client-side scope accumulation; the default RFC 8414 `oauth-authorization-server` suffix). None of the three strings appear in the `2025-11-25` authorization page. They are **not** enumerated in the changelog, so cite the spec section | https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization · /authorization-server-discovery | 2026-09-26 |
+| SEP-2164 = error-code change | **CHANGED**: SEP-2164 is specifically resource-not-found `-32002` → `-32602` (CL minor #6, unnumbered there). The error-code allocation policy (CL minor #12) carries no SEP number in the changelog | https://modelcontextprotocol.io/seps/2164-resource-not-found-error | 2026-09-26 |
+
+**The SAFE conformance-gating claim still holds** (with the date softened):
+*"The 2026-07-28 release ships into a conformance-gated, SDK-tiered ecosystem: a
+conformance suite live since 2026-01-23, published SDK tiers since 2026-02-23, and,
+as of SEP-2484 (Final in early June 2026), a standing rule that **future**
+Standards-Track SEPs cannot reach Final without a matching conformance scenario."*
+**Do NOT write** "every 7-28 SEP was conformance-gated from birth": SEP-2484 went
+Final after the RC text locked (2026-05-21) and is not in the 7-28 changelog.
+
 ## Sources (7-28 deep brief)
 
 - RC announcement: https://blog.modelcontextprotocol.io/posts/2026-07-28-release-candidate/
-- Draft changelog (authoritative SEP list): https://modelcontextprotocol.io/specification/draft/changelog
+- Final announcement (2026-07-28): https://blog.modelcontextprotocol.io/posts/2026-07-28/
+- Final changelog (authoritative SEP list): https://modelcontextprotocol.io/specification/2026-07-28/changelog
+- Final schema: `schema/2026-07-28/schema.ts` at tag `2026-07-28` in github.com/modelcontextprotocol/modelcontextprotocol
 - **SEP-2567** (Sessionless MCP via Explicit State Handles, Final): https://modelcontextprotocol.io/seps/2567-sessionless-mcp
 - Feature lifecycle / deprecation policy (SEP-2596): https://modelcontextprotocol.io/community/feature-lifecycle
-- Deprecated-features registry: https://modelcontextprotocol.io/specification/draft/deprecated
+- Deprecated-features registry: https://modelcontextprotocol.io/specification/2026-07-28/deprecated
 - SDK tiers + conformance: https://modelcontextprotocol.io/community/sdk-tiers · https://github.com/modelcontextprotocol/conformance
 - Extensions framework (SEP-2133): https://modelcontextprotocol.io/docs/extensions/overview
 - MCP Apps (SEP-1865): https://modelcontextprotocol.io/community/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp · https://github.com/modelcontextprotocol/ext-apps
