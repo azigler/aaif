@@ -12,6 +12,8 @@ Active reference material the harness loads to do the work. The deliverable of
 | [`research-paper-pipeline.md`](research-paper-pipeline.md) | The venue-neutral research-paper / whitepaper cookbook — the deep reference behind the `/research-paper` skill. |
 | [`pulse-ledger.jsonl`](pulse-ledger.jsonl) | Append-only JSONL record of autonomous loop ticks (e.g. `aaif-radar`) and their outcomes/proof — so nothing runs unaccounted for. |
 | [`session-handoff.md`](session-handoff.md) | The rotating handoff note written by `/offboard` — the state at the end of the last working session (open beads, what to do first next). |
+| [`draft-review-surface.md`](draft-review-surface.md) | Zig's standing weekly draft-review process (ruled 2026-08-28): every draft ships to a hosted review page, never to the terminal. |
+| [`interview-first-drafting.md`](interview-first-drafting.md) | The interview-first drafting process for long-form pieces under Zig's name (ratified 2026-08-28): quarry the draft from his own words, then edit. |
 | **`program/`** | The Ambassador Program itself. |
 | [`program/ambassador-program.md`](program/ambassador-program.md) | **Authoritative mechanics** — commitment, contribution types, the submission workflow, the points table, scorecards, perks, renewal. Distilled from the handbook. |
 | [`program/strategy-top-ambassador.md`](program/strategy-top-ambassador.md) | The playbook — what "top ambassador" means, Andrew's leverage, the cadence engine, selection heuristics, opening moves. |
@@ -23,6 +25,8 @@ Active reference material the harness loads to do the work. The deliverable of
 | [`projects/goose.md`](projects/goose.md) | goose — local-first agent framework. |
 | [`projects/agentgateway-and-working-groups.md`](projects/agentgateway-and-working-groups.md) | agentgateway + the 7 working groups + landscape. |
 | [`projects/mcp.md`](projects/mcp.md) | MCP — the protocol. |
+| [`projects/a2a.md`](projects/a2a.md) | A2A — agent-to-agent interoperability (joined AAIF 2026-08-17). |
+| [`projects/agent-router.md`](projects/agent-router.md) | Agent Router — the renamed Envoy AI Gateway, AAIF's second gateway (joined 2026-09-09). |
 | **`brand/`** | Logos, the Credly badge, the announcement header. |
 
 ## Provenance

@@ -67,6 +67,7 @@ in [`.claude/skills/`](.claude/skills/):
 | `camp-publish` | Lands a finished piece into my personal-site publish pipeline. |
 | `amplify` | Drafts the announcement and community-help copy for a shipped contribution, and judges whether it stands alone as its own small contribution. Drafting only — posting is always mine. |
 | `storybook-header` | Makes the header image for a post, in the running watercolour series (a white goose in a red aviator scarf, somewhere pastoral). |
+| `aaif-line-art` | The other image lane: flat line-art headers and hand-built diagrams in AAIF's own brand palette, for pieces that should look AAIF-native. Imagery always comes after the text is locked. |
 | `aaif-radar` | A read-only weekly scan of the submissions landscape for trends and under-served lanes. Its report is private; nothing about other people is ever committed. |
 | `agentgateway` | Read-only observability for a self-hosted agent gateway: audit, cost, trace, and human-gated hardening suggestions. |
 | `aaif-blog-guidelines` | AAIF's own editorial + intake guidelines for blog content (authored by AAIF). |
