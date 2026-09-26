@@ -1,5 +1,7 @@
 # P0 — verified findings (claim inventory)
 
+> **Re-verified at Final 2026-09-26 → [refs/projects/mcp.md#verified-claims-annex-2026-07-28-final](../../../refs/projects/mcp.md#verified-claims-annex-2026-07-28-final)** (§1 below is the RC-era snapshot; the annex supersedes it: SEP-2484 date → "early June 2026", tier SEP is SEP-1730.)
+
 > The `/research-paper` P0 grounding pass for this whitepaper. Every load-bearing
 > fact below was verified against a **primary source** by a read-only research
 > agent (bead `aaif-wzz`). This is the claim inventory the `/spec` test cases and
