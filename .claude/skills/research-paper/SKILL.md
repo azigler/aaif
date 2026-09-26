@@ -123,6 +123,6 @@ test line checked before "done." Full test-case catalog + examples in the cookbo
 - `/research` + `/deep-research` — the research fan-out for P0 grounding. **Reference,
   don't reimplement** — compose them; this skill doesn't re-do research orchestration.
 - `/randomize` — force real angle diversity in P0 so the framing isn't the modal one.
-- `~/.claude/skills/cfp/` — the global research-paper + conference arc this loop was
-  ported from; `~/.claude/skills/cfp/reference/scientific-paper-arc.md` is the full
+- `~/cfp/.claude/skills/cfp/` — the global research-paper + conference arc this loop was
+  ported from; `~/cfp/.claude/skills/cfp/reference/scientific-paper-arc.md` is the full
   academic-layer how-to the cookbook's optional appendix points to.

@@ -449,7 +449,7 @@ cycle, a named publisher, or open-science / artifact-compliance language).
 The full how-to for this layer is **not duplicated here** — it lives in the
 global CFP arc, which walks it end-to-end on a real accepted paper:
 
-> **`~/.claude/skills/cfp/reference/scientific-paper-arc.md`** — the complete
+> **`~/cfp/.claude/skills/cfp/reference/scientific-paper-arc.md`** — the complete
 > peer-reviewed-paper sub-arc: reviewer-comment capture → revision spec →
 > worktree revision dispatch → open-science artifact bundle → Zenodo DOI (via the
 > GitHub integration) → arXiv preprint (cs.SE endorsement flow, source-tarball
