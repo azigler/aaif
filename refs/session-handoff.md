@@ -3,47 +3,60 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-09-15 de2bbda9
+# Session handoff — 2026-09-26 6d94b139
+
+Covers two sessions: 824c8cfb (2026-09-19, the W38 radar run, which ended without /offboard; its
+`.offboard-pending` marker is cleared by this offboard) and 6d94b139 (2026-09-26, this one).
 
 ## State at offboard
 - Current branch: main
-- Last commit: 8049269 (beads: aaif-i5a.1 — #1030 APPROVED, 15 pts, September 2026); remote = local
-- Open beads: `br ready` is the source; in-progress: aaif-omn (unchanged, untouched this session)
-- In-flight subagents: none. Worktrees: only the two FOREIGN locked trees (agent-a51e8785c7e2bb0f2, agent-a770a7ae4bace6230) — not ours, leave them.
+- Last commit: see `git log -1` (the offboard commit follows dda5ebf, the idea-walk bead commit)
+- Open beads: 48 (1 in progress: aaif-omn)
+- In-flight subagents: none. A demesne builder worktree at /home/ubuntu/.agents-wt-aaif-friction
+  (branch aaif/friction-fixes-2026-09-26) is left for consul to reap after merging.
 - Dirty files: none
-- Markers: `.offboard-pending` cleared (Step 4)
-- Stage unit `aaif-stage-review` still ACTIVE by Zig's hold (sign-off not given). Promise ledger: none open for aaif.
+- Markers: `.offboard-pending` cleared
 
 ## What happened this session (bullets)
-- **THE SEPTEMBER ANCHOR IS LIVE, SUBMITTED AND APPROVED.** Live at https://www.andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise (200 at 2026-09-14T03:49Z; the 20:00 PT build took ~49 min; bare host 308s to www). Verified by battery: title, published 2026-09-13, CDN hero, six superseded phrases ABSENT, BeadGraph allocation caption visibly rendered, $646.68 on page, privacy 0 in the article (site-wide author JSON-LD is the only employer hit; ruled not a finding), Playwright 390/1280 unclipped. Proofs: `.local/live-verify-20260913/`.
-- Step 7 logged: SUBMISSIONS.md 2026-09 row; logged onto the September recurring task in Zig's Asana planning hub via the connector (URL in notes + comment) — the private-notes "Asana write path not wired" item is RESOLVED (connector reaches his workspace, posts as him).
-- /amplify on Zig's GO: LINKEDIN-POST.md (deep on ONE insight, the A2A deadline gap; /randomize seed e4c22d5ae9a8fbbb → 3/2/3), X-THREAD.md (standalone CANDIDATE), AMPLIFY.md. On his order the LinkedIn draft was landed VERBATIM as an Asana comment on the September task for his review; he posted it 2026-09-15: https://www.linkedin.com/feed/update/urn:li:activity:7505636103551459328/
-- On his verbatim order (via the desk, ~07:4x PT 09-15): SUBMITTED https://github.com/aaif/ambassadors/issues/1030 — `[Submission]: I taught my agents how to keep a promise`, A2A box, Notes brief, LinkedIn post as social evidence. Reviewer scored it 17:07Z (blog_post, A2A, 15, high); scorecard PR #1035 MERGED; issue CLOSED `status:approved`. **15 points, September 2026. Portfolio: 3 ledger pieces, 50 ledger pts, 55 total approved** (Clare episode #703 still pending).
-- camp-publish Step 4 now carries the verify-by-ABSENCE practice + 390px render + live-HTML privacy battery (81063eb).
-- Session was restarted 3x by the desk (pool corrections onto linearb); each time: re-arm channel watcher, drain spool, idle flag once.
+- W38 (2026-09-19): radar run; own-record fix for #703; radar skill gained step 2.5 (own issues).
+- W39 radar (2026-09-26): 41 new subs, +34 cards, no re-base. The Agent Router template checkbox
+  landed today → folded back into /aaif-review and refs/projects/agent-router.md (a8ade1f).
+  Private report .local/radar/2026-W39.md; note bead aaif-lvcd.
+- Mail: the /cfp path fix for consul (8c6a8b9, sha mailed). The stage-review teardown was re-verified
+  as done.
+- Triage + housekeeping (aa57285): closed aaif-zpz, aaif-0dd, aaif-v5k, aaif-nqf; added dep edges
+  (18o.28→18o.44, 18o.45 waits-for aaif-l0kl); index drift fixed. Reaped 2 dead Aug-28 aaif
+  worktrees (override; nothing unmerged). Deleted 3 merged pinki PR branches (local + remote).
+- Idea walk (Zig approved all): closed 9 idea beads, undeferred vj6/18o.23/18o.24 (dda5ebf).
+- 18o.37 CLOSED: MCP 2026-07-28 confirmed Final; refs/projects/mcp.md re-verified + claims annex
+  (f60d951); monthly-floor guard now lives in radar step 2.5 (4389c8a). Follow-up: aaif-kiz5.
+- Friction fixes aaif-73y / aaif-l49q / aaif-2ay BUILT on demesne branch
+  aaif/friction-fixes-2026-09-26 (tip 3acec05d, warn-only fences). Merge request mailed to
+  consul 22:48Z. The beads stay OPEN until consul returns the merge sha.
 
 ## Friction
-- `pre-bash-cd-relative-guard` refused compound `cd … && cmd <relative>` twice → absolute paths → `aaif-0dd`
-- Channel-watch Monitors are capped at 30 min in this client build, and every expiry is a new turn to `stop-declared-work-guard.sh`; the desk's first steer ("tell the desk nothing on re-arm") tripped the guard, the corrected rule is ONE short desk line without the idle literal → `dotfiles-cgpbk` (desk-filed; guard to treat a monitor-expiry boundary as a non-work turn)
-- The claude.ai Asana MCP tools were present at first, then removed from the session mid-day after a resume (used for step 7 + the comment landing; not needed after) → one-off
-- Playwright `getByText(...).innerText()` threw "Node is not an HTMLElement" because the caption text also lives in an SVG `<title>`; the visible caption is `.bead-pool__footer` → one-off
-- A `works\b` privacy grep matched "the join works" in prose; the shipped battery needs word-boundary care around seat names that are common words → one-off (noted in verify-live.sh in the scratchpad)
+- Commits of explicit non-bead paths silently included .beads/issues.jsonl (twice) → filed aaif-ruqm
+- `br update --notes` REPLACES existing notes rather than appending (lost 18o.39's notes, restored
+  by hand) → one-off (now known; append by re-passing old text)
+- The worktree-remove guard blocked removal of dead-session trees on policy; the documented override
+  worked → one-off (the guard behaved as designed)
+- The bead close gate refused closing a template-less idea bead; the `stale:` disposal reason worked
+  → one-off
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- none filed as `-t decision` beads (harvest: 0 of 6 scanned; cutoff = session start, genuine zero). Calls made inline and recorded where they bind: the submission gate was opened on Zig's VERBATIM order relayed by the desk (recorded on aaif-i5a.1 + AMPLIFY.md); the site JSON-LD employer hit ruled not a privacy finding (desk agreed, on the bead).
+- none filed as decision beads (0 created since 2026-09-19, 6 scanned). The one real fork (the floor
+  timer as a radar step rather than a new systemd timer) is recorded in 18o.37's close reason.
 
 ## Proposed practices — where each one landed (Step 2.6)
-- "Verify a rendered page by the ABSENCE of superseded text" → written into `/camp-publish` Step 4 (81063eb).
-- "Routine Monitor re-arm → one short desk line without the idle literal; real flag only on state change" → memory `feedback_idle_flag_only_on_state_change.md`; mechanical fix is the desk's `dotfiles-cgpbk`.
+- The monthly-floor guard → written into .claude/skills/aaif-radar/SKILL.md step 2.5 (4389c8a)
+- `set -e` is a no-op in the Bash tool → errexit-guard hook + a commit/SKILL.md line on the demesne
+  branch (pending consul merge)
 
 ## What's next
-- NEXT: close bead aaif-i5a.1 with its evidence chain and file the stage-review teardown as its own bead gated on Zig's sign-off BY 2026-09-16T18:00:00Z
-- On Zig's sign-off of the live page (via the desk): `systemctl --user stop aaif-stage-review`, then close that teardown bead and consider closing the parent aaif-i5a.
-- X-THREAD.md stays parked unless Zig asks; if he posts it, it is a standalone CANDIDATE → its own /aaif-review + gated submission.
-- Next radar tick Sat 2026-09-19 15:00 PT (run `bin/radar-live-state-lint.py` first).
+- NEXT: close aaif-73y, aaif-l49q, aaif-2ay citing consul's merge sha for demesne branch aaif/friction-fixes-2026-09-26 BY +3d
+- 2026-10-01: the October anchor. The radar's floor guard fires a P1 menu bead if no submission by the 8th.
+- aaif-kiz5 when the whitepaper resumes.
 
 ## Warnings / watch-outs
-- ⛔ The submit gate is CLOSED again. #1030 was opened on ONE verbatim order for ONE piece; nothing about it carries to the next submission.
-- The blog folder is gitignored: LINKEDIN-POST/X-THREAD/AMPLIFY/PUBLISH-v7/DATASET-postcost-v1 exist only on this disk (+ the vault copy of PUBLISH). Do not "restore" the FOLD-close byte-lock (Zig's own cut).
-- `.local/private-notes.md` holds the Asana comment GIDs — never echo them into tracked files.
-- The stage unit still serves the land-state page on the tailnet; it is Zig's to release.
+- TAP secondary was at 0.9 (5h) / 0.82 (7d) at offboard. Ration the pool this week.
+- Two open idea beads (18o.11, 18o.12) stay deferred to 2026-10-01 by design.
