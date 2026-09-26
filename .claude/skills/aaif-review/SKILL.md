@@ -92,7 +92,7 @@ A blog post is not automatically 15, and **this is not a blog-post rule.** The t
 |---|---|
 | Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | **full rung** (e.g. `blog_post` 15) |
 | Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ `organizing_meetup` 25 vs 35 is **not** this dock (W36/W37: the split is unexplained — see the type table) |
-| Names a **hosted AAIF project that has no template checkbox** (e.g. **Agent Router**, joined 2026-09-09) — tick *Other AAIF Project* and name it in Notes | **full rung** (W37: a Korean Agent Router guide tagged `mcp+other` scored `blog_post` **15**, rationale *"the AAIF-hosted Agent Router project"*). `other` is a dock only when there is no specific project |
+| Names a **hosted AAIF project that has no template checkbox** (any new Sandbox project) — tick *Other AAIF Project* and name it in Notes | **full rung** (W37: a Korean Agent Router guide tagged `mcp+other` scored `blog_post` **15**, rationale *"the AAIF-hosted Agent Router project"*). `other` is a dock only when there is no specific project. **Agent Router has its own checkbox since 2026-09-26** (W39: tag `agent-router`; the four earlier `other` cards were retagged at unchanged points) |
 | No AAIF project reference at all | **rejected** — see rejection risks |
 
 W32 confirmed the generalization empirically: an `organizing_meetup` scored **25 instead of
@@ -291,9 +291,9 @@ help you."* Always state, concisely:
 - Your **role / handle** on the artifact (authorship link).
 - The **developer value** in one line.
 - Any **evidence** the agent should check (merged-PR link, session page, repo).
-- If the project has **no checkbox yet** (Agent Router, joined AAIF 2026-09-09; any Sandbox
-  project), tick **Other AAIF Project** and **name the project here** — it scores at the full
-  rung when named (W37).
+- If the project has **no checkbox yet** (any new Sandbox project; Agent Router got its own
+  box 2026-09-26), tick **Other AAIF Project** and **name the project here** — it scores at the
+  full rung when named (W37).
 
 ## Draft the [Submission] issue body
 
@@ -318,6 +318,7 @@ Check all that apply:
 - [ ] AGENTS.md
 - [ ] agentgateway
 - [ ] A2A
+- [ ] Agent Router
 - [ ] Other AAIF Project
 
 ## Notes

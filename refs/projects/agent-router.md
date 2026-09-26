@@ -285,16 +285,12 @@ go-ahead (repo hard rule).
 
 ## Submission mechanics
 
-As of **2026-09-12** the AAIF Ambassador submission template has **no Agent
-Router checkbox** — its project boxes are goose, MCP, AGENTS.md, agentgateway,
-A2A, and "Other AAIF Project".
-
-**Tick "Other AAIF Project" and name Agent Router in the Notes.** The automated
-reviewer tags such a piece `other` and scores it at the **full rung** for its type
-when the hosted project is named — observed once, a `blog_post` at **15**, the
-rationale citing AAIF-hosted status; `other` is a dock only when there is no real
-AAIF project behind the work. **Watch for a new checkbox** — a hosted project
-usually gets one eventually, and `/aaif-radar` is what notices. Scoring rules and
+Since **2026-09-26** the AAIF Ambassador submission template has an **Agent Router
+checkbox**, and scorecards carry the project tag `agent-router`. **Tick it.** Before
+that date the box did not exist: pieces ticked "Other AAIF Project" and named Agent
+Router in the Notes, and the automated reviewer scored them at the **full rung** for
+their type. The four approved cards from that window were retagged `agent-router` at
+unchanged points when the box landed. Scoring rules and
 the issue-body drafter live in `/aaif-review`, which is the authority on rungs,
 not this brief.
 
