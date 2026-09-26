@@ -79,6 +79,23 @@ Diff every azigler card against `SUBMISSIONS.md` and the open `submission:` bead
 is fixed **in this run** (row + totals + bead close with the scorecard as evidence), then reported
 to the desk as a record. `state.json` keeps `own_scorecards` for the next diff.
 
+**Monthly-floor guard (aaif-ambassador-program-18o.37).** The floor is ≥1 submitted contribution per
+calendar month, and late entries are not recalculated, so the weekly run is also the floor's
+timer. From the same own-issues list, count azigler `[Submission]` issues whose `created_at` falls
+in the current month (PT):
+```bash
+M=$(date +%Y-%m)   # PT, the program's month for our purposes
+gh api --paginate "repos/aaif/ambassadors/issues?state=all&creator=azigler&per_page=100" \
+  --jq "[.[] | select(.pull_request==null) | select(.title|startswith(\"[Submission]\")) | select(.created_at|startswith(\"$M\"))] | length"
+```
+- **≥1** → floor met; the report says so, with the issue number.
+- **0 and day-of-month < 8** → report the anchor in flight (the in-progress `submission:`/spec bead,
+  live-state tagged). No bead.
+- **0 and day-of-month ≥ 8** → **notable**: file the P1 `human:` bead (MENU shape below: the two or
+  three most-ready `submission:` beads with predicted type/points, plus *none-for-now*) and push.
+  A month is lost once it closes, so this is the one radar finding that is always a decision.
+Record `floor: {month, count, issue}` in `state.json`.
+
 ### 3. Delta vs last run (the ledger makes it a *radar*, not a snapshot)
 State lives at `.local/radar/state.json` — last-seen max issue number, scorecard count, and
 the prior type/project distribution. Compute **what changed this week**: new submissions, new
