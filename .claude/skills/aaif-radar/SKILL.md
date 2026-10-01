@@ -91,9 +91,17 @@ gh api --paginate "repos/aaif/ambassadors/issues?state=all&creator=azigler&per_p
 - **≥1** → floor met; the report says so, with the issue number.
 - **0 and day-of-month < 8** → report the anchor in flight (the in-progress `submission:`/spec bead,
   live-state tagged). No bead.
-- **0 and day-of-month ≥ 8** → **notable**: file the P1 `human:` bead (MENU shape below: the two or
-  three most-ready `submission:` beads with predicted type/points, plus *none-for-now*) and push.
-  A month is lost once it closes, so this is the one radar finding that is always a decision.
+- **0 and day-of-month ≥ 8, month RULED** → first check `br list --label floor-ruled-$M --all`.
+  A hit means Zig has already ruled on this month's anchor (e.g. aaif-mik5, 2026-10: "I don't think
+  we want to force anything here"). Do not file the menu bead. The report states the open floor
+  plainly, cites the ruling bead, and lists any candidate that has EMERGED since: lab or studio work
+  that ties back to an AAIF project. A candidate goes to the desk as news, never as a pick-now ask.
+  Asking again for a decision he has already made is exactly the forced pick he declined.
+- **0 and day-of-month ≥ 8, not ruled** → **notable**: file the P1 `human:` bead (MENU shape below:
+  the two or three most-ready `submission:` beads with predicted type/points, plus *none-for-now*)
+  and push. A month is lost once it closes, so an UNRULED empty floor is always a decision. When
+  he answers "none" or "don't force it", record the ruling as a `-t decision` bead labelled
+  `floor-ruled-<YYYY-MM>` so the next run takes the branch above.
 Record `floor: {month, count, issue}` in `state.json`.
 
 ### 3. Delta vs last run (the ledger makes it a *radar*, not a snapshot)
