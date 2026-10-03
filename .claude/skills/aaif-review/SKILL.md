@@ -40,7 +40,7 @@ never by underselling a piece that genuinely is the higher type.
 | Type (`detected_type`) | Points | What it is |
 |---|---|---|
 | `social_thread` | 5 | a substantive thread/post with developer value W38: a post with a short embedded screen recording of a concrete first-use workflow clears the *more-than-promotion* bar. |
-| `community_help` | 5–15 | answering/supporting in community channels (scope-scaled) |
+| `community_help` | 5–15 | answering/supporting in community channels (scope-scaled). **W40: first observed, n=1 at 10** (a public GitHub Discussions thread on a third-party agent framework about its AAIF interoperability, tagged with 5 projects, high confidence). Treat 10 as the observed mid-rung; 5 and 15 are unobserved |
 | `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below**. Also the landing type for a **whitepaper** (W37: an aaif.io authz whitepaper scored 15 — *"explanatory rather than step-by-step"*) and for a **newsletter issue** with one substantive project section (W37: 15 per issue, scored on the AAIF section only) |
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
@@ -48,7 +48,7 @@ never by underselling a piece that genuinely is the higher type.
 | `meetup_talk` | **20 / 25** | a talk given at a meetup — **two live rungs (W35: the 20-rung solidified n=8, alongside n=14 at 25, both active in the same month)**. Observed split: user-group / community-session / casual-online venues land **20**; established meetups and flagship community events land **25**. Predict **20** conservatively for community-event sessions; claim 25 only with strong meetup evidence |
 | `livestream` | 25 | a live technical stream |
 | `conference_talk` | 30 | a talk at a conference (verifiable session page). A listed **panel seat** is 30 (W36); **co-speakers** on one session are each credited 30; the **same talk repeated at a different verifiable conference is a new 30** (W37) |
-| `organizing_meetup` | **25 / 35** | organizing an event — **two live rungs and the split is UNEXPLAINED** (W37: n=4 at 25, n=9 at 35; project tie, event scale/substance, and organize-plus-talk-bundled each have counterexamples — a 116-registrant, three-talk, five-project chapter event scored 25 for each of two co-hosts). **Predict 25**; treat 35 as upside. Co-organizers of one event are each credited |
+| `organizing_meetup` | **25 / 35** | organizing an event — **two live rungs and the split is UNEXPLAINED** (W40: n=9 at 25, n=10 at 35, but September-recognized cards ran 8 at 25 to 1 at 35, so 25 is now the working default; W37: n=4 at 25, n=9 at 35; project tie, event scale/substance, and organize-plus-talk-bundled each have counterexamples — a 116-registrant, three-talk, five-project chapter event scored 25 for each of two co-hosts). **Predict 25**; treat 35 as upside. Co-organizers of one event are each credited |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
 | `project_contribution` | 5 / 10 / 15 / 20 / 25 / 40 | code/artifact contribution — **scope ladder below** |
@@ -60,6 +60,9 @@ never by underselling a piece that genuinely is the higher type.
 > disagrees with its `scoring.base_points` field (observed on the one adjusted record),
 > **trust the field** — the prose goes stale across a re-base.
 
+> **W40 update: every type in the table is now observed.** `community_help` scored for the
+> first time (n=1 at 10, of 559 cards). The history below records the pre-W40 state.
+>
 > Firmness note: every type in the table above is now grounded in observed scorecards
 > **except `community_help`** — `workshop` (35) and `livestream` (25) were both confirmed on
 > first observation in W32, at exactly their program-table values. `community_help` 5–15 has
@@ -273,6 +276,12 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   the artifact, the URL, and the Notes all describe the same thing.
 - **Meta / self-referential** — tooling *about* the ambassador program rather than a
   contribution *to* an AAIF project.
+- **Working-group participation → rejected, out of scope** (new, W40, staff-reviewed): a
+  working-group survey was closed with no points: *"Working group participation is valuable,
+  but it is a separate program and does not automatically qualify for Ambassador credit."*
+  WG work earns credit only when it yields a separate developer-facing artifact (a post,
+  tutorial, talk or tool) with a direct tie to a named AAIF project. ⚠️ This bears on our
+  `wg:` beads: joining or serving a WG is not itself a submission.
 - **Not a scoreable type** — a format the reviewer can't map to the point table.
 
 **Rejection is not terminal.** The rework-and-resubmit path works: tie it harder to one
