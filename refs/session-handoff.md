@@ -3,60 +3,50 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-09-26 6d94b139
-
-Covers two sessions: 824c8cfb (2026-09-19, the W38 radar run, which ended without /offboard; its
-`.offboard-pending` marker is cleared by this offboard) and 6d94b139 (2026-09-26, this one).
+# Session handoff — 2026-10-05 693cbb0a
 
 ## State at offboard
 - Current branch: main
-- Last commit: see `git log -1` (the offboard commit follows dda5ebf, the idea-walk bead commit)
-- Open beads: 48 (1 in progress: aaif-omn)
-- In-flight subagents: none. A demesne builder worktree at /home/ubuntu/.agents-wt-aaif-friction
-  (branch aaif/friction-fixes-2026-09-26) is left for consul to reap after merging.
-- Dirty files: none
-- Markers: `.offboard-pending` cleared
+- Last commit: e7b0ace :card_file_box: beads + pulse: radar note 2026-W40 (aaif-ey0z) + ledger row; WG-rule and o11y comments
+- Open beads: 43; in-progress: 1 (aaif-omn, though the August post shipped; a /triage candidate)
+- In-flight subagents: none
+- Dirty files: none tracked (only untracked br runtime files under .beads/)
+- Markers: `.offboard-pending` none present
+- Open promises for aaif: none (`promise-gap.sh open --entity aaif` → none)
 
 ## What happened this session (bullets)
-- W38 (2026-09-19): radar run; own-record fix for #703; radar skill gained step 2.5 (own issues).
-- W39 radar (2026-09-26): 41 new subs, +34 cards, no re-base. The Agent Router template checkbox
-  landed today → folded back into /aaif-review and refs/projects/agent-router.md (a8ade1f).
-  Private report .local/radar/2026-W39.md; note bead aaif-lvcd.
-- Mail: the /cfp path fix for consul (8c6a8b9, sha mailed). The stage-review teardown was re-verified
-  as done.
-- Triage + housekeeping (aa57285): closed aaif-zpz, aaif-0dd, aaif-v5k, aaif-nqf; added dep edges
-  (18o.28→18o.44, 18o.45 waits-for aaif-l0kl); index drift fixed. Reaped 2 dead Aug-28 aaif
-  worktrees (override; nothing unmerged). Deleted 3 merged pinki PR branches (local + remote).
-- Idea walk (Zig approved all): closed 9 idea beads, undeferred vj6/18o.23/18o.24 (dda5ebf).
-- 18o.37 CLOSED: MCP 2026-07-28 confirmed Final; refs/projects/mcp.md re-verified + claims annex
-  (f60d951); monthly-floor guard now lives in radar step 2.5 (4389c8a). Follow-up: aaif-kiz5.
-- Friction fixes aaif-73y / aaif-l49q / aaif-2ay BUILT on demesne branch
-  aaif/friction-fixes-2026-09-26 (tip 3acec05d, warn-only fences). Merge request mailed to
-  consul 22:48Z. The beads stay OPEN until consul returns the merge sha.
+- Article live and pinki adoption closed
+- Supported lab on helium-mb9, the "From Muse to Genius to Factory" article. It is live on andrewzigler.com. I did the voice passes and ran the battery each round (rationale in lab-helium `refs/articles/2026-10-01-muse-genius-factory/VOICE.md`). Lab closed helium-mb9 and helium-29o.
+- The voice battery is now canonical in the zig-voice skill (consul landed d5361126 and 6611f924); `bin/voice-battery.py` here is a thin wrapper (82c401d).
+- Zig ruled on October: no forced anchor (aaif-mik5). The radar floor guard now honors a ruled month (aa43614).
+- Zig dropped the public-agents skill, so 18o.5 and 18o.43 are closed. I asked the desk whether 18o.12 (a recipe) should also go; no answer yet.
+- The LinkedIn launch post: Zig edited and posted it himself. The edit-study is Exemplar 3 in `refs/program/voice-and-posting-examples.md` (5491445).
+- The pinki go-direct cut-over landed (dotfiles-i5byh, demesne 33e5cd4d plus 4 follow-ups). I re-derived the shas and window evidence and closed aaif-rsi.8. I accepted one divergence: a resolve without evidence now means satisfied with `evidence_given=false`, not cancelled. That unblocks aaif-9c7; its first real-usage learning is on the bead.
+- The W40 radar ran (report `.local/radar/2026-W40.md`, note bead aaif-ey0z). First `community_help` card (10). New rejection rule: working-group participation earns no points. Written agent o11y filled up this week. All of it was folded into `/aaif-review` (dfccc41), and the desk got a news row. No human bead.
 
 ## Friction
-- Commits of explicit non-bead paths silently included .beads/issues.jsonl (twice) → filed aaif-ruqm
-- `br update --notes` REPLACES existing notes rather than appending (lost 18o.39's notes, restored
-  by hand) → one-off (now known; append by re-passing old text)
-- The worktree-remove guard blocked removal of dead-session trees on policy; the documented override
-  worked → one-off (the guard behaved as designed)
-- The bead close gate refused closing a template-less idea bead; the `stale:` disposal reason worked
-  → one-off
+- post.sh rejects a positional body after flags. Use `--body-stdin` or `--body-file` → one-off (now habit).
+- `cd X && <relative path>` trips the cd-relative guard advisory. Use absolute paths → one-off (known guard; documented).
+- The radar's state.json had no scorecard path list, so W40 re-fetched all 559 cards. Fixed in the run: `scorecard_paths` is now in state.json → one-off (fixed).
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- none filed as decision beads (0 created since 2026-09-19, 6 scanned). The one real fork (the floor
-  timer as a radar step rather than a new systemd timer) is recorded in 18o.37's close reason.
+- `aaif-mik5` — decision: October 2026 anchor — no forced pick; let a candidate emerge from lab/studio work (Zig 2026-10-01) _(closed this session)_
+- I accepted consul's no-evidence-resolve = satisfied divergence on aaif-rsi.8. It is recorded in the bead's close comment, not as a separate decision bead.
 
 ## Proposed practices — where each one landed (Step 2.6)
-- The monthly-floor guard → written into .claude/skills/aaif-radar/SKILL.md step 2.5 (4389c8a)
-- `set -e` is a no-op in the Bash tool → errexit-guard hook + a commit/SKILL.md line on the demesne
-  branch (pending consul merge)
+- Floor guard honors a ruled month → written into `.claude/skills/aaif-radar/SKILL.md` step 2.5 (aa43614)
+- Voice-battery checks (plural-no, bare-count, self-quoting parenthetical) → the zig-voice skill (consul, d5361126/6611f924)
+- W40 calibration (community_help, WG rule, org_meetup) → `.claude/skills/aaif-review/SKILL.md` (dfccc41)
+- Radar diffs scorecards by path set → `.local/radar/state.json` `scorecard_paths` (private state; skill text unchanged)
 
 ## What's next
-- NEXT: close aaif-73y, aaif-l49q, aaif-2ay citing consul's merge sha for demesne branch aaif/friction-fixes-2026-09-26 BY +3d
-- 2026-10-01: the October anchor. The radar's floor guard fires a P1 menu bead if no submission by the 8th.
-- aaif-kiz5 when the whitepaper resumes.
+- NEXT: Harvest the pinki dogfood notes onto aaif-9c7 BY 2026-10-12T22:00:00Z
+- Next radar is W41, Sat 2026-10-10 15:00 PT, run by the timer. Diff `scorecard_paths` instead of re-fetching all cards.
+- aaif-9c7 (pinki real-usage update) is unblocked. Harvest the 09-29 to 10-03 dogfood (C4b refusal audit rows, reader friction) while it is fresh. Bring it to Zig only as news; October stays unforced.
+- Waiting on the desk's relay: whether 18o.12 is dropped too.
+- Housekeeping: aaif-omn is still in_progress although the August post shipped. Close it or re-scope it at /triage.
 
 ## Warnings / watch-outs
-- TAP secondary was at 0.9 (5h) / 0.82 (7d) at offboard. Ration the pool this week.
-- Two open idea beads (18o.11, 18o.12) stay deferred to 2026-10-01 by design.
+- October has no submission by Zig's ruling (aaif-mik5). Do not file a floor menu bead or re-raise it.
+- An aaif-9c7 submission would hit the own-area dedup rule unless it carries new findings beyond #1030.
+- 18o.28 and 18o.9 (o11y pieces): lead with measured fleet data and policy; the plumbing angle is now crowded.
