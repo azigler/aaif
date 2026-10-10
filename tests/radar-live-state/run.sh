@@ -34,6 +34,8 @@ run_case "bad-closed-as-ask" "bad-closed-as-ask.md" 1 "ask-vocabulary"
 run_case "bad-wrong-tag" "bad-wrong-tag.md" 1 "tag disagrees with store"
 run_case "bad-tombstone" "bad-tombstone.md" 1 "TOMBSTONE"
 run_case "bad-unknown-id" "bad-unknown-id.md" 1 "unknown id"
+run_case "bad-wrong-tag-4char" "bad-wrong-tag-4char.md" 1 "tag disagrees with store"
+run_case "bad-untagged-4char" "bad-untagged-4char.md" 1 "missing status tag"
 run_case "good" "good.md" 0
 
 if [ "$fail" -ne 0 ]; then
