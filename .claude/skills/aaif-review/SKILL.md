@@ -240,7 +240,9 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
 - **Translation or cross-post of an already-submitted article → 0** (new, W36): *"Cross-posts
   or translations of the same article count once"* — a second-language version of a credited
   post scored nothing. Syndication (own site + aaif.io + LinkedIn Pulse) is ONE submission;
-  submit the canonical URL once.
+  submit the canonical URL once. **W41: splitting does not multiply credit.** An aaif.io
+  republication of an already-credited article, split into two parts, scored 0 for each part;
+  the reviewer counted the earlier complete article as the single credit.
 - **Project mentioned only in passing → 0, in every type** (confirmed W36 across slides, a
   social reel, and a conference talk; W37 added a livestream — three ambassadors promoting
   the program did not substitute for a project focus): a talk where the project *"appears briefly… as an
