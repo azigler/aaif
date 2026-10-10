@@ -28,16 +28,20 @@ import re
 import sys
 from pathlib import Path
 
-# Bead ids in this store look like: aaif-51g, aaif-i5a,
+# Bead ids in this store look like: aaif-51g, aaif-i5a, aaif-mik5,
 # aaif-ambassador-program-18o.28, aaif-pinki-export-formats-rbs — a prefix,
-# zero or more slug words, and a final 3-char base36-ish hash segment,
-# optionally followed by a `.N` child suffix. The 3-char-final-segment rule
-# is what keeps this from matching prose or skill/file names built the same
-# way (`aaif-review`, `aaif-line-art`'s "art" is the one known near miss —
-# see DENYLIST) and from matching `#709`-style issue numbers, which never
-# start with `aaif-` in the first place.
+# zero or more slug words, and a final 3- or 4-char base36-ish hash segment,
+# optionally followed by a `.N` child suffix. The store mints both lengths
+# (3-char ids are the older majority, 4-char ids are newer: aaif-wj1h,
+# aaif-a7bk); a 3-only rule silently skipped every 4-char id (aaif-wsx4).
+# The 3-4-char-final-segment rule is what keeps this from matching prose or
+# skill/file names built the same way (`aaif-review`, `aaif-radar`,
+# `aaif-overview` and `aaif-blog-guidelines` all end in a 5+ char segment;
+# `aaif-line-art`'s "art" is the one known near miss — see DENYLIST) and
+# from matching `#709`-style issue numbers, which never start with `aaif-`
+# in the first place.
 ID_RE = re.compile(
-    r"(?<![\w/.-])aaif-(?:[a-z0-9]+-)*[a-z0-9]{3}(?:\.[0-9]+)?(?![\w-])"
+    r"(?<![\w/.-])aaif-(?:[a-z0-9]+-)*[a-z0-9]{3,4}(?:\.[0-9]+)?(?![\w-])"
 )
 
 # Known aaif-prefixed names that match ID_RE's shape but are not bead ids
