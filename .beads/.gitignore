@@ -46,3 +46,10 @@ redirect
 .bv.lock
 *.db-fsqlite-*
 .write.lock
+
+# br/fsqlite migration + WAL-index sidecars (local runtime state, aaif-a7bk 2026-10-10)
+*.fsqlite-migration-state
+*.vacuum-fsqlite-ns-*
+.br-wal-index-*/
+beads.db-wal-cert
+beads.db-wal-cert-head
