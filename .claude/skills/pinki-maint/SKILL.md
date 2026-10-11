@@ -79,19 +79,39 @@ Before you file:
    already did the thing.
 4. Record each filing as a comment on its bead, with the date. That comment is the counter.
 
-PRs and releases stay GATED per act. Ask through the desk. The grant does not cover them.
+PRs stay GATED per act. Ask through the desk. The grant does not cover them. Releases are
+the loop's own call (Step 5).
 
 ## Step 5 — BUILD + RELEASE
 
 Fixes are built in worktrees. A different model reviews each fix before merge.
 
+The release is the loop's call, not the desk's (Zig 2026-10-11, recorded on aaif-rsi).
+After the weekly work, if a change merged since the last tag, decide: cut it or hold it.
+
 Cut a release only when ALL of these hold:
 - At least 1 merged change alters behavior the estate can see.
-- `cargo test` is green.
-- `bash ~/.agents/agents/lib/test-promise-gap.sh` passes against the release binary.
+- `cargo test` is green on `main`.
+- The estate suites pass with the release binary FIRST on PATH. Build `main` to a scratch
+  dir (`cargo build --release --locked`), put its dir first on `PATH`, and run all four:
+  `~/.agents/agents/lib/test-promise-gap.sh`, `~/.agents/agents/lib/test-molt-gap.sh`,
+  `~/.agents/agents/scheduler/test-expected-gap-watchdog.sh`,
+  `~/.agents/agents/bin/test-desk-query.sh`. Run them on the installed binary too: a
+  suite that is red on BOTH is a pre-existing estate bug, not this release's.
 
-Version rule: patch for fixes, minor for new verbs. At most 1 release per week. Every
-release is gated on the desk's yes.
+A suite that is green on the installed binary and red on the release binary HOLDS the
+release. That is a contract break with the estate wrapper (owner: consul). Mail consul the
+failing test ids and the error line, and wait for the wrapper to adapt. Measured
+2026-10-11: #16 (missing ledger is an error) turned at least 156 estate tests red in 3
+suites (promise-gap 60 then a crash, watchdog 80, molt-gap 16), because the
+wrapper reads a fresh ledger before its first write.
+
+Version rule: patch for fixes, minor for new verbs or a changed exit code a caller can
+see. At most 1 release per week. To cut one: bump `Cargo.toml` and `Cargo.lock`, move the
+CHANGELOG `Unreleased` entries under the version, commit `:bookmark: vX.Y.Z — <one line>`
+on `main`, push an annotated tag `vX.Y.Z` (the release workflow builds the asset), then
+`cargo install --path ~/pinki --locked` and confirm `pinki --version`. Mail the desk the
+tag as NEWS, not as a gate. The canary tick the next day checks the estate on it.
 
 ## Step 6 — OUTPUTS, every tick
 
@@ -109,7 +129,7 @@ release is gated on the desk's yes.
    names tied to a finding.
 3. One short digest on #pinki-incorporation (`post.sh publish pinki-incorporation`).
 
-Desk mail only when a decision is needed, or for a release or PR gate.
+Desk mail only when a decision is needed, for a PR gate, or as news of a cut release.
 
 ## Success measures (week over week)
 
