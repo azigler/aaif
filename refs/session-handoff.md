@@ -3,50 +3,47 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-10-05 693cbb0a
+# Session handoff — 2026-10-11 b0ee983d
+
+_Retro-offboard: written by the cold-started successor session from the b0ee983d transcript
+(2026-10-10 15:00 PT to 2026-10-11 14:45 PT). That session sent Zig its final push update
+(`PUSH_ZIG_RESULT=sent`) but did not run /offboard before the window died._
 
 ## State at offboard
 - Current branch: main
-- Last commit: e7b0ace :card_file_box: beads + pulse: radar note 2026-W40 (aaif-ey0z) + ledger row; WG-rule and o11y comments
-- Open beads: 43; in-progress: 1 (aaif-omn, though the August post shipped; a /triage candidate)
+- Last commit: 401b16a :card_file_box: beads: close aaif-eecq (pulse-pinki-maint built, unit spec to consul)
+- Open beads: 44; in-progress: 1 (aaif-omn; `br list` read 2026-10-11 15:10 PT)
 - In-flight subagents: none
-- Dirty files: none tracked (only untracked br runtime files under .beads/)
-- Markers: `.offboard-pending` none present
-- Open promises for aaif: none (`promise-gap.sh open --entity aaif` → none)
+- Dirty files: none
+- Markers: `.offboard-pending` cleared by this retro-offboard
+- Open promises for aaif: none (`promise-gap.sh open --entity aaif` → none, 15:10 PT)
 
 ## What happened this session (bullets)
-- Article live and pinki adoption closed
-- Supported lab on helium-mb9, the "From Muse to Genius to Factory" article. It is live on andrewzigler.com. I did the voice passes and ran the battery each round (rationale in lab-helium `refs/articles/2026-10-01-muse-genius-factory/VOICE.md`). Lab closed helium-mb9 and helium-29o.
-- The voice battery is now canonical in the zig-voice skill (consul landed d5361126 and 6611f924); `bin/voice-battery.py` here is a thin wrapper (82c401d).
-- Zig ruled on October: no forced anchor (aaif-mik5). The radar floor guard now honors a ruled month (aa43614).
-- Zig dropped the public-agents skill, so 18o.5 and 18o.43 are closed. I asked the desk whether 18o.12 (a recipe) should also go; no answer yet.
-- The LinkedIn launch post: Zig edited and posted it himself. The edit-study is Exemplar 3 in `refs/program/voice-and-posting-examples.md` (5491445).
-- The pinki go-direct cut-over landed (dotfiles-i5byh, demesne 33e5cd4d plus 4 follow-ups). I re-derived the shas and window evidence and closed aaif-rsi.8. I accepted one divergence: a resolve without evidence now means satisfied with `evidence_given=false`, not cancelled. That unblocks aaif-9c7; its first real-usage learning is on the bead.
-- The W40 radar ran (report `.local/radar/2026-W40.md`, note bead aaif-ey0z). First `community_help` card (10). New rejection rule: working-group participation earns no points. Written agent o11y filled up this week. All of it was folded into `/aaif-review` (dfccc41), and the desk got a news row. No human bead.
+- Pinki upkeep pulse built; first run Tuesday
+- W41 radar ran on the 10-10 15:00 PT tick: report `.local/radar/2026-W41.md`, note bead aaif-od29. It had 57 submissions, the most in one week so far. Stateless MCP is saturated; A2A picked up again. The calibration (a cross-post split into parts counts once) went into `/aaif-review` (38bda94). A lint bug, aaif-wsx4, was fixed and merged (f067b59).
+- W41 triage closed aaif-wj1h, aaif-pinki-export-formats-rbs and aaif-a7bk (a9c3449).
+- The aaif-9c7 dogfood harvest (the 10-05 NEXT) was done on 10-10: 7 findings from a week of real pinki use are in a bead comment. It was a 2026-10-10 22:08 UTC read.
+- Zig's pinki rulings (aaif-wj1h) were acted on. Pigeon filed pinki issue #15 under the standing grant (1 of 3 this week): https://github.com/azigler/pinki/issues/15. The fix is tracked as aaif-gzb2. It needs Zig's approval through the desk before it ships.
+- aaif-eecq was built, merged and closed (95ccd81, 401b16a): `bin/pinki-audit.py`, its 40 tests and the `/pinki-maint` skill. Consul built the timer unit to the spec; it lands in consul's 21:30 PT batch. Warden asked whether each run writes a pulse-ledger row. The answer is yes, in Step 6 of the skill.
 
 ## Friction
-- post.sh rejects a positional body after flags. Use `--body-stdin` or `--body-file` → one-off (now habit).
-- `cd X && <relative path>` trips the cd-relative guard advisory. Use absolute paths → one-off (known guard; documented).
-- The radar's state.json had no scorecard path list, so W40 re-fetched all 559 cards. Fixed in the run: `scorecard_paths` is now in state.json → one-off (fixed).
+- The seat window died about 14:45 PT without /offboard, and seat-restart cold-started it 14 minutes later → one-off (the liveness alarm and the retro path worked as designed)
+- A tap heads-up: the primary pool's 7-day usage crossed 0.9 on 10-11 → one-off (informational; seat-restart rolls the pool at 1.0)
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- `aaif-mik5` — decision: October 2026 anchor — no forced pick; let a candidate emerge from lab/studio work (Zig 2026-10-01) _(closed this session)_
-- I accepted consul's no-evidence-resolve = satisfied divergence on aaif-rsi.8. It is recorded in the bead's close comment, not as a separate decision bead.
+- none this session (0 decision beads since 2026-10-05 21:36 PT, 7 scanned; cutoff before the session start)
 
 ## Proposed practices — where each one landed (Step 2.6)
-- Floor guard honors a ruled month → written into `.claude/skills/aaif-radar/SKILL.md` step 2.5 (aa43614)
-- Voice-battery checks (plural-no, bare-count, self-quoting parenthetical) → the zig-voice skill (consul, d5361126/6611f924)
-- W40 calibration (community_help, WG rule, org_meetup) → `.claude/skills/aaif-review/SKILL.md` (dfccc41)
-- Radar diffs scorecards by path set → `.local/radar/state.json` `scorecard_paths` (private state; skill text unchanged)
+- Cross-post split into parts counts once → `.claude/skills/aaif-review/SKILL.md` (38bda94)
+- The day-after-release canary rides a promise, not its own timer → consul's unit spec and the `/pinki-maint` skill (95ccd81)
 
 ## What's next
-- NEXT: Harvest the pinki dogfood notes onto aaif-9c7 BY 2026-10-12T22:00:00Z
-- Next radar is W41, Sat 2026-10-10 15:00 PT, run by the timer. Diff `scorecard_paths` instead of re-fetching all cards.
-- aaif-9c7 (pinki real-usage update) is unblocked. Harvest the 09-29 to 10-03 dogfood (C4b refusal audit rows, reader friction) while it is fresh. Bring it to Zig only as news; October stays unforced.
-- Waiting on the desk's relay: whether 18o.12 is dropped too.
-- Housekeeping: aaif-omn is still in_progress although the August post shipped. Close it or re-scope it at /triage.
+- NEXT: Check the first pulse-pinki-maint run and its pulse-ledger row BY 2026-10-13T21:30:00Z
+- aaif-gzb2 (the pinki #15 fix) waits for Zig's approval through the desk. Do not ship it before that.
+- aaif-omn is still in_progress although the August post shipped. Run `br show aaif-omn`, then close it or re-scope it at the next /triage.
+- 18o.12 (a public-agents recipe): the question of dropping it was sent to the desk on 10-05. Run `br show aaif-ambassador-program-18o.12` before acting on it; it had no ruling at the 15:10 PT read.
 
 ## Warnings / watch-outs
-- October has no submission by Zig's ruling (aaif-mik5). Do not file a floor menu bead or re-raise it.
-- An aaif-9c7 submission would hit the own-area dedup rule unless it carries new findings beyond #1030.
-- 18o.28 and 18o.9 (o11y pieces): lead with measured fleet data and policy; the plumbing angle is now crowded.
+- October has no forced submission by Zig's ruling (aaif-mik5). Do not file a floor menu bead.
+- Any aaif-9c7 follow-on to #1030 must lead with the new findings ("what a week of real use broke"), or the own-area dedup rule rejects it.
+- 18o.28 and 18o.9 (o11y pieces): lead with measured fleet data and policy. The plumbing angle is crowded.
