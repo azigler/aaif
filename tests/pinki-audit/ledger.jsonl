@@ -1,0 +1,21 @@
+{"ts":"2026-10-10T10:00:00Z","type":"promise","id":"pr-20261010-aaaa","promise":"land the audit fix","by":"alpha","to":"self","until":"2026-10-10T11:00:00Z","meta":{"writer":"offboard","kind":"promise","ref":"dotfiles-1","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-10T10:45:00Z","type":"amend","promise":"pr-20261010-aaaa","by":"alpha","until":"2026-10-10T11:30:00Z","reason":"nudge 1","meta":{"writer":"offboard"}}
+{"ts":"2026-10-10T11:30:00Z","type":"assess","promise":"pr-20261010-aaaa","state":"violated","observer":"expected-gap-watchdog","meta":{"terminal":"lapsed"}}
+{"ts":"2026-10-10T12:00:00Z","type":"resolve","promise":"pr-20261010-aaaa","as":"satisfied","by":"alpha","evidence":["abc123"]}
+{"ts":"2026-10-10T09:00:00Z","type":"promise","id":"pr-20261010-bbbb","promise":"return after the molt","by":"beta","to":"self","until":"2026-10-10T10:00:00Z","meta":{"writer":"promise-gap","kind":"molt","ref":"","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-10T09:30:00Z","type":"resolve","promise":"pr-20261010-bbbb","as":"cancelled","by":"beta","reason":"superseded by new session"}
+{"ts":"2026-10-10T09:00:00Z","type":"promise","id":"pr-20261010-cccc","promise":"return after the second molt","by":"beta","to":"self","until":"2026-10-10T10:00:00Z","meta":{"writer":"promise-gap","kind":"molt","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-10T09:30:00Z","type":"resolve","promise":"pr-20261010-cccc","as":"cancelled","by":"beta","reason":"Work landed, closing"}
+{"ts":"2026-10-11T08:00:00Z","type":"promise","id":"pr-cccc-d","promise":"check the queue","by":"gamma","to":"self","until":"2026-10-11T09:00:00Z","meta":{"writer":"manual","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-11T08:20:00Z","type":"resolve","promise":"pr-cccc-d","as":"cancelled","by":"gamma","reason":"no longer needed"}
+{"ts":"2026-10-11T08:00:00Z","type":"promise","id":"pr-20261011-rel1","promise":"hand off the review","by":"gamma","to":"self","until":"2026-10-11T12:00:00Z","meta":{"writer":"manual","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-11T09:00:00Z","type":"resolve","promise":"pr-20261011-rel1","as":"released","by":"gamma"}
+{"ts":"2026-10-09T12:00:00Z","type":"promise","id":"pr-20261009-eeee","promise":"Post the opus-drift verdict on dotfiles-2ojvq","by":"alpha","to":"self","until":"2026-10-09T14:00:00Z","meta":{"writer":"offboard","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-09T15:00:00Z","type":"assess","promise":"pr-20261009-eeee","state":"violated","observer":"expected-gap-watchdog","meta":{"terminal":"lapsed"}}
+{"ts":"2026-10-11T12:00:00Z","type":"promise","id":"pr-20261011-ffff","promise":"post the Opus drift verdict on dotfiles-2ojvq!","by":"alpha","to":"self","until":"2026-10-11T13:00:00Z","meta":{"writer":"offboard","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-12T09:00:00Z","type":"promise","id":"pr-20261012-gggg","promise":"wait for the CI run","by":"beta","to":"self","until":"2026-10-13T09:00:00Z","meta":{"writer":"manual","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-12T09:00:00Z","type":"promise","id":"pr-test-0001","promise":"fixture row","by":"alpha","to":"self","until":"2026-10-12T10:00:00Z","meta":{"writer":"offboard","kind":"molt","ref":"x-1","dir":"/tmp/test-seat.abc/home-alpha"}}
+{"ts":"2026-10-12T09:01:00Z","type":"amend","promise":"pr-test-0001","by":"alpha","until":"2026-10-12T10:30:00Z","reason":"nudge 1"}
+{"ts":"2026-10-12T09:30:00Z","type":"resolve","promise":"pr-test-0001","as":"cancelled","by":"alpha","reason":"done"}
+{"ts":"2026-09-01T10:00:00Z","type":"promise","id":"pr-20260901-old","promise":"an older promise","by":"alpha","to":"self","until":"2026-09-01T11:00:00Z","meta":{"writer":"offboard","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-09-01T10:30:00Z","type":"resolve","promise":"pr-20260901-old","as":"satisfied","by":"alpha"}
