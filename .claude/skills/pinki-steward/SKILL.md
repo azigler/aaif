@@ -115,11 +115,24 @@ Cut a release only when ALL of these hold:
 - At least 1 merged change alters behavior the estate can see.
 - `cargo test` is green on `main`.
 - The estate suites pass with the release binary FIRST on PATH. Build `main` to a scratch
-  dir (`cargo build --release --locked`), put its dir first on `PATH`, and run all four:
-  `~/.agents/agents/lib/test-promise-gap.sh`, `~/.agents/agents/lib/test-molt-gap.sh`,
-  `~/.agents/agents/scheduler/test-expected-gap-watchdog.sh`,
-  `~/.agents/agents/bin/test-desk-query.sh`. Run them on the installed binary too: a
-  suite that is red on BOTH is a pre-existing estate bug, not this release's.
+  dir (`cargo build --release --locked`), put its dir first on `PATH`, and run EVERY estate
+  suite that touches pinki. Derive the list; never keep a fixed one:
+  ```bash
+  grep -rl --include='test-*.sh' -E '\bpinki\b|promise-gap\.sh|pinki-estate' \
+    "$(readlink -f ~/.agents)/agents" | grep -v mutate
+  ```
+  Run each suite on the installed binary too: a suite that is red on BOTH is a
+  pre-existing estate bug, not this release's. Hold new starts while load1 > 12. On
+  2026-10-12 the derived list had 47 suites (the gate used to run a fixed 4).
+- If the release needed a wrapper change, that change is in consul's gate-window PIN, not
+  only on demesne main. Ask consul for the pin sha and check it with `git merge-base
+  --is-ancestor <fix> <pin>`. The gate window runs its suites on a pinned demesne copy,
+  but it uses the one installed `pinki`. Measured on the v0.4.0 canary: the wrapper fix
+  bd3aa4c9 was on main before the install, but gate window 442316 ran on pin 740de725
+  without it. The result was red test-seat-restart (264), promise-watchdog and
+  pulse-ledger-watch runs, plus cascades (consul triage on dotfiles-xcb08). No live
+  reader logged a refusal after the install. The user journal had 0 "no ledger at" lines.
+  In the harness logs, every hit was test, triage or mail text.
 
 A suite that is green on the installed binary and red on the release binary HOLDS the
 release. That is a contract break with the estate wrapper (owner: consul). Mail consul the
