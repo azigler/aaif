@@ -1,6 +1,6 @@
 ---
 name: pinki-steward
-description: Weekly pinki-steward pulse. Audits the shared pinki ledger and pinki's repo state, triages findings into upstream issues, estate-wrapper beads or usage notes, and logs a pulse-ledger row. Fires from the Tue 13:07 PT timer, on the canary tick the day after a pinki release, or on demand ("audit pinki", "pinki maintenance").
+description: Weekly pinki-steward pulse. Audits the shared pinki ledger, pinki's repo state, and its README and docs against the latest release, triages findings into upstream issues, estate-wrapper beads or usage notes, and logs a pulse-ledger row. Fires from the Tue 13:07 PT timer, on the canary tick the day after a pinki release, or on demand ("audit pinki", "pinki maintenance").
 ---
 
 # /pinki-steward — the weekly pinki-steward pulse
@@ -46,6 +46,25 @@ Then check repo state:
 Reading a zero: the test fixture makes every metric nonzero at least once, so a zero in the
 audit is a real zero. If a metric looks wrong, re-run `tests/pinki-audit/run.sh` first.
 
+## Step 1b — README + DOCS, every run
+
+Agents are the README's audience (Zig 2026-10-12, aaif-rsi.15). They learn pinki from it and
+paste it to other agents, so drift costs adoption. Each run checks the README and docs
+against the latest release and fixes what drifted:
+
+```bash
+bash ~/pinki/scripts/check-readme.sh        # every README example, run as committed
+grep -n -E 'v?0\.[0-9]+\.[0-9]+' ~/pinki/README.md ~/pinki/docs/*.md   # version claims
+```
+
+- A red check, or a version, verb, flag or exit code the README states that the binary does
+  not have, is drift. Fix it on a `docs/` branch in `~/pinki`, with a different-model review.
+- Ask: what would a new agent fail on? A missing command, an example that needs editing to
+  run, a paragraph of prose before the first command. Fix the worst one each week.
+- A release (Step 5) updates the README before the tag, not after.
+- Docs-only PRs that fix drift are this duty, and the README rewrite was Zig's own ask. A PR
+  that changes what pinki claims to be, or its scope, still goes through the desk.
+
 ## Step 2 — LISTEN
 
 Read the channel: `bash ~/.agents/agents/lib/post.sh read` (channel `#pinki-incorporation`).
@@ -80,7 +99,7 @@ Before you file:
 4. Record each filing as a comment on its bead, with the date. That comment is the counter.
 
 PRs stay GATED per act. Ask through the desk. The grant does not cover them. Releases are
-the loop's own call (Step 5).
+the loop's own call (Step 5). Docs-drift PRs are the exception in Step 1b.
 
 ## Step 5 — BUILD + RELEASE
 
@@ -110,7 +129,8 @@ suites (promise-gap 60 then a crash, watchdog 80, molt-gap 16), because the
 wrapper reads a fresh ledger before its first write.
 
 Version rule: patch for fixes, minor for new verbs or a changed exit code a caller can
-see. At most 1 release per week. To cut one: bump `Cargo.toml` and `Cargo.lock`, move the
+see. At most 1 release per week. To cut one: confirm `scripts/check-readme.sh` is green on
+the release binary, bump `Cargo.toml` and `Cargo.lock`, move the
 CHANGELOG `Unreleased` entries under the version, commit `:bookmark: vX.Y.Z — <one line>`
 on `main`, push an annotated tag `vX.Y.Z` (the release workflow builds the asset), then
 `cargo install --path ~/pinki --locked` and confirm `pinki --version`. Mail the desk the
