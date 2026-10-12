@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """pinki-audit.py -- deterministic, read-only audit of the shared pinki ledger.
 
-Job: the weekly pinki-maint pulse (aaif-eecq) runs this to get the same metrics
+Job: the weekly pinki-steward pulse (aaif-eecq) runs this to get the same metrics
 every week, so week-over-week deltas mean something. Stdlib only. It never
 writes the ledger; the only file it writes is the --json snapshot.
 

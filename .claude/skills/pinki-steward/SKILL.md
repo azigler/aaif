@@ -1,9 +1,9 @@
 ---
-name: pinki-maint
-description: Weekly pinki-maintainer pulse. Audits the shared pinki ledger and pinki's repo state, triages findings into upstream issues, estate-wrapper beads or usage notes, and logs a pulse-ledger row. Fires from the Tue 13:07 PT timer, on the canary tick the day after a pinki release, or on demand ("audit pinki", "pinki maintenance").
+name: pinki-steward
+description: Weekly pinki-steward pulse. Audits the shared pinki ledger and pinki's repo state, triages findings into upstream issues, estate-wrapper beads or usage notes, and logs a pulse-ledger row. Fires from the Tue 13:07 PT timer, on the canary tick the day after a pinki release, or on demand ("audit pinki", "pinki maintenance").
 ---
 
-# /pinki-maint — the weekly pinki-maintainer pulse
+# /pinki-steward — the weekly pinki-steward pulse
 
 ## What it is
 
@@ -118,12 +118,12 @@ tag as NEWS, not as a gate. The canary tick the next day checks the estate on it
 
 ## Step 6 — OUTPUTS, every tick
 
-1. A row in `refs/pulse-ledger.jsonl` with `"row":"pinki-maint"`. The proof is `kind:cmd`
+1. A row in `refs/pulse-ledger.jsonl` with `"row":"pinki-steward"`. The proof is `kind:cmd`
    and re-runs a grep over the snapshot. Model: Output 3 in
    `.claude/skills/aaif-radar/SKILL.md`.
    ```bash
    TS=$(date -u +%FT%TZ)
-   printf '%s\n' "{\"ts\":\"$TS\",\"row\":\"pinki-maint\",\"outcome\":\"done\",\"proof\":{\"kind\":\"cmd\",\"cmd\":\"grep -q promises_live .local/pinki-audit/<YYYY-Www>.json && grep -q open_overdue .local/pinki-audit/<YYYY-Www>.json\"},\"note\":\"pinki-maint <YYYY-Www> — <headline numbers, participant-free>\"}" \
+   printf '%s\n' "{\"ts\":\"$TS\",\"row\":\"pinki-steward\",\"outcome\":\"done\",\"proof\":{\"kind\":\"cmd\",\"cmd\":\"grep -q promises_live .local/pinki-audit/<YYYY-Www>.json && grep -q open_overdue .local/pinki-audit/<YYYY-Www>.json\"},\"note\":\"pinki-steward <YYYY-Www> — <headline numbers, participant-free>\"}" \
      >> refs/pulse-ledger.jsonl
    ```
    Replace every `<YYYY-Www>`. Add the row with `git add refs/pulse-ledger.jsonl`, then
