@@ -84,7 +84,10 @@ the loop's own call (Step 5).
 
 ## Step 5 — BUILD + RELEASE
 
-Fixes are built in worktrees. A different model reviews each fix before merge.
+Fixes are built in worktrees. A different model reviews each fix before merge. The
+builder goes to tertiary (Codex) by default: `/drain-tap dispatch --pool tertiary`, with
+a `Bead:` line on the item. The review of that Codex output stays on Claude (Zig
+2026-10-11, #taps `taps-codex-drain-20261011`: keep secondary for orchestrator turns).
 
 The release is the loop's call, not the desk's (Zig 2026-10-11, recorded on aaif-rsi).
 After the weekly work, if a change merged since the last tag, decide: cut it or hold it.
