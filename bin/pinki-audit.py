@@ -111,14 +111,13 @@ def audit(rows, now, since):
         res = resolves[-1] if resolves else None
         ts = parse_ts(p.get("ts"))
         until = parse_ts(p.get("until"))
+        # pinki's fold: the LAST amend in log order wins, unconditionally. An
+        # unparseable until there leaves the promise owed but never overdue.
         current_until = until
         current_until_text = p.get("until")
-        for amend in reversed(amends):
-            amended_until = parse_ts(amend.get("until"))
-            if amended_until is not None:
-                current_until = amended_until
-                current_until_text = amend["until"]
-                break
+        if amends:
+            current_until = parse_ts(amends[-1].get("until"))
+            current_until_text = amends[-1].get("until")
         info[i] = {
             "p": p,
             "meta": meta,

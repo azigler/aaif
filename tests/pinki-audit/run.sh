@@ -33,9 +33,9 @@ rc=$?
 if [ "$rc" -eq 0 ]; then ok "full run exit 0"; else bad "full run exit" "rc=$rc $OUT"; fi
 
 # 1 totals + fixtures excluded
-check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 13
+check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 14
 check "m1 fixture_promises" "$SNAP" "s['scalars']['fixture_promises']" 1
-check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 12
+check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 13
 # 2 writer/seat outcomes (all four outcome kinds nonzero)
 check "m2 writer promise-gap cancelled" "$SNAP" "s['by_writer']['promise-gap']['cancelled']" 2
 check "m2 writer offboard satisfied" "$SNAP" "s['by_writer']['offboard']['satisfied']" 2
@@ -52,8 +52,8 @@ check "m4 cancelled_reads_done" "$SNAP" "s['scalars']['cancelled_reads_done']" 1
 check "m5 violated_assessments" "$SNAP" "s['scalars']['violated_assessments']" 2
 check "m5 violated_then_satisfied" "$SNAP" "s['scalars']['violated_then_satisfied']" 1
 # 6 open + overdue + age
-check "m6 open" "$SNAP" "s['scalars']['open']" 6
-check "m6 amended_open" "$SNAP" "s['scalars']['amended_open']" 3
+check "m6 open" "$SNAP" "s['scalars']['open']" 7
+check "m6 amended_open" "$SNAP" "s['scalars']['amended_open']" 4
 check "m6 open_overdue" "$SNAP" "s['scalars']['open_overdue']" 3
 check "m6 forward amend is not overdue" "$SNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'pr-amend-forward')" False
 check "m6 forward amend is current until" "$SNAP" "next(o['until'] for o in s['open_promises'] if o['id'] == 'pr-amend-forward')" 2026-10-12T13:00:00Z
@@ -61,6 +61,8 @@ check "m6 back amend is overdue" "$SNAP" "next(o['overdue'] for o in s['open_pro
 check "m6 back amend is current until" "$SNAP" "next(o['until'] for o in s['open_promises'] if o['id'] == 'pr-amend-back')" 2026-10-12T11:00:00Z
 check "m6 ledger order wins" "$SNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'pr-amend-order')" False
 check "m6 ledger order until" "$SNAP" "next(o['until'] for o in s['open_promises'] if o['id'] == 'pr-amend-order')" 2026-10-12T14:00:00Z
+check "m6 garbage last amend is not overdue (pinki fold)" "$SNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'pr-amend-garbage')" False
+check "m6 garbage last amend is the until text" "$SNAP" "next(o['until'] for o in s['open_promises'] if o['id'] == 'pr-amend-garbage')" not-a-time
 check "m6 oldest open age_h" "$SNAP" "s['open_promises'][0]['age_h']" 72.0
 check "m6 oldest open id" "$SNAP" "s['open_promises'][0]['id']" pr-20261009-eeee
 check "m6 text capped at 70" "$SNAP" "max(len(o['text']) for o in s['open_promises']) <= 70" True
@@ -70,7 +72,7 @@ check "m7 duplicate groups" "$SNAP" "s['scalars']['duplicate_open_groups']" 1
 check "m7 duplicate count" "$SNAP" "s['duplicate_open_texts'][0]['count']" 2
 # 8 refs (fixture ref must not count)
 check "m8 with_ref" "$SNAP" "s['scalars']['with_ref']" 1
-check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0833
+check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0769
 # 9 nudged (fixture nudge must not count)
 check "m9 nudged" "$SNAP" "s['scalars']['nudged']" 1
 # 10 medians
@@ -91,16 +93,16 @@ done
 # --since window
 WIN="$TMP/win.json"
 python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --since 2026-10-01T00:00:00Z --json "$WIN" > /dev/null
-check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 12
+check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 13
 
 # --prev delta
 DOUT=$(python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --prev "$WIN" 2>&1)
-if printf '%s' "$DOUT" | grep -qE '^promises_total +13 +\+1$'; then
+if printf '%s' "$DOUT" | grep -qE '^promises_total +14 +\+1$'; then
   ok "prev delta column (+1)"
 else
   bad "prev delta column" "$(printf '%s' "$DOUT" | head -8)"
 fi
-if printf '%s' "$DOUT" | grep -qE '^amended_open +3 +\+0$'; then
+if printf '%s' "$DOUT" | grep -qE '^amended_open +4 +\+0$'; then
   ok "amended_open delta column (+0)"
 else
   bad "amended_open delta column" "$(printf '%s' "$DOUT" | grep amended_open)"

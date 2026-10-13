@@ -26,3 +26,6 @@
 {"ts":"2026-10-12T10:00:00Z","type":"promise","id":"pr-amend-order","promise":"use ledger order for amends","by":"delta","to":"self","until":"2026-10-12T11:00:00Z","meta":{"writer":"amend-test","kind":"promise","dir":"/home/ubuntu/work"}}
 {"ts":"2026-10-12T11:30:00Z","type":"amend","promise":"pr-amend-order","by":"delta","until":"2026-10-12T11:00:00Z","reason":"earlier ledger row"}
 {"ts":"2026-10-12T10:30:00Z","type":"amend","promise":"pr-amend-order","by":"delta","until":"2026-10-12T14:00:00Z","reason":"last ledger row"}
+{"ts":"2026-10-12T10:00:00Z","type":"promise","id":"pr-amend-garbage","promise":"a garbage final amend","by":"delta","to":"self","until":"2026-10-12T11:00:00Z","meta":{"writer":"amend-test","kind":"promise","dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-12T10:20:00Z","type":"amend","promise":"pr-amend-garbage","by":"delta","until":"2026-10-12T11:30:00Z","reason":"valid but past"}
+{"ts":"2026-10-12T10:40:00Z","type":"amend","promise":"pr-amend-garbage","by":"delta","until":"not-a-time","reason":"hand-edited"}
