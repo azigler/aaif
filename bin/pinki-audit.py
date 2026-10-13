@@ -111,6 +111,13 @@ def audit(rows, now, since):
         res = resolves[-1] if resolves else None
         ts = parse_ts(p.get("ts"))
         until = parse_ts(p.get("until"))
+        # pinki's fold: the LAST amend in log order wins, unconditionally. An
+        # unparseable until there leaves the promise owed but never overdue.
+        current_until = until
+        current_until_text = p.get("until")
+        if amends:
+            current_until = parse_ts(amends[-1].get("until"))
+            current_until_text = amends[-1].get("until")
         info[i] = {
             "p": p,
             "meta": meta,
@@ -119,6 +126,8 @@ def audit(rows, now, since):
             "assess": assess,
             "ts": ts,
             "until": until,
+            "current_until": current_until,
+            "current_until_text": current_until_text,
             "writer": meta.get("writer") or "unknown",
             "seat": p.get("by") or "unknown",
             "outcome": (res.get("as") if res else None)
@@ -169,14 +178,14 @@ def audit(rows, now, since):
     for i, v in info.items():
         if v["res"] is None:
             age = (now - v["ts"]).total_seconds() / 3600 if v["ts"] else None
-            overdue = bool(v["until"] and v["until"] < now)
+            overdue = bool(v["current_until"] and v["current_until"] < now)
             opens.append(
                 {
                     "id": i,
                     "by": v["seat"],
                     "age_h": round(age, 1) if age is not None else None,
                     "overdue": overdue,
-                    "until": v["p"].get("until"),
+                    "until": v["current_until_text"],
                     "text": (v["p"].get("promise") or "")[:70],
                 }
             )
@@ -208,7 +217,7 @@ def audit(rows, now, since):
         )
     ]
 
-    # 10. medians per writer
+    # 10. Horizon median measures the deadline promised at declaration.
     horizon, latency = (
         collections.defaultdict(list),
         collections.defaultdict(list),
@@ -245,6 +254,9 @@ def audit(rows, now, since):
         "violated_assessments": violated_rows,
         "violated_then_satisfied": len(violated_then_satisfied),
         "open": len(opens),
+        "amended_open": sum(
+            1 for v in info.values() if v["res"] is None and v["amends"]
+        ),
         "open_overdue": len(overdue),
         "open_overdue_max_age_h": max(
             (o["age_h"] or 0 for o in overdue), default=0
