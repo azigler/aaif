@@ -13,7 +13,9 @@ aaif-weekly and have the triage/housekeeping step". `pulse-aaif-weekly` replaces
 Goal: `br ready` stays a list Zig and this seat can trust, and the repo carries no drift.
 
 **The estate ruling on weekly pulses** (Zig, desk window, 2026-10-14 ~21:1x-21:4x PT,
-#estate 2026-10-15T04:29Z) binds this pass:
+#estate 2026-10-15T04:29Z) binds this pass. Its one written copy is consul's
+`~/.agents/agents/skills/pulse/reference/weekly.md` (dotfiles-8fn94); if that file and
+this summary disagree, that file wins:
 1. "Each seat needs to fully run the loop on all its projects".
 2. ALL and ONLY the seat's roster folders. Nothing joins by default: a project joins only
    when Zig adds it to aaif's roster row.
