@@ -1,6 +1,6 @@
 ---
 name: aaif-radar
-description: Weekly read-only scan of the AAIF ambassadors submissions repo — what's being submitted + scored, where the topic bloat / over-rotation is, which lanes are under-served (our opportunities), and whether the automated reviewer's grading still matches our documented model. Emits a PRIVATE full report to .local/radar/ and a participant-FREE closed `note` bead to preserve learnings, and notifies only when something is notable. Read-only; never posts to any AAIF surface. Pairs with /aaif-review (which scores OUR piece). Fire weekly (the pulse-aaif-radar timer, Sat 15:00 PT) or on demand ("scan the landscape", "what's the submission trend", "is Angie's scoring still in sync").
+description: Weekly read-only scan of the AAIF ambassadors submissions repo — what's being submitted + scored, where the topic bloat / over-rotation is, which lanes are under-served (our opportunities), and whether the automated reviewer's grading still matches our documented model. Emits a PRIVATE full report to .local/radar/ and a participant-FREE closed `note` bead to preserve learnings, and notifies only when something is notable. Read-only; never posts to any AAIF surface. Pairs with /aaif-review (which scores OUR piece). Runs weekly as Part 1 of /aaif-weekly (the pulse-aaif-weekly timer, Sat 15:00 PT), or on demand ("scan the landscape", "what's the submission trend", "is Angie's scoring still in sync").
 ---
 
 # /aaif-radar — the AAIF submissions-landscape radar
@@ -30,8 +30,10 @@ zero "better than X". If a learning can't be stated without naming a peer, it st
 ## Modes
 
 - **Interactive** (Zig types `/aaif-radar`): may surface highlights via AskUserQuestion.
-- **Autonomous** (timer-fired, `pulse-aaif-radar`): **never blocks.** Writes the report +
-  the note bead, files a P1 `human:` bead + push **only if notable**, then ends. (Global rule:
+- **Autonomous** (timer-fired as Part 1 of `/aaif-weekly`, unit `pulse-aaif-weekly`, which
+  replaced `pulse-aaif-radar` on 2026-10-15, aaif-ub9x): **never blocks.** Writes the report +
+  the note bead, files a P1 `human:` bead + push **only if notable**, then ends. (Inside
+  `/aaif-weekly` there is no push: that pass's one desk mail carries it, and it makes the commit.) (Global rule:
   scheduled runs never escalate to AskUserQuestion.)
 
 Detect autonomous mode the usual way (a `/pulse`-style injected tick / no interactive
@@ -163,7 +165,9 @@ This is the durable, committed memory of what each week taught us — safe becau
 only the model, never the people.
 
 ### Output 3 — a `pulse-ledger` row (radar is a pulse loop; every run leaves a ledger)
-The radar fires on `pulse-aaif-radar.timer`, so — like every pulse loop — it MUST leave a
+**Inside `/aaif-weekly` (the timer path), SKIP this output:** that pass writes ONE
+`aaif-weekly` row per fire and carries the radar result in its note. The block below is
+for a by-hand radar run only. A pulse loop MUST leave a
 ledger row the harness dashboard can read (no ledger-less ticks). Append ONE line to
 `/home/ubuntu/aaif/refs/pulse-ledger.jsonl` with `"row":"aaif-radar"`. **Participant-free**
 (this file is committed + read cross-machine — same rule as the bead: model only, never people):
@@ -190,7 +194,8 @@ with no follow-up question because it was shaped that way; a bead that only repo
 situation gets a conversation instead of a ruling. And every bead id the bead names carries
 its store-status tag (the live-state lint rule above).
 
-File a **P1 `human:` bead + push notification** if the week shows: a clear **new opportunity**
+File a **P1 `human:` bead + push notification** (inside `/aaif-weekly`: the bead + its one
+desk mail, no push) if the week shows: a clear **new opportunity**
 in Zig's lane, meaningful **over-rotation** worth steering around, a **grading-model drift**
 (so `/aaif-review` predictions stay honest), or a **rejection pattern** worth avoiding.
 A quiet week = write the report + note bead, no notification.

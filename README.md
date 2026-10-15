@@ -71,6 +71,7 @@ in [`.claude/skills/`](.claude/skills/):
 | `aaif-radar` | A read-only weekly scan of the submissions landscape for trends and under-served lanes. Its report is private; nothing about other people is ever committed. |
 | `agentgateway` | Read-only observability for a self-hosted agent gateway: audit, cost, trace, and human-gated hardening suggestions. |
 | `pinki-steward` | The weekly upkeep pulse for [pinki](https://github.com/azigler/pinki), the promise tool this repo maintains: it audits the shared ledger, turns real-use findings into upstream issues, and cuts a release only when the downstream test suites pass on the new binary. |
+| `aaif-weekly` | The weekly pass: it runs the radar, then closes the loop on this repo's own work. It closes finished tasks with evidence, folds duplicates, re-ranks the backlog, checks the monthly floor, and runs the housekeeping lint. Anything that needs my decision comes to me as one message. |
 | `aaif-blog-guidelines` | AAIF's own editorial + intake guidelines for blog content (authored by AAIF). |
 | `aaif-brand-guidelines` | AAIF's own brand system for any branded visual or asset (authored by AAIF). |
 | `housekeeping` | Project-local mechanical hygiene — mostly a lint that catches these indexes drifting out of sync with what's actually on disk. |
