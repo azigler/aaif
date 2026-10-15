@@ -12,11 +12,27 @@ aaif-weekly and have the triage/housekeeping step". `pulse-aaif-weekly` replaces
 
 Goal: `br ready` stays a list Zig and this seat can trust, and the repo carries no drift.
 
+**The estate ruling on weekly pulses** (Zig, desk window, 2026-10-14 ~21:1x-21:4x PT,
+#estate 2026-10-15T04:29Z) binds this pass:
+1. "Each seat needs to fully run the loop on all its projects".
+2. ALL and ONLY the seat's roster folders. Nothing joins by default: a project joins only
+   when Zig adds it to aaif's roster row.
+3. Demesne and dotfiles get no weekly pulse.
+4. "These weekly pulses ... should also push and close the beads they can, and even
+   utilize the garden skill to knock it all out".
+
 Models: `/pigeon-weekly` (~/dovecoted) for the shape. The global `/triage` for each bead
 population. Where this file and `/triage` differ, this file wins.
 
 ## Paths (absolute, always)
 
+- ROSTER FOLDERS: read live every run, never from this file:
+  `jq -r '.seats.aaif | [.home] + (.homes // []) | .[]' /home/ubuntu/.agents/agents/seats.json`.
+  It prints `~` paths: expand each with `p=${p/#\~/$HOME}` before any `cd`. On 2026-10-15
+  it printed only `~/aaif`, so today Part 2 runs on aaif alone. If Zig adds a folder,
+  repeat Part 2 there with REPO set to it; REPORT and the one ledger row stay aaif's and
+  list each folder. `~/pinki` is not on the
+  roster: `/pinki-steward` covers it.
 - REPO = `/home/ubuntu/aaif`. Start every Bash call with `REPO=/home/ubuntu/aaif` and use
   `$REPO/...` paths. Shell state does not survive between calls.
 - W = `$(date +%G-W%V)`. Recompute it in every call that needs it.
@@ -33,8 +49,9 @@ population. Where this file and `/triage` differ, this file wins.
    anything on an AAIF surface. It never names, ranks or compares other ambassadors in a
    bead, a comment, a commit or the ledger. Nothing from `.local/` goes into a tracked
    file. Close reasons and comments cite bead ids, shas and URLs only.
-3. Close only with evidence: a merge sha, a live URL that Zig already approved, a closed
-   child, or a ledger row. A `:card_file_box:` / `beads: file` commit is NEVER evidence,
+3. Close with evidence: a merge sha, a live URL that Zig already approved, a closed
+   child, or a ledger row. Or close it as STALE (Step 2, item 8), with a `Reopen if:`
+   line. A `:card_file_box:` / `beads: file` commit is NEVER evidence,
    even though `/triage` says to "usually just close" an orphan. "Probably done" stays
    open, with a comment that names the missing evidence.
 4. Each bead mutation is its own Bash call. A hook block kills the whole call.
@@ -50,11 +67,13 @@ population. Where this file and `/triage` differ, this file wins.
 |---|---|
 | Close a bead whose work landed (evidence in the close reason) | aaif acts |
 | Fold an exact duplicate into the older bead (`-r "duplicate of <id>"`) | aaif acts |
+| Close a stale bead with a `Reopen if: <condition>` line (Step 2, item 8) | aaif acts |
+| Dispatch a buildable bead to a builder, at most 2 a run (Step 4b) | aaif acts; aaif merges after a different-model SHIP |
 | Release a stale `in_progress` claim back to `open` | aaif acts |
 | Add a `waits-for` edge, or `br defer --until <date>` on a dated trigger | aaif acts |
 | Move a priority by one step, with a one-line comment saying why | aaif acts, at most 5 a week |
 | Close a `submission:` bead. A draft, or a piece waiting at the submit gate, stays open | aaif acts only on a live URL Zig approved; else Zig |
-| Close an `idea:` or `submission:` bead as won't-do, or change a month's anchor | Zig, via the desk |
+| Close an `idea:` or `submission:` bead as won't-do on its merits, or change a month's anchor | Zig, via the desk |
 | Close a P1 `human:` bead (title prefix: a decision filed for Zig) | Zig, via the desk |
 | Anything on an AAIF surface | Zig, every time (CLAUDE.md hard rule) |
 
@@ -117,6 +136,15 @@ week's first items. In this order:
    duplicates. Near-duplicates get a comment that links them.
 7. Re-rank: read the open P1 list. A P1 with no activity in 21 days is a candidate to
    move to P2. Move at most 5, each with a comment that says why.
+8. Close the stale (estate ruling, point 4). A bead with no activity in 30 days closes as
+   stale UNLESS it is: a `submission:`, `cadence:` or `human:` bead; a `decision` or
+   `note` type; an epic with open children; `in_progress`, `deferred`, the source of a
+   `waits-for` edge, or a blocker of any open bead (`br dep tree <id>`); or a bead that
+   quotes a Zig ruling (test: `br show <id> | command grep -E 'Zig[ ,(]+20[0-9]{2}-'`; a hit
+   excludes it). An `idea:` bead may close as
+   stale: the ruling covers it, and the `Reopen if:` line keeps it findable. The close:
+   `br close <id> -r "stale: no activity since <date>. Reopen if: <the condition that makes it live again>"`.
+   Write a real condition, not "if needed". Stale closes are capped at 10 a run, oldest first.
 
 ### Step 3. The monthly floor
 
@@ -137,6 +165,27 @@ it files one, goes in Step 6's desk mail. If Part 1 failed, run radar's floor bl
 - `git ls-files .local | wc -l` must print 0. Nonzero is a leak: stop, and report it as
   `blocked:housekeeping:local-tracked`.
 - `refs/session-handoff.md` older than 14 days while beads moved: note it in REPORT.
+- Units live: for each schedules row in aaif's roster entry,
+  `systemctl --user is-enabled <unit>.timer` must print `enabled`, and `systemctl --user
+  list-timers <unit>.timer` must show a NEXT time. A row with no live timer, or a live
+  aaif timer that no row names, goes to consul as one mail. Until consul's cutover
+  (demesne branch `aaif/aaif-weekly`) the roster still names `pulse-aaif-radar`, and
+  `pulse-aaif-weekly` is not installed. That is expected: note it in REPORT, mail nobody.
+
+### Step 4b. Knock it out (the garden's dispositions)
+
+`/garden` is demesne's backlog engine and a model cannot invoke it. This pass borrows its
+dispositions for aaif's own store. Each bead still open after Step 2 that the pass looked
+at gets one: close, fold, interconnect (`br dep add`), groom (a sharper title or
+acceptance line), ask-zig (Step 6), keep, or build.
+
+A `build` bead has clear acceptance criteria and needs no decision from Zig. Dispatch at
+most 2 a run, and only while load1 (`cut -d' ' -f1 /proc/loadavg`) is 12 or less; above
+that, record the bead in REPORT as next week's build. Use the global `/drain-tap dispatch
+--pool tertiary` with a `Bead:` line, and set the bead `in_progress` at dispatch so next
+week does not send it twice. No `.local/` text goes in the brief. A Claude agent reviews the result; aaif merges it on SHIP,
+in a later run or by hand. A builder never closes the bead: this seat closes it with the
+merge sha. Anything on an AAIF surface is never a `build`.
 
 ### Step 5. Leak check before any commit
 
