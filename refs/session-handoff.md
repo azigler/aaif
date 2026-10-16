@@ -37,6 +37,14 @@ because the secondary pool's 7-day usage reached 0.95, so seat-restart may roll 
   - aaif added a test of whether projected epic finish dates are calibrated (edges on a time axis).
   - Lab owns the lead (NFZPEP; pitch by 2026-10-16 12:00 PT) and noted aaif's offer of the node-to-horizon join.
 
+- After the first offboard (2026-10-15 to 10-16):
+  - consul's two review nits are fixed in demesne e5767ff3, and consul's merge is 82b57d8c.
+  - warden's harnessd manifest row is live on main e709e4bb. Its seed ledger row was asked by warden and is in aaif 7d341aa.
+  - The skill points at /pulse reference/weekly.md (e28a83e).
+  - The desk's capped fan-out needed 0 builders from aaif: all four aaif quest rows are closed or waiting on the Sat run.
+  - The pulse-list check (desk, 10-16): aaif-weekly is ONE healthy loop in state.json.
+  - The seat restarted onto the linearb pool, with its context intact.
+
 ## Friction
 - The demesne pre-commit hook waits a long time for heavy job slots (10-25 min under load 12-20). One run died with rc 143 (SIGTERM) under the harness's background task. The fix was to run the commit detached (`nohup setsid`) with a Monitor watching it. → one-off (the workaround is known)
 - My first Monitor filter used `refus`, which matched passing test names ("refuses the shared default"). Match the sentinel lines exactly. → one-off
