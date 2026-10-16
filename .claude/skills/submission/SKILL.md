@@ -89,10 +89,10 @@ recalculated for late entries. Respond in-thread if the review agent asks for
 more info.
 
 ### 7. Log
-Add a row to `SUBMISSIONS.md` (title, format, project, URL, status). **Also log
-it onto the current month's recurring task in the Asana planning hub** — the
-private scheduler/collector (IDs + write convention in `.local/private-notes.md`;
-that file is gitignored, so never echo its IDs into tracked files or commits).
+Add a row to `SUBMISSIONS.md` (title, format, project, URL, status). **Also note it
+on the `cadence:` bead** (`aaif-ambassador-program-18o.4`), which the weekly
+`/aaif-weekly` pass reads for the monthly floor. The Asana recurring task is retired
+(Zig 2026-10-16, sep26-rkw); its history stays in the Asana archive.
 Capture the scorecard/points when AAIF approves. Close the bead (`/commit` with
 the bead trailer; one bead = one commit). Update running totals.
 

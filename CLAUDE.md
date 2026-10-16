@@ -108,10 +108,11 @@ bead = one folder under `submissions/`.
    AAIF project(s) · notes. (**`/aaif-review`** drafts the exact issue body and
    stops here at the gate.) (Submit early in the month — monthly leaderboards
    aren't recalculated for late entries.)
-7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), **and log
-   it onto the current month's recurring task in the Asana planning hub** (private
-   scheduler/collector — IDs + convention in `.local/private-notes.md`). Close the
-   bead. Capture the scorecard/points when AAIF approves it.
+7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), and note
+   it on the `cadence:` bead (`aaif-ambassador-program-18o.4`), which the weekly
+   `/aaif-weekly` pass checks. The Asana recurring task is retired (Zig 2026-10-16,
+   sep26-rkw); its history stays in the Asana archive. Close the bead. Capture the
+   scorecard/points when AAIF approves it.
 8. **Amplify** — announce per `refs/program/brand-and-social.md` (tag
    **@AgenticAIFdn**, **#AAIFAmbassador**, badge). A thread earns its own 5 pts
    only when it carries a self-contained technical payload — **`/amplify`** runs

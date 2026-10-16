@@ -125,9 +125,8 @@ without Zig's explicit go-ahead). **Do not post. Do not open a submission issue.
 Zig fills in `Posted URL` + `Posted date` + the engagement snapshot in
 AMPLIFY.md. If the post stood alone, its row lands in the SUBMISSIONS.md
 pulse-contributions table (status `posted` → `submitted` → `approved`), and it
-also gets logged on the month's Asana planning task (IDs + convention live in the
-gitignored `.local/private-notes.md` — reference by pointer, never echo the IDs
-into tracked files).
+also gets a note on the `cadence:` bead (`aaif-ambassador-program-18o.4`). The Asana
+planning task is retired (Zig 2026-10-16, sep26-rkw).
 
 ## Done when
 
