@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# aaif-handoff-scrub-gate  (marker: install-hooks.sh keys on this line)
+#
+# Refuses a COMMIT whose staged refs/session-handoff*.md carries a `.local/` path,
+# an Asana GID, or a credential, and names each offending line (aaif-l0kl; Zig ruled
+# 2026-09-22: handoff notes stay public, with this gate; history is left as published).
+#
+# Scope, stated plainly: LITERAL markers only. It does not catch strategy
+# inference. It checks staged content (the index), blocks the commit, and never
+# rewrites the note. Bypass for a false positive: `git commit --no-verify`.
+set -u
+
+top=$(git rev-parse --show-toplevel) || exit 1
+checker="${HANDOFF_SCRUB_CHECK:-$top/bin/handoff-scrub-check.py}"
+
+mapfile -t notes < <(git diff --cached --name-only --diff-filter=ACM -- \
+  'refs/session-handoff*.md')
+[ "${#notes[@]}" -eq 0 ] && exit 0
+
+if [ ! -f "$checker" ]; then
+  echo "handoff-scrub: COULD NOT EVALUATE: $checker is missing, so the note cannot be checked. Refusing." >&2
+  exit 1
+fi
+
+tmp=$(mktemp) || exit 1
+trap 'rm -f "$tmp"' EXIT
+rc=0
+for f in "${notes[@]}"; do
+  git show ":$f" >"$tmp" || { echo "handoff-scrub: cannot read staged $f" >&2; exit 1; }
+  python3 "$checker" "$f" "$tmp" || rc=1
+done
+if [ "$rc" -ne 0 ]; then
+  echo "handoff-scrub: commit REFUSED. Remove the line(s) above from the note, re-stage, and commit again." >&2
+  exit 1
+fi
+exit 0
