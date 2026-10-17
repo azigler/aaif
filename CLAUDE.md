@@ -141,6 +141,7 @@ guards the floor.
 | Creating / reviewing AAIF-branded visuals, slides, or social graphics | `/aaif-brand-guidelines` (`.claude/skills/aaif-brand-guidelines/`) — the AAIF brand system for any branded deliverable (authored by AAIF) |
 | Building one contribution end-to-end | `/submission` (`.claude/skills/submission/`) |
 | Starting a new submission folder | `bin/submission-init <YYYY-MM> <slug> [--title "<title>"]` |
+| Capturing local gateway tutorial screenshots | `bin/tutorial-rig/README.md` — temporary rig, request driver, Playwright captures, and OCR gate |
 | Building a long-form research paper / white-paper | `/research-paper` (`.claude/skills/research-paper/`) — the heavy long-form build branch of `/submission` (bootstrap → verbatim refs → angle-lock → per-section beads → read-only critic loop → REVIEW-NOTES human-gate → gated publish; every claim gets a grep-able test case; STOPS at the Zig submit-gate); the optional academic layer (Zenodo/arXiv/ORCID) points to the global `/cfp` arc — shares `refs/research-paper-pipeline.md` |
 | Score-checking a contribution before publish/submit | `/aaif-review` (`.claude/skills/aaif-review/`) — type + points + conformance + issue drafter |
 | Publishing a finished piece to andrewzigler.com | `/camp-publish` (`.claude/skills/camp-publish/`) — lexicon frontmatter + MDX body transform, build-validate, land in the camp vault before the daily build (the Publish step) |

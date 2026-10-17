@@ -1,0 +1,20 @@
+# This template is rendered only inside the temporary run directory.
+config:
+  adminAddr: 127.0.0.1:{{ADMIN_PORT}}
+  statsAddr: 127.0.0.1:{{STATS_PORT}}
+  readinessAddr: 127.0.0.1:{{READINESS_PORT}}
+  database:
+    url: "sqlite://{{RUN_DIR}}/requests.db?mode=rwc"
+  standardAttributes:
+    user: 'apiKey.name'
+
+mcp:
+  port: {{MCP_PORT}}
+  targets:
+  - name: example
+    stdio: { cmd: python3, args: ["{{RIG_DIR}}/example-mcp.py"] }
+  policies:
+    apiKey:
+      mode: strict
+      keys:
+{{ROLE_KEYS}}

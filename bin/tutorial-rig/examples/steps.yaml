@@ -1,0 +1,52 @@
+steps:
+  - name: admin UI
+    endpoint: admin
+    path: /ui
+    expect_status: 200
+  - name: unauthenticated MCP refused
+    endpoint: mcp
+    method: POST
+    path: /mcp
+    headers:
+      Accept: application/json, text/event-stream
+    body:
+      jsonrpc: "2.0"
+      id: 1
+      method: initialize
+      params:
+        protocolVersion: "2025-03-26"
+        capabilities: {}
+        clientInfo: { name: tutorial-rig, version: "1" }
+    expect_status: 401
+  - name: research key accepted
+    endpoint: mcp
+    method: POST
+    path: /mcp
+    role: research
+    headers:
+      Accept: application/json, text/event-stream
+    body:
+      jsonrpc: "2.0"
+      id: 2
+      method: initialize
+      params:
+        protocolVersion: "2025-03-26"
+        capabilities: {}
+        clientInfo: { name: tutorial-rig, version: "1" }
+    expect_status: 200
+  - name: builder key accepted
+    endpoint: mcp
+    method: POST
+    path: /mcp
+    role: builder
+    headers:
+      Accept: application/json, text/event-stream
+    body:
+      jsonrpc: "2.0"
+      id: 3
+      method: initialize
+      params:
+        protocolVersion: "2025-03-26"
+        capabilities: {}
+        clientInfo: { name: tutorial-rig, version: "1" }
+    expect_status: 200
