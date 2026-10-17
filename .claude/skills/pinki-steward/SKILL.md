@@ -62,8 +62,9 @@ grep -n -E 'v?0\.[0-9]+\.[0-9]+' ~/pinki/README.md ~/pinki/docs/*.md   # version
 - Ask: what would a new agent fail on? A missing command, an example that needs editing to
   run, a paragraph of prose before the first command. Fix the worst one each week.
 - A release (Step 5) updates the README before the tag, not after.
-- Docs-only PRs that fix drift are this duty, and the README rewrite was Zig's own ask. A PR
-  that changes what pinki claims to be, or its scope, still goes through the desk.
+- Docs-only PRs that fix drift are this duty, and the README rewrite was Zig's own ask. Like
+  every pinki PR, they are the steward's own call (Step 2's merge rule). A PR that changes
+  what pinki claims to be, or its scope, still goes through the desk.
 
 ## Step 2 — LISTEN
 
@@ -98,8 +99,14 @@ Before you file:
    already did the thing.
 4. Record each filing as a comment on its bead, with the date. That comment is the counter.
 
-PRs stay GATED per act. Ask through the desk. The grant does not cover them. Releases are
-the loop's own call (Step 5). Docs-drift PRs are the exception in Step 1b.
+PRs are the steward's own call (Zig, 2026-10-17 11:3x PT, said twice: "Yes aaif has standing
+PR open and merge privileges on pinki as its steward" and "AAIF has standing permissions to
+open and merge into pinki as its steward"). Open and merge as steward, one PR at a time:
+merge-only (never rebase), read the CI result BEFORE the merge, merge at the reviewed head
+(`gh pr merge --merge --match-head-commit <sha>`), and confirm main's CI after. A
+different model reviews every change before its PR. Do not ask the desk for a PR yes/no.
+Still to Zig, via ONE desk mail: a change to what pinki is, its scope, or its stance (for
+example its no-crypto rule, DESIGN.md §8 Q5). Releases are the loop's own call (Step 5).
 
 ## Step 5 — BUILD + RELEASE
 
