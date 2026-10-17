@@ -1,0 +1,229 @@
+#!/usr/bin/env bash
+# Submission skeletons are inline heredocs below. Only supplied title and slug are filled in.
+set -euo pipefail
+
+usage() {
+  printf 'Usage: %s <YYYY-MM> <kebab-case-slug> [--title "<title>"]\n' "${0##*/}" >&2
+  exit 1
+}
+
+(( $# == 2 || $# == 4 )) || usage
+month=$1
+slug=$2
+title='<title>'
+if (( $# == 4 )); then
+  [[ $3 == --title && -n $4 ]] || usage
+  title=$4
+fi
+
+[[ $month =~ ^[0-9]{4}-(0[1-9]|1[0-2])$ && ${month:0:4} != 0000 ]] || {
+  printf 'Invalid YYYY-MM: %s\n' "$month" >&2
+  exit 1
+}
+[[ $slug =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || {
+  printf 'Invalid kebab-case slug: %s\n' "$slug" >&2
+  exit 1
+}
+[[ $title != *$'\n'* && $title != *$'\r'* && $title != *$'\t'* ]] || {
+  printf 'Title must be one line: %s\n' "$title" >&2
+  exit 1
+}
+
+repo_root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+submissions_root=${SUBMISSIONS_ROOT:-$repo_root/submissions}
+target=$submissions_root/$month-$slug
+mkdir -p "$submissions_root"
+if ! mkdir "$target"; then
+  printf 'Refusing to overwrite existing folder: %s\n' "$target" >&2
+  exit 1
+fi
+
+# Double-quoted YAML scalar. No publish date, image, category, or project is guessed.
+yaml_title=${title//\/\\}
+yaml_title=${yaml_title//\"/\\\"}
+
+cat > "$target/README.md" <<EOF
+# $title
+
+- AAIF project tie: TODO — name one specific project and explain the tie.
+- Status: draft
+- Working artifact: TODO — link a file in this folder.
+- Public artifact: TBD
+- Submission issue: TBD — requires Zig's explicit go-ahead.
+EOF
+
+cat > "$target/PUBLISH.md" <<EOF
+---
+title: "$yaml_title"
+published: "YYYY-MM-DD"
+slug: "$slug"
+tags:
+  - com.andrewzigler.content.article
+  - www-andrewzigler-com
+  - camp-note
+---
+
+TODO — replace this body with reviewed prose and run /camp-publish before use.
+EOF
+
+cat > "$target/AAIF-REVIEW.md" <<EOF
+# AAIF conformance — $title
+
+## Type and points
+
+- Claimed type and why: TODO
+- Predicted points: TODO
+- Higher legitimate type: TODO
+
+## Project tie
+
+- Specific AAIF project: TODO
+- Evidence in the artifact: TODO
+
+## Verifiability checklist
+
+- [ ] Title visible on public artifact
+- [ ] Publish date visible
+- [ ] Specific project anchor visible
+- [ ] Authorship and handle visible
+- [ ] Concrete developer value visible
+- [ ] Timing eligible
+- Recognition month: TODO — check approval month
+
+## Rejection risks
+
+- TODO — inspect /aaif-review rejection risks for this piece.
+
+## Conformance report
+
+- Detected type: TODO
+- Project anchor: TODO
+- Verifiability: TODO
+- Confidence estimate: TODO
+- Rejection risk: TODO
+- Fix before publish: TODO
+- Verdict: SHAPE FIRST — run /aaif-review before publishing.
+
+## Drafted [Submission] issue body — do not post without Zig
+
+Title: [Submission]: $title
+
+### Ambassador
+
+@azigler
+
+### Contribution URL
+
+TBD
+
+### AAIF Project
+
+Check all that apply:
+
+- [ ] goose
+- [ ] MCP
+- [ ] AGENTS.md
+- [ ] agentgateway
+- [ ] A2A
+- [ ] Agent Router
+- [ ] Other AAIF Project
+
+### Notes
+
+TODO — claimed type and why, project anchor, publish date, authorship, developer value, evidence links.
+
+### Social Links for AAIF Amplification
+
+TBD
+
+## Submit gate
+
+Zig reviews and gives explicit approval before any AAIF-facing action.
+EOF
+
+cat > "$target/AMPLIFY.md" <<EOF
+# Amplification — $title
+
+> Draft with /amplify. Zig posts by hand. Live fields stay TBD until then.
+
+## The piece being amplified
+
+- Submission: $title (TODO format · TODO project)
+- Public URL: TBD
+- Logged in SUBMISSIONS.md: no
+
+## Posts
+
+### TODO platform — draft
+
+- Draft copy: TODO — file in this folder, reviewed with /zig-voice
+- Posted URL: TBD
+- Posted date: TBD
+- Tags applied: TODO — platform handle and #AAIFAmbassador (+ #AAAmbassador)
+- Badge included: TBD
+- Engagement snapshot: TBD
+- Stands alone as its own contribution? no — announcement (default; run /amplify step 3)
+
+## Standalone determination
+
+Default: no. TODO — record what the post teaches without the link, or what is missing.
+If yes, record a separate pulse row and seek a separate gated submission.
+EOF
+
+cat > "$target/NOTES.md" <<EOF
+# Submission notes — $title
+
+- Claimed type and why: TODO
+- AAIF project tie and artifact evidence: TODO
+- New contribution area claimed: TODO
+- Differentiation from prior credited work in this area: TODO
+- Publish date: TBD
+- Author/handle evidence: TODO
+- Developer value: TODO
+- Supporting evidence links: TODO
+EOF
+
+cat > "$target/gates.sh" <<'EOF'
+#!/usr/bin/env bash
+# Per-piece ship gates from /submission Verify. Fill the TODO values below.
+set -euo pipefail
+here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+artifact=''        # TODO: path to the actual draft, relative to this folder.
+test_command=''    # TODO: command that runs/tests its code or instructions.
+project_ref=''     # TODO: refs/projects/<project>.md for the anchored AAIF project.
+facts_checked=''   # TODO: set to yes after checking facts and project names.
+usage_checked=''   # TODO: set to yes after checking real use, edited text, and developer value.
+review_done=''     # TODO: set to yes after /aaif-review (and /scrutinize if substantial).
+andrew_signed_off='' # TODO: set to yes after Andrew reviews the finished piece.
+zig_submit_approval='' # TODO: set to yes only after explicit approval to submit to AAIF.
+
+failed=0
+gate() {
+  local name=$1
+  shift
+  if "$@"; then printf 'PASS %s\n' "$name"; else printf 'FAIL %s\n' "$name"; failed=1; fi
+}
+is_set() { [[ -n $1 ]]; }
+confirmed() { [[ $1 == yes ]]; }
+run_test() { (cd "$here" && bash -lc "$test_command"); }
+
+gate artifact-configured is_set "$artifact"
+if [[ -n $artifact ]]; then gate artifact-exists test -s "$here/$artifact"; fi
+gate test-configured is_set "$test_command"
+if [[ -n $test_command ]]; then gate run-or-test run_test; fi
+gate project-reference-configured is_set "$project_ref"
+if [[ -n $project_ref ]]; then gate project-reference-exists test -f "$here/../../$project_ref"; fi
+gate review-record-exists test -s "$here/AAIF-REVIEW.md"
+gate facts-and-projects-checked confirmed "$facts_checked"
+gate usage-text-and-developer-value-checked confirmed "$usage_checked"
+gate aaif-review-and-scrutiny-done confirmed "$review_done"
+gate andrew-signed-off confirmed "$andrew_signed_off"
+gate explicit-aaif-submit-approval confirmed "$zig_submit_approval"
+exit "$failed"
+EOF
+chmod +x "$target/gates.sh"
+mkdir "$target/images" "$target/screenshots"
+: > "$target/images/.gitkeep"
+: > "$target/screenshots/.gitkeep"
+printf 'Created %s\n' "$target"
