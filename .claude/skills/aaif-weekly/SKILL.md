@@ -1,6 +1,6 @@
 ---
 name: aaif-weekly
-description: aaif's weekly pass. Part 1 is the /aaif-radar scan of the submissions landscape. Part 2 closes the loop on aaif's own beads and repo (close done work with evidence, fold duplicates, release stale claims, re-rank, monthly-floor check, housekeeping lint). Mails the desk only what needs Zig. Fires from the Sat 15:00 PT timer (pulse-aaif-weekly), or by hand ("aaif weekly", "triage aaif").
+description: aaif's weekly pass. Part 1 is the /aaif-radar scan of the submissions landscape. Part 2 closes the loop on aaif's own beads and repo (close done work with evidence, fold duplicates, release stale claims, re-rank, monthly-floor check, housekeeping lint). Ends every run with one four-part desk mail (ran, suggestions, questions for Zig, notes). Fires from the Sat 15:00 PT timer (pulse-aaif-weekly), or by hand ("aaif weekly", "triage aaif").
 ---
 
 # /aaif-weekly — the radar, then close the loop on aaif's own work
@@ -45,8 +45,8 @@ population. Where this file and `/triage` differ, this file wins.
 
 ## Hard rules
 
-1. Timer lane: never AskUserQuestion. A decision only Zig can make goes in ONE folded
-   desk mail (Step 6), and the pass ends.
+1. Timer lane: never AskUserQuestion. A decision only Zig can make goes in part 3 of
+   the ONE desk mail (Step 6), which every run sends, and the pass ends.
 2. The AAIF hard rules in `CLAUDE.md` hold. This pass never opens, comments on or submits
    anything on an AAIF surface. It never names, ranks or compares other ambassadors in a
    bead, a comment, a commit or the ledger. Nothing from `.local/` goes into a tracked
@@ -204,17 +204,28 @@ The ledger row's `proof` names `.local/aaif-weekly/` on purpose; only its `note`
 checked. Also read the added lines yourself for any other ambassador's name or handle. A hit
 means: edit the comment or close reason, then re-run.
 
-### Step 6. The one desk mail
+### Step 6. The one desk mail — EVERY run (Zig, Ruling 4, 2026-10-16)
 
-Only when a decision is needed from Zig. ONE mail, every item in it, each with a
-recommendation and a default. Write the body to MAIL first:
+Every run ends with ONE desk mail, even a quiet run. Zig, at the desk, 2026-10-16
+~17:1x PT: "all of the seats' weekly pulses ... end by making some suggestions for
+things to do. Whenever these pulses run they should always report that or mail that to
+the desk." A run with no desk mail is incomplete. The body has four parts, in this order:
+
+1. **RAN:** what the run did and how it went. Name anything skipped or broken.
+2. **SUGGESTIONS:** things to do next.
+3. **QUESTIONS FOR ZIG:** each decision only Zig can make, with a recommendation and a
+   default; or "none".
+4. **NOTES:** anything else about the run.
+
+The body stays participant-free (no other ambassador named); radar specifics stay in the
+private report. Write the body to MAIL first, then send it with the dated ref:
 
 ```bash
-REPO=/home/ubuntu/aaif; W=$(date +%G-W%V)
-bash ~/.agents/agents/lib/post.sh send desk --from aaif --ref aaif-weekly --body-file "$REPO/.local/aaif-weekly/$W-desk.md"
+REPO=/home/ubuntu/aaif; W=$(date +%G-W%V); D=$(date +%F)
+bash ~/.agents/agents/lib/post.sh send desk --from aaif --ref "aaif-weekly-$D" --body-file "$REPO/.local/aaif-weekly/$W-desk.md"
 ```
 
-Believe only a `POST_SEND_RESULT=` line. No decision means no desk mail.
+Believe only a `POST_SEND_RESULT=` line.
 
 ### Step 7. Report, ledger, commit
 
