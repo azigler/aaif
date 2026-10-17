@@ -1,0 +1,357 @@
+#!/usr/bin/env python3
+"""An isolated, temporary agentgateway rig for tutorial images."""
+
+import argparse
+import html
+import json
+import os
+from pathlib import Path
+import re
+import secrets
+import signal
+import socket
+import struct
+import subprocess
+import sys
+import tempfile
+import time
+import urllib.error
+import urllib.request
+
+import yaml
+
+HERE = Path(__file__).resolve().parent
+GATEWAY = Path("/home/ubuntu/.local/bin/agentgateway")
+PLAYWRIGHT = Path("/home/ubuntu/andrewzigler3/node_modules/playwright")
+RESERVED = set(range(15000, 15022)) | {17017}
+PORT_NAMES = ("admin", "stats", "readiness", "mcp")
+PNG_PRIVATE_CHUNKS = {b"tEXt", b"iTXt", b"zTXt", b"eXIf"}
+BUILTIN_PATTERNS = {
+    "home path": re.compile(r"/(?:home|Users)/\S+", re.I),
+    "100.x address": re.compile(r"\b100(?:\.\d{1,3}){3}\b"),
+    "192.168.x address": re.compile(r"\b192\.168(?:\.\d{1,3}){2}\b"),
+    "sk- key": re.compile(r"\bsk-[A-Za-z0-9_-]+\b", re.I),
+}
+
+
+def fail(message):
+    raise RuntimeError(message)
+
+
+def run_dir():
+    base = Path(os.environ.get("TMPDIR") or tempfile.gettempdir())
+    path = base / f"tutorial-rig-{os.getuid()}"
+    path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    path.chmod(0o700)
+    return path
+
+
+def read_yaml(path):
+    value = yaml.safe_load(Path(path).read_text())
+    if not isinstance(value, dict):
+        fail(f"expected YAML mapping: {path}")
+    return value
+
+
+def state_path():
+    return run_dir() / "state.json"
+
+
+def state():
+    path = state_path()
+    if not path.exists():
+        fail("no rig is up")
+    return json.loads(path.read_text())
+
+
+def write_private(path, contents):
+    path = Path(path)
+    with path.open("w") as stream:
+        os.fchmod(stream.fileno(), 0o600)
+        stream.write(contents)
+
+
+def listening_ports():
+    result = subprocess.run(["ss", "-ltnH"], capture_output=True, text=True, check=True)
+    ports = set()
+    for line in result.stdout.splitlines():
+        fields = line.split()
+        if len(fields) >= 4:
+            match = re.search(r":(\d+)$", fields[3])
+            if match:
+                ports.add(int(match.group(1)))
+    return ports
+
+
+def free_port(exclude):
+    occupied = listening_ports() | RESERVED | set(exclude)
+    for _ in range(100):
+        with socket.socket() as probe:
+            probe.bind(("127.0.0.1", 0))
+            port = probe.getsockname()[1]
+        if port not in occupied:
+            return port
+    fail("could not find a free non-reserved port")
+
+
+def living(pid):
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+
+
+def render_template(template, values):
+    def replacement(match):
+        name = match.group(1)
+        if name not in values:
+            fail(f"unknown config placeholder: {name}")
+        return str(values[name])
+
+    rendered = re.sub(r"\{\{([A-Z_]+)\}\}", replacement, template)
+    if "{{" in rendered or "}}" in rendered:
+        fail("unresolved config placeholder")
+    return rendered
+
+
+def up(args):
+    config = read_yaml(args.rig)
+    previous = state_path()
+    if previous.exists():
+        old = json.loads(previous.read_text())
+        if living(old["pid"]):
+            fail("a rig is already up; run down first")
+        fail("stale rig state exists; run down first")
+    roles = config.get("roles")
+    if not isinstance(roles, list) or not roles or any(not isinstance(r, str) or not re.fullmatch(r"[a-z][a-z0-9-]*", r) for r in roles):
+        fail("roles must be a nonempty list of simple lower-case names")
+    if len(set(roles)) != len(roles):
+        fail("roles must be unique")
+    template = (Path(args.rig).resolve().parent / config["template"]).resolve()
+    ports = {}
+    for name in PORT_NAMES:
+        ports[name] = free_port(ports.values())
+    keys = {role: "sk-" + secrets.token_hex(24) for role in roles}
+    key_lines = "\n".join(
+        f'      - {{ key: "{keys[role]}", metadata: {{ name: {role} }} }}'
+        for role in roles
+    )
+    values = {f"{name.upper()}_PORT": port for name, port in ports.items()}
+    values.update(ROLE_KEYS=key_lines, RUN_DIR=str(run_dir()), RIG_DIR=str(HERE))
+    rendered = render_template(template.read_text(), values)
+    parsed = yaml.safe_load(rendered)
+    if not isinstance(parsed, dict):
+        fail("rendered gateway config is invalid")
+    cfg_path = run_dir() / "gateway.yaml"
+    write_private(cfg_path, rendered)
+    write_private(run_dir() / "keys.json", json.dumps(keys))
+    log_path = run_dir() / "gateway.log"
+    print("WARNING: agentgateway 1.5.0 binds data ports on all interfaces; use these throwaway keys only.", flush=True)
+    with log_path.open("w") as log:
+        process = subprocess.Popen(
+            ["nice", "-n", "19", str(GATEWAY), "-f", str(cfg_path)],
+            stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+        )
+    details = {"pid": process.pid, "ports": ports, "roles": roles}
+    write_private(previous, json.dumps(details))
+    deadline = time.monotonic() + 45
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            down(None)
+            fail(f"gateway exited during startup; see {log_path}")
+        if set(ports.values()).issubset(listening_ports()):
+            try:
+                with urllib.request.urlopen(f"http://127.0.0.1:{ports['admin']}/ui", timeout=2) as response:
+                    if response.status == 200:
+                        print("rig ready: " + ", ".join(f"{name}={port}" for name, port in ports.items()))
+                        print(f"run dir: {run_dir()}")
+                        return
+            except (urllib.error.URLError, TimeoutError):
+                pass
+        time.sleep(0.5)
+    down(None)
+    fail(f"gateway did not become ready; see {log_path}")
+
+
+def drive(args):
+    details = state()
+    keys = json.loads((run_dir() / "keys.json").read_text())
+    steps = read_yaml(args.steps).get("steps")
+    if not isinstance(steps, list) or not steps:
+        fail("steps must be a nonempty list")
+    for index, step in enumerate(steps, 1):
+        label = step.get("name", f"step-{index}")
+        endpoint = step.get("endpoint", "mcp")
+        if endpoint not in details["ports"]:
+            fail(f"{label}: unknown endpoint {endpoint}")
+        path = step.get("path", "/")
+        if not isinstance(path, str) or not path.startswith("/") or path.startswith("//"):
+            fail(f"{label}: path must start with one slash")
+        role = step.get("role")
+        if role is not None and role not in keys:
+            fail(f"{label}: unknown role {role}")
+        url = f"http://127.0.0.1:{details['ports'][endpoint]}{path}"
+        body = step.get("body")
+        cmd = ["curl", "--silent", "--show-error", "--max-time", "15", "--output", str(run_dir() / "response.txt"), "--write-out", "%{http_code}", "--request", step.get("method", "GET")]
+        headers = dict(step.get("headers") or {})
+        if role:
+            headers["Authorization"] = "Bearer " + keys[role]
+        if body is not None:
+            headers.setdefault("Content-Type", "application/json")
+            cmd.extend(["--data", json.dumps(body) if not isinstance(body, str) else body])
+        for key, value in headers.items():
+            cmd.extend(["--header", f"{key}: {value}"])
+        result = subprocess.run(cmd + [url], capture_output=True, text=True, check=True)
+        actual = int(result.stdout.strip())
+        expected = int(step["expect_status"])
+        print(f"{label}: HTTP {actual} (expected {expected})", flush=True)
+        if actual != expected:
+            fail(f"{label}: response: {(run_dir() / 'response.txt').read_text()[:300]}")
+
+
+def node_capture(mode, specs):
+    spec_path = run_dir() / f"{mode}.json"
+    write_private(spec_path, json.dumps(specs))
+    env = os.environ.copy()
+    env["PLAYWRIGHT_MODULE"] = str(PLAYWRIGHT)
+    subprocess.run(["node", str(HERE / "capture.js"), mode, str(spec_path)], env=env, check=True)
+
+
+def shoot(args):
+    details = state()
+    config = read_yaml(args.shots)
+    shots = config.get("shots")
+    if not isinstance(shots, list) or not shots:
+        fail("shots must be a nonempty list")
+    output = run_dir() / "shots"
+    output.mkdir(exist_ok=True)
+    specs = []
+    for shot in shots:
+        name = shot["name"]
+        if not re.fullmatch(r"[a-zA-Z0-9_-]+", name):
+            fail(f"unsafe shot name: {name}")
+        path = shot["path"]
+        if not path.startswith("/") or path.startswith("//"):
+            fail(f"unsafe shot path: {path}")
+        specs.append({"url": f"http://127.0.0.1:{details['ports']['admin']}{path}", "out": str(output / f"{name}.png"), "width": int(shot.get("width", 1440)), "height": int(shot.get("height", 900)), "scale": float(shot.get("scale", 2)), "wait_ms": int(shot.get("wait_ms", 1000))})
+    node_capture("shoot", specs)
+
+
+def cards(args):
+    directory = Path(args.cards_dir).resolve()
+    pages = sorted(directory.glob("*.html"))
+    if not pages:
+        fail("cards directory has no HTML pages")
+    data_path = directory / "data.json"
+    data = json.loads(data_path.read_text()) if data_path.exists() else {}
+    if not isinstance(data, dict):
+        fail("cards data.json must be an object")
+    rendered = run_dir() / "rendered-cards"
+    output = run_dir() / "cards"
+    rendered.mkdir(exist_ok=True)
+    output.mkdir(exist_ok=True)
+    specs = []
+    for page in pages:
+        if not re.fullmatch(r"[a-zA-Z0-9_-]+", page.stem):
+            fail(f"unsafe card filename: {page.name}")
+        def substitute(match):
+            key = match.group(1)
+            if key not in data:
+                fail(f"{page.name}: missing data key {key}")
+            return html.escape(str(data[key]))
+        content = re.sub(r"\{\{([a-zA-Z0-9_]+)\}\}", substitute, page.read_text())
+        target = rendered / page.name
+        target.write_text(content)
+        specs.append({"url": target.as_uri(), "out": str(output / f"{page.stem}.png")})
+    node_capture("cards", specs)
+
+
+def private_png_chunks(path):
+    found = []
+    with path.open("rb") as stream:
+        if stream.read(8) != b"\x89PNG\r\n\x1a\n":
+            fail(f"{path}: invalid PNG")
+        while True:
+            length_bytes = stream.read(4)
+            if not length_bytes:
+                fail(f"{path}: PNG has no IEND")
+            length = struct.unpack(">I", length_bytes)[0]
+            kind = stream.read(4)
+            if len(kind) != 4 or length > 100_000_000:
+                fail(f"{path}: invalid PNG chunk")
+            if kind in PNG_PRIVATE_CHUNKS:
+                found.append(kind.decode("ascii"))
+            stream.seek(length + 4, 1)
+            if kind == b"IEND":
+                return found
+
+
+def scrub(args):
+    directory = Path(args.png_dir)
+    images = sorted(directory.rglob("*.png"))
+    if not images:
+        fail(f"no PNG files in {directory}")
+    terms = [line.strip() for line in Path(args.terms_file).read_text().splitlines() if line.strip() and not line.lstrip().startswith("#")]
+    hits = []
+    for png in images:
+        for kind in private_png_chunks(png):
+            hits.append(f"{png}: PNG chunk {kind}")
+        result = subprocess.run(["tesseract", str(png), "stdout"], capture_output=True, text=True, check=True)
+        ocr = result.stdout
+        if not re.search(r"\w+", ocr):
+            hits.append(f"{png}: OCR returned no words")
+        for term in terms:
+            if term.casefold() in ocr.casefold():
+                hits.append(f"{png}: term {term!r}")
+        for label, pattern in BUILTIN_PATTERNS.items():
+            if pattern.search(ocr):
+                hits.append(f"{png}: built-in pattern {label}")
+    if hits:
+        for hit in hits:
+            print("SCRUB HIT: " + hit, file=sys.stderr)
+        raise SystemExit(1)
+    print(f"scrub passed: {len(images)} PNG(s), OCR text present, no terms or private chunks")
+
+
+def down(_args):
+    path = state_path()
+    if not path.exists():
+        fail("no rig state to stop")
+    details = json.loads(path.read_text())
+    pid = details["pid"]
+    if living(pid):
+        os.killpg(pid, signal.SIGTERM)
+        deadline = time.monotonic() + 10
+        while time.monotonic() < deadline and set(details["ports"].values()) & listening_ports():
+            time.sleep(0.2)
+        if set(details["ports"].values()) & listening_ports():
+            os.killpg(pid, signal.SIGKILL)
+    open_ports = set(details["ports"].values()) & listening_ports()
+    if open_ports:
+        fail(f"rig ports remain open: {sorted(open_ports)}")
+    path.unlink()
+    for secret_file in (run_dir() / "keys.json", run_dir() / "gateway.yaml"):
+        secret_file.unlink(missing_ok=True)
+    print("rig down: ports closed " + ", ".join(str(port) for port in details["ports"].values()))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    commands = parser.add_subparsers(dest="command", required=True)
+    for name, positional in (("up", "rig"), ("drive", "steps"), ("shoot", "shots"), ("cards", "cards_dir"), ("scrub", "png_dir"), ("down", None)):
+        child = commands.add_parser(name)
+        if positional:
+            child.add_argument(positional)
+        if name == "scrub":
+            child.add_argument("terms_file")
+    args = parser.parse_args()
+    try:
+        globals()[args.command](args)
+    except (OSError, KeyError, ValueError, subprocess.CalledProcessError, RuntimeError) as error:
+        print(f"rig: {error}", file=sys.stderr)
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()

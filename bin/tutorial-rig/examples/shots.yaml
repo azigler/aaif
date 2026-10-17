@@ -1,0 +1,7 @@
+shots:
+  - name: overview
+    path: /ui
+    width: 1200
+    height: 800
+    scale: 2
+    wait_ms: 1000

@@ -1,0 +1,2 @@
+# One literal, case-insensitive term per line.
+private-example-term
