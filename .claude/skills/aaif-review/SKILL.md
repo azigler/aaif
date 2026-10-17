@@ -248,6 +248,19 @@ These patterns get **rejected with no scorecard**. Flag any that apply:
   the program did not substitute for a project focus): a talk where the project *"appears briefly… as an
   implementation that was replaced"* is 0, not 30; a reel that *lists* projects among skills
   is 0. The project must be a **meaningful focus** that helps a developer understand or use it.
+- **Canonical-project identity; approval is not final** (new, W42): a staff eligibility
+  audit (2026-10-11) **removed nine already-approved scorecards**
+  (180 points). The issue labels stayed `approved`; only the scorecard JSON was deleted. The
+  reasons: **WebMCP credited as MCP** (6; WebMCP is not the MCP project); **MCP event
+  branding** did not establish substantive MCP coverage in the article; **generic agent
+  communication** did not establish coverage of the **specific A2A protocol**; a **personal
+  ambassador-appointment announcement** does not qualify under the community policy. Ticking a
+  project means covering THAT canonical project, not a namesake, a neighbour or an event name.
+  Since the audit, every new rationale opens with an **eligibility route** —
+  `canonical AAIF project contribution`, or `General AAIF community` (AAIF chapter events and
+  recaps, schema project `other`, no project credit claimed) — and then cites the **exact
+  section or paragraph** that proves each ticked project. Mirror that in Notes: one line per
+  ticked project, naming the section of the artifact that proves it.
 - **Unverifiable scope or date → `needs-human-review`** (new, W35 — first occurrence): a
   deployed artifact whose **source repo is private** and whose only visible date is a
   "last updated" footer doesn't get rejected — it stalls in a new `needs-human-review`
