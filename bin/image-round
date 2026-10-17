@@ -1,0 +1,516 @@
+#!/usr/bin/env python3
+"""Plan, preview, and pick a post image round.
+
+Brief format: ``## Style`` and ``## Scene`` contain prose. Optional
+``## References`` lists local image paths, one per bullet. Optional
+``## Choices`` lists scene axes as ``- axis: option | option | ...``.
+Without Choices, framing and light use the built-in options. ``plan`` records
+the seed, each RNG draw, its modulo, the selected choices, and full prompts.
+Network work is disabled by default. ``--live --yes`` is required for render
+and CDN upload; ``--live`` alone prints the estimated total and stops.
+"""
+
+import argparse
+import base64
+import html
+import ipaddress
+import json
+import random
+import re
+import secrets
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
+
+MODEL = "google/gemini-3.1-flash-image-preview"
+ESTIMATE_PER_IMAGE = 0.07  # USD, 1K image; actual billed cost comes from API.
+OG_SIZE = (1200, 630)
+CDN = Path.home() / ".claude/skills/cdn/cdn.sh"
+DEFAULT_AXES = {
+    "framing": [
+        "wide environmental view",
+        "medium scene view",
+        "close detail view",
+    ],
+    "light": [
+        "soft morning light",
+        "late afternoon side light",
+        "overcast diffuse light",
+    ],
+    "viewpoint": [
+        "eye-level viewpoint",
+        "slightly elevated viewpoint",
+        "low viewpoint",
+    ],
+}
+
+
+def fail(message):
+    raise ValueError(message)
+
+
+def parse_brief(path):
+    sections = {}
+    current = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = re.match(r"^#{1,3}\s+(.+?)\s*$", line)
+        if match:
+            current = match.group(1).strip().lower()
+            sections[current] = []
+        elif current:
+            sections[current].append(line)
+    style = "\n".join(sections.get("style", [])).strip()
+    scene = "\n".join(sections.get("scene", [])).strip()
+    if not style or not scene:
+        fail("brief needs nonempty ## Style and ## Scene sections")
+    refs = []
+    for line in sections.get("references", []) + sections.get(
+        "reference images", []
+    ):
+        value = re.sub(r"^\s*[-*]\s+", "", line).strip()
+        if not value:
+            continue
+        ref = (path.parent / value).resolve()
+        if not ref.is_file():
+            fail(f"reference does not exist: {ref}")
+        refs.append(str(ref))
+    axes = {}
+    for line in sections.get("choices", []):
+        if not line.strip():
+            continue
+        match = re.match(r"^\s*[-*]\s+([^:]+):\s*(.+)$", line)
+        if not match:
+            fail(f"bad Choices line: {line}")
+        name = match.group(1).strip()
+        options = [part.strip() for part in match.group(2).split("|")]
+        if not name or len(options) < 2 or any(not item for item in options):
+            fail(f"Choices axis needs at least two nonempty options: {line}")
+        axes[name] = options
+    return style, scene, refs, axes or DEFAULT_AXES
+
+
+def draw_index(rng, size):
+    bits = rng.getrandbits(32)
+    return bits % size, {
+        "hex": f"{bits:08x}",
+        "modulo": size,
+        "index": bits % size,
+    }
+
+
+def make_plan(brief, n, seed):
+    if n < 1 or n > 24:
+        fail("--n must be between 1 and 24")
+    style, scene, refs, axes = parse_brief(brief)
+    master = random.Random(seed)
+    axis_names = list(axes)
+    variants = []
+    for number in range(1, n + 1):
+        variant_seed = master.getrandbits(64)
+        rng = random.Random(variant_seed)
+        count_index, count_draw = draw_index(rng, min(2, len(axis_names)))
+        count = count_index + 1
+        available = axis_names[:]
+        choices = {}
+        draws = [{"purpose": "axis count", **count_draw}]
+        for _ in range(count):
+            axis_index, axis_draw = draw_index(rng, len(available))
+            axis = available.pop(axis_index)
+            option_index, option_draw = draw_index(rng, len(axes[axis]))
+            choices[axis] = axes[axis][option_index]
+            draws.extend(
+                (
+                    {"purpose": "axis", "axis": axis, **axis_draw},
+                    {"purpose": "option", "axis": axis, **option_draw},
+                )
+            )
+        choice_text = "; ".join(
+            f"{key}: {value}" for key, value in choices.items()
+        )
+        prompt = f"Style:\n{style}\n\nScene:\n{scene}\n\nScene choices:\n{choice_text}"
+        variants.append(
+            {
+                "number": number,
+                "seed": f"{variant_seed:016x}",
+                "choices": choices,
+                "draws": draws,
+                "prompt": prompt,
+            }
+        )
+    return {
+        "schema": 1,
+        "seed": f"{seed:016x}",
+        "brief": str(brief.resolve()),
+        "references": refs,
+        "axes": axes,
+        "variants": variants,
+    }
+
+
+def load_plan(directory):
+    path = directory / "plan.json"
+    if not path.is_file():
+        fail(f"missing {path}; run plan first")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def image_extension(data):
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data.startswith(b"\xff\xd8\xff"):
+        return ".jpg"
+    if data.startswith(b"RIFF") and data[8:12] == b"WEBP":
+        return ".webp"
+    if data.startswith((b"GIF87a", b"GIF89a")):
+        return ".gif"
+    fail("image response has an unrecognized image format")
+
+
+def placeholder_png(number):
+    # The local stub creates a real 1200x630 PNG and never calls the API.
+    try:
+        from io import BytesIO
+
+        from PIL import Image, ImageDraw
+
+        canvas = Image.new("RGB", OG_SIZE, (242, 232, 216))
+        draw = ImageDraw.Draw(canvas)
+        draw.rectangle((36, 36, 1164, 594), outline=(58, 69, 65), width=5)
+        draw.text((72, 80), f"DRY RUN / candidate {number}", fill=(58, 69, 65))
+        buffer = BytesIO()
+        canvas.save(buffer, format="PNG")
+        return buffer.getvalue()
+    except ImportError:
+        # A valid 1x1 PNG keeps plan/render usable without Pillow.
+        return base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL/nwAAAABJRU5ErkJggg=="
+        )
+
+
+def network_request(payload, key):
+    """The only OpenRouter network seam. Never called by dry-run."""
+    request = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(request, timeout=180) as response:
+        return json.load(response)
+
+
+def request_payload(model, prompt, references):
+    content = [{"type": "text", "text": prompt}]
+    for path in references:
+        data = Path(path).read_bytes()
+        ext = image_extension(data)
+        mime = {
+            ".jpg": "image/jpeg",
+            ".png": "image/png",
+            ".webp": "image/webp",
+            ".gif": "image/gif",
+        }[ext]
+        content.append(
+            {
+                "type": "image_url",
+                "image_url": {
+                    "url": f"data:{mime};base64,{base64.b64encode(data).decode('ascii')}"
+                },
+            }
+        )
+    return {
+        "model": model,
+        "messages": [{"role": "user", "content": content}],
+        "modalities": ["image", "text"],
+        "image_config": {"aspect_ratio": "16:9", "image_size": "1K"},
+    }
+
+
+def response_image(response):
+    images = response["choices"][0]["message"]["images"]
+    url = images[0]["image_url"]["url"]
+    if not url.startswith("data:image/") or ";base64," not in url:
+        fail("OpenRouter did not return a base64 image")
+    data = base64.b64decode(url.split(";base64,", 1)[1], validate=True)
+    return data, image_extension(data)
+
+
+def read_log(directory):
+    path = directory / "log.jsonl"
+    if not path.exists():
+        return []
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+
+
+def cmd_render(args):
+    directory = args.dir.resolve()
+    plan = load_plan(directory)
+    logged = {row["number"]: row for row in read_log(directory)}
+    pending = [
+        item
+        for item in plan["variants"]
+        if not (
+            item["number"] in logged
+            and (directory / logged[item["number"]]["file"]).is_file()
+            and not (args.live and logged[item["number"]]["dry_run"])
+        )
+    ]
+    estimate = len(pending) * ESTIMATE_PER_IMAGE
+    if args.live:
+        print(
+            f"Estimated total: ${estimate:.2f} for {len(pending)} image(s) (actual cost may vary)"
+        )
+        if not args.yes:
+            print("Stopped. Add --yes to spend credits.")
+            return 2
+        import os
+
+        key = os.environ.get("OPENROUTER_API_KEY")
+        if not key:
+            fail("OPENROUTER_API_KEY is required for --live")
+    for item in pending:
+        if args.live:
+            response = network_request(
+                request_payload(args.model, item["prompt"], plan["references"]),
+                key,
+            )
+            data, extension = response_image(response)
+            cost = response.get("cost")
+            if cost is None:
+                fail("OpenRouter response has no cost field")
+        else:
+            data = placeholder_png(item["number"])
+            extension = ".png"
+            cost = 0.0
+        name = f"candidate-{item['number']:02d}{extension}"
+        (directory / name).write_bytes(data)
+        row = {
+            "number": item["number"],
+            "file": name,
+            "model": args.model,
+            "cost": cost,
+            "dry_run": not args.live,
+            "prompt": item["prompt"],
+        }
+        with (directory / "log.jsonl").open("a", encoding="utf-8") as log:
+            log.write(json.dumps(row, ensure_ascii=False) + "\n")
+        print(f"{name}: {'dry-run' if not args.live else f'${cost}'}")
+    return 0
+
+
+def crop_og(source, target):
+    try:
+        from PIL import Image, ImageOps
+    except ImportError:
+        fail("Pillow is required for OG crops; install python3-pil")
+    with Image.open(source) as image:
+        image = ImageOps.exif_transpose(image).convert("RGB")
+        ImageOps.fit(image, OG_SIZE, method=Image.Resampling.LANCZOS).save(
+            target, "PNG"
+        )
+
+
+def cmd_sheet(args):
+    directory = args.dir.resolve()
+    plan = load_plan(directory)
+    logged = {row["number"]: row for row in read_log(directory)}
+    cards = []
+    for item in plan["variants"]:
+        row = logged.get(item["number"])
+        if not row or not (directory / row["file"]).is_file():
+            fail(f"candidate {item['number']} has no render")
+        crop = f"candidate-{item['number']:02d}-og.png"
+        crop_og(directory / row["file"], directory / crop)
+        choice_text = ", ".join(
+            f"{key}: {value}" for key, value in item["choices"].items()
+        )
+        cards.append(
+            f"<article><h2>Candidate {item['number']}</h2>"
+            f'<img src="{html.escape(row["file"], quote=True)}" alt="Candidate {item["number"]}">'
+            f"<p>Seed: <code>{item['seed']}</code><br>Choices: {html.escape(choice_text)}</p>"
+            f'<h3>1200 x 630 OG crop</h3><img src="{crop}" alt="OG crop for candidate {item["number"]}"></article>'
+        )
+    page = (
+        '<!doctype html><html lang="en"><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        "<title>Image round</title><style>body{font:16px/1.5 system-ui,sans-serif;"
+        "color:#23302c;background:#faf8f3;margin:0;padding:clamp(1rem,3vw,2rem)}"
+        "main{max-width:1400px;margin:auto}.grid{display:grid;grid-template-columns:"
+        "repeat(auto-fit,minmax(min(100%,360px),1fr));gap:1.25rem}article{background:white;"
+        "padding:1rem;border:1px solid #ddd;border-radius:12px;min-width:0}img{width:100%;"
+        "height:auto;display:block;border-radius:6px}h2{margin-top:0}code{overflow-wrap:anywhere}"
+        '</style><main><h1>Image round</h1><div class="grid">'
+        + "".join(cards)
+        + "</div></main></html>"
+    )
+    (directory / "index.html").write_text(page, encoding="utf-8")
+    print(directory / "index.html")
+    return 0
+
+
+def validate_bind(address):
+    ip = ipaddress.ip_address(address)
+    if ip.version != 4 or ip not in ipaddress.ip_network("100.64.0.0/10"):
+        fail(f"refusing non-tailnet bind address: {address}")
+    return address
+
+
+def cmd_stage(args):
+    directory = args.dir.resolve()
+    if not (directory / "index.html").is_file():
+        fail("missing index.html; run sheet first")
+    if not 1 <= args.port <= 65535:
+        fail("port must be between 1 and 65535")
+    address = validate_bind(
+        subprocess.check_output(["tailscale", "ip", "-4"], text=True).strip()
+    )
+    unit = "aaif-stage-images.service"
+    if (
+        subprocess.run(
+            ["systemctl", "--user", "is-active", "--quiet", unit], check=False
+        ).returncode
+        == 0
+    ):
+        subprocess.run(["systemctl", "--user", "stop", unit], check=True)
+    subprocess.run(
+        ["systemctl", "--user", "reset-failed", unit],
+        check=False,
+        stdout=subprocess.DEVNULL,
+    )
+    subprocess.run(
+        [
+            "systemd-run",
+            "--user",
+            "--unit=aaif-stage-images",
+            "--collect",
+            f"--working-directory={directory}",
+            "--",
+            sys.executable,
+            "-m",
+            "http.server",
+            str(args.port),
+            "--bind",
+            address,
+        ],
+        check=True,
+    )
+    print(f"http://zig-computer.tailfb4637.ts.net:{args.port}/")
+    return 0
+
+
+def cdn_upload(path, key):
+    """The only CDN upload seam. Never called by dry-run."""
+    result = subprocess.run(
+        [str(CDN), "up", "--key", key, str(path)],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    return result.stdout.strip()
+
+
+def cmd_pick(args):
+    directory = args.dir.resolve()
+    plan = load_plan(directory)
+    if args.candidate not in [item["number"] for item in plan["variants"]]:
+        fail(f"candidate must be 1 through {len(plan['variants'])}")
+    if (
+        args.key.startswith("/")
+        or ".." in Path(args.key).parts
+        or not args.key.endswith(".png")
+    ):
+        fail("--key must be a relative CDN path ending in .png")
+    row = next(
+        (
+            entry
+            for entry in reversed(read_log(directory))
+            if entry["number"] == args.candidate
+        ),
+        None,
+    )
+    if not row or not (directory / row["file"]).is_file():
+        fail("candidate has no render")
+    if args.live:
+        print("Estimated total: $0.00 for one CDN upload (within R2 free tier)")
+        if not args.yes:
+            print("Stopped. Add --yes to upload.")
+            return 2
+        if row["dry_run"]:
+            fail("refusing to upload a dry-run placeholder")
+    crop = directory / f"candidate-{args.candidate:02d}-og.png"
+    crop_og(directory / row["file"], crop)
+    if args.live:
+        print(f'image: "{cdn_upload(crop, args.key)}"')
+    else:
+        print(f"WOULD upload {crop} with CDN key {args.key}")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+    plan = sub.add_parser("plan")
+    plan.add_argument("brief", type=Path)
+    plan.add_argument("--out", type=Path, required=True)
+    plan.add_argument("--n", type=int, default=4)
+    plan.add_argument("--seed", type=lambda value: int(value, 0))
+    render = sub.add_parser("render")
+    render.add_argument("dir", type=Path)
+    render.add_argument("--model", default=MODEL)
+    render.add_argument("--live", action="store_true")
+    render.add_argument("--yes", action="store_true")
+    sheet = sub.add_parser("sheet")
+    sheet.add_argument("dir", type=Path)
+    stage = sub.add_parser("stage")
+    stage.add_argument("dir", type=Path)
+    stage.add_argument("--port", type=int, default=18272)
+    pick = sub.add_parser("pick")
+    pick.add_argument("dir", type=Path)
+    pick.add_argument("candidate", type=int)
+    pick.add_argument("--key", required=True)
+    pick.add_argument("--live", action="store_true")
+    pick.add_argument("--yes", action="store_true")
+    args = parser.parse_args(argv)
+    if args.command in ("render", "pick") and args.yes and not args.live:
+        parser.error("--yes requires --live")
+    try:
+        if args.command == "plan":
+            result = make_plan(
+                args.brief,
+                args.n,
+                args.seed if args.seed is not None else secrets.randbits(64),
+            )
+            args.out.mkdir(parents=True, exist_ok=True)
+            (args.out / "plan.json").write_text(
+                json.dumps(result, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            print(args.out / "plan.json")
+            return 0
+        return {
+            "render": cmd_render,
+            "sheet": cmd_sheet,
+            "stage": cmd_stage,
+            "pick": cmd_pick,
+        }[args.command](args)
+    except (
+        ValueError,
+        KeyError,
+        IndexError,
+        OSError,
+        subprocess.CalledProcessError,
+    ) as error:
+        print(f"image-round: {error}", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
