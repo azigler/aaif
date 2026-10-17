@@ -230,6 +230,14 @@ def request_payload(model, prompt, references):
     }
 
 
+def response_cost(response):
+    """OpenRouter puts the billed cost under usage.cost; older shapes used a top-level cost."""
+    cost = response.get("cost")
+    if cost is None:
+        cost = (response.get("usage") or {}).get("cost")
+    return cost
+
+
 def response_image(response):
     images = response["choices"][0]["message"]["images"]
     url = images[0]["image_url"]["url"]
@@ -283,15 +291,19 @@ def cmd_render(args):
                 key,
             )
             data, extension = response_image(response)
-            cost = response.get("cost")
-            if cost is None:
-                fail("OpenRouter response has no cost field")
         else:
             data = placeholder_png(item["number"])
             extension = ".png"
-            cost = 0.0
+        # Save the paid image BEFORE anything else can fail: a live render is already
+        # charged when it returns, so losing its bytes loses money (aaif-ambassador-program-18o.54).
         name = f"candidate-{item['number']:02d}{extension}"
         (directory / name).write_bytes(data)
+        if args.live:
+            cost = response_cost(response)
+            if cost is None:
+                print(f"warning: {name}: no cost in the response; logged as null", file=sys.stderr)
+        else:
+            cost = 0.0
         row = {
             "number": item["number"],
             "file": name,

@@ -75,3 +75,34 @@ fi
 grep -Fq 'Estimated total:' "$tmp/pick-live.out"
 grep -Fq 'Stopped. Add --yes' "$tmp/pick-live.out"
 printf 'PASS live operations stop after cost estimate without --yes\n'
+
+# Regression (aaif-ambassador-program-18o.54): a live response that carries its cost
+# under usage.cost (no top-level cost) must still SAVE the paid image and log the cost.
+"$repo_root/bin/image-round" plan "$tmp/brief.md" --out "$tmp/c" --n 1 --seed 0x1234 > /dev/null
+IMAGE_ROUND_TEST_DIR="$tmp/c" IMAGE_ROUND_SCRIPT="$repo_root/bin/image-round" OPENROUTER_API_KEY=test-not-a-key python3 - <<'PY'
+import base64
+import importlib.machinery
+import json
+import os
+import sys
+from pathlib import Path
+from unittest.mock import patch
+
+sys.dont_write_bytecode = True
+module = importlib.machinery.SourceFileLoader("image_round_live", os.environ["IMAGE_ROUND_SCRIPT"]).load_module()
+directory = Path(os.environ["IMAGE_ROUND_TEST_DIR"])
+png = module.placeholder_png(1)
+live = {
+    "choices": [{"message": {"images": [{"image_url": {"url": "data:image/png;base64," + base64.b64encode(png).decode()}}]}}],
+    "usage": {"cost": 0.14},
+}
+with patch.object(module, "network_request", return_value=live) as network:
+    assert module.main(["render", str(directory), "--live", "--yes"]) == 0
+    assert network.call_count == 1
+saved = directory / "candidate-01.png"
+assert saved.exists() and saved.read_bytes() == png, "paid image was not saved"
+rows = [json.loads(line) for line in (directory / "log.jsonl").read_text().splitlines()]
+assert rows[-1]["cost"] == 0.14, rows[-1]
+assert rows[-1]["dry_run"] is False
+PY
+printf 'PASS a live render with usage.cost is saved and its cost logged\n'
