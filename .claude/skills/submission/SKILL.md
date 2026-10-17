@@ -47,7 +47,8 @@ new back into refs (the archive is a deliverable). For a heavier dig, dispatch a
 read-only research agent or use `/explore`/`/research`.
 
 ### 3. Build
-Create `submissions/<YYYY-MM>-<slug>/` and produce the artifact:
+Run `bin/submission-init <YYYY-MM> <slug> [--title "<title>"]` to create
+`submissions/<YYYY-MM>-<slug>/`, then produce the artifact:
 - **written** (blog / tutorial / thread) → draft, then `/zig-voice` for Andrew's
   voice. Keep AAIF framing vendor-neutral (LinearB tie = one closing link).
 - **talk / conference** → `/cfp` (proposal) then `/talk` (deck + script). Target
