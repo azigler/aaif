@@ -146,3 +146,25 @@ is his point, made checkable.
     cold and grade writing and voice: is it interesting, cutting edge, on the frontier, informative
     from the front lines (not smoke in the ears), and does the reader have a reason to care? The
     grades travel with the draft.
+
+### Second review (2026-10-18): accurate is not enough
+
+Zig read two rewrites that followed the ten rules above and rejected both. They were correct and
+dry. These rules add to the ten; none of them cancels one.
+
+11. **Wonder, earned.** Slow down at the moments that are genuinely strange. Say how unnatural the
+    new way of working feels and which old assumption broke, so the reader is on an adventure with
+    you. A factual log of what the system did is not an essay. Rule 2 still holds: earn the wonder
+    with a concrete moment, never with adjectives or announcements.
+12. **Concepts over mechanics.** Teach the idea, not the query. A runnable join or a JSON record is
+    boring unless the concept needs it. Carry the concept so a reader can rebuild it in their own
+    system.
+13. **Sharpen the braindumps; do not list them.** Zig's braindumps are raw material. The drafting
+    model's job is to work out what he is trying to say and say it better. Pasting each idea in as a
+    marked paragraph is not sharpening it.
+14. **Set up the big frame.** When the subject is a new way to build (the factory as a place, ideas
+    borrowed from MUDs), spend real space on why it matters. Build on his own earlier writing where
+    it fits. Rule 5 bans the tour, not the idea of place: argue why a place is the right shape, and
+    do not walk the reader through rooms.
+15. **Read more references than you cite.** A draft that read only its own facts file sounds like
+    one. Read his earlier essays and the writers he names, and match the register he points at.
