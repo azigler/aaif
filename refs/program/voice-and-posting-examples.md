@@ -112,3 +112,37 @@ against ours.
 5. **Cross-reference his own recent work** (the LeadDev talk) and credit the thinker whose words he builds on (Yegge), in the post itself.
 6. **The CTA names the reader's transformation** ("from building to discovery") and absorbs the peer question.
 7. **His register is louder than the skill's defaults.** He uses ALL CAPS on 7 words (KNOW, SOFTWARE FACTORY, FOUND, HAD, ARE, BEING, HAVE), streamer slang ("chat,"), an underscore-italic (_really_), and a spaced hyphen as a dash. Don't "correct" these in his own text. Its typos ("excavation your own") are his to keep or fix.
+
+## Long-form rules — Zig's review of an agent-drafted essay (2026-10-17)
+
+An agent drafted the October essay as a guided tour of the agent system it runs in. Zig rejected it
+and asked for a rewrite. His review is the standing brief for every long-form piece. Each rule below
+is his point, made checkable.
+
+1. **Arrive with one purpose.** The piece must know what it is for before line one. A draft that
+   discovers its subject while you read it is journaling, not writing. Write it as a report sent
+   back from the future, not as musing.
+2. **Do not talk down or force awe.** No nudge-nudge, no "this is a bigger deal than you think".
+   Say the thing simply and exactly, and let the reader decide it is remarkable. Prose that pushes
+   the reader toward wonder pushes them away.
+3. **The reader was not on the journey.** Our own scale, counts and achievements mean nothing to a
+   stranger. Every claim has to give the reader a reason to care, on their own terms.
+4. **Have references, but do not wear them.** No explicit timestamps, frame numbers or tallies as
+   anchors ("8 of 14 kept"). Having the data is not a reason to print it.
+5. **No guided tour.** No "stop one, stop two" and no extended physical-space metaphor for the
+   system. Metaphor that maps every part to a room makes the piece hard to follow, and it teaches
+   nothing.
+6. **Cut AI filler on sight.** Example of what he flagged: "A lot of what I'll show you, I found by
+   walking into a room and asking what something was for." A line that only gestures at a story is
+   slop. A quote from a named builder earns its place only if the next sentence makes it clearer,
+   not more confusing.
+7. **The AAIF tie is the spine, never a bolt-on.** If the project link (A2A, MCP, AGENTS.md) could
+   be cut without breaking the argument, the piece is built wrong.
+8. **One piece, one job.** If it tries to cover the protocol, the promises, attention and the place
+   all at once, it hits none of them.
+9. **Give the reader something to work with.** Express where agent work is going, and show how
+   agents collaborate, in a form a developer can try.
+10. **Grade it cold before it reaches Zig.** Two smart models at high or max effort read the draft
+    cold and grade writing and voice: is it interesting, cutting edge, on the frontier, informative
+    from the front lines (not smoke in the ears), and does the reader have a reason to care? The
+    grades travel with the draft.
