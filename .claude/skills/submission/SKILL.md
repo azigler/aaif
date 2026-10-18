@@ -51,6 +51,9 @@ Run `bin/submission-init <YYYY-MM> <slug> [--title "<title>"]` to create
 `submissions/<YYYY-MM>-<slug>/`, then produce the artifact:
 - **written** (blog / tutorial / thread) → draft, then `/zig-voice` for Andrew's
   voice. Keep AAIF framing vendor-neutral (LinearB tie = one closing link).
+  Long-form drafts start from the "Long-form rules" in
+  `refs/program/voice-and-posting-examples.md` (Zig, 2026-10-17), and two models grade them
+  cold before they reach Zig.
 - **talk / conference** → `/cfp` (proposal) then `/talk` (deck + script). Target
   AGNTCon / MCPCon.
 - **code / recipe / skill PR** → build + test it. For `public-agents`, author in
