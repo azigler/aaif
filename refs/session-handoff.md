@@ -3,71 +3,51 @@ seat: aaif
 session: zig-computer
 window: aaif
 ---
-# Session handoff — 2026-10-15 80deba86
+# Session handoff — 2026-10-17 80deba86
 
-_Session ran 2026-10-11 08:04 PT to 2026-10-15 ~12:00 PT, with compactions. Offboarded early
-because the secondary pool's 7-day usage reached 0.95, so seat-restart may roll the seat at 1.0._
+_Long session (2026-10-11 to 2026-10-17 ~17:30 PT), compacted and restarted several times; molting at 90% context._
 
 ## State at offboard
-- Current branch: main
-- Last commit: b1b280c :card_file_box: beads: aaif-ub9x cutover evidence
-- Open beads: 42; in-progress: 1 (aaif-omn; `br count` read 2026-10-15 ~12:00 PT)
-- In-flight subagents: none
-- Dirty files: none
-- Markers: `.offboard-pending` not present
-- Open promises for aaif: pr-aaif-3, to desk, until 2026-10-17T22:00:00Z
-  (`promise-gap.sh open --entity aaif` read ~12:00 PT)
+- Current branch: main, clean and pushed (last bead commit after 2026-10-18T00:28Z).
+- In flight: the pinki 0.5.0 RELEASE GATE on Codex (drain-tap label aaif-pinki-gate-050, detached). Scratch: /tmp/claude-1000/-home-ubuntu-aaif/80deba86-a631-4951-9262-a111e7169ae2/scratchpad/pinki-gate/ (REPORT.md, suite-results.tsv). It hits its 2 h limit ~17:47 PT with a PARTIAL table: about 3 of 47 suites done. drain-tap mails aaif its result.
+- Open promises: run `bash ~/.agents/agents/lib/promise-gap.sh open --entity aaif` (at offboard: pr-aaif-4 pinki 0.5.0 decision Tue 13:07 PT; pr-aaif-24 Kite Strings wiring; pr-aaif-25 draft with both components to Zig; pr-aaif-26 re-renders to Zig).
+- Tailnet review pages UP: draft http://zig-computer.tailfb4637.ts.net:18271/feed/nobody-designed-this-place/ (unit aaif-stage-review); images http://zig-computer.tailfb4637.ts.net:18272/ (unit aaif-stage-images). The canon page moved to studio (:18283); aaif's :18273 is stopped.
 
 ## What happened this session (bullets)
-- aaif-radar is now /aaif-weekly, cut over for Sat 15:00 PT
-  - It adds a bead-triage and housekeeping step (Zig, desk, 2026-10-14; bead aaif-ub9x).
-  - Part 1 is the radar. Part 2 is the triage, folded together with the estate ruling on weekly pulses (#estate 2026-10-15T04:29Z).
-  - Skill commits are aaif b813113 and dcfb990. A Sonnet review went FIX-FIRST twice, then SHIP.
-  - On the demesne side, branch aaif/aaif-weekly (a5272934, 95be4f63, e5767ff3) was landed by consul in the Thu batch and cut over at 11:38 PT.
-  - pulse-aaif-weekly.timer next fires Sat 2026-10-17 15:00 PT, in its OWN window `aaif-weekly`, with --launch bypassPermissions. pulse-aaif-radar is retired.
-  - Warden flips the harnessd manifest loop entry (timer and row only; the manifest has no window key) at the 14:30 PT slot on 10-15.
-- Earlier in the session:
-  - The pinki README was rewritten for agents (pinki PR #17, f4bef27), and scripts/check-readme.sh now runs in CI.
-  - README and docs upkeep is now /pinki-steward Step 1b.
-  - The v0.4.0 canary and the first weekly /pinki-steward run (W42) were green.
-  - The audit's amend-horizon fix is in aaif 951b6c2, and the false canary overdue was corrected in place.
-  - The no-Fable rule was lifted (Zig 2026-10-13); see memory feedback_fable_dispatch_allowed.md.
-- On #pinki-incorporation, aaif posted thoughts on Zig's "promises bind tasks with time" reflection.
-  - The numbers: 526 promises, 252 with a bead-shaped ref, and molt cancels at 0.50 of all cancels.
-  - aaif added a test of whether projected epic finish dates are calibrated (edges on a time axis).
-  - Lab owns the lead (NFZPEP; pitch by 2026-10-16 12:00 PT) and noted aaif's offer of the node-to-horizon join.
-
-- After the first offboard (2026-10-15 to 10-16):
-  - consul's two review nits are fixed in demesne e5767ff3, and consul's merge is 82b57d8c.
-  - warden's harnessd manifest row is live on main e709e4bb. Its seed ledger row was asked by warden and is in aaif 7d341aa.
-  - The skill points at /pulse reference/weekly.md (e28a83e).
-  - The desk's capped fan-out needed 0 builders from aaif: all four aaif quest rows are closed or waiting on the Sat run.
-  - The pulse-list check (desk, 10-16): aaif-weekly is ONE healthy loop in state.json.
-  - The seat restarted onto the linearb pool, with its context intact.
+- October AAIF piece reshaped by Zig into "Nobody designed this place", a tour of the emerged factory. Draft v2 is in submissions/2026-10-nobody-designed-this-place/, with A2A and AGENTS.md central, Kite Strings at stop 1, and an EstateScene marker at the bottom.
+  - The line "I was here first, and I still get lost" is cut, and the agent-home is unnamed (no "Holt"). Zig gives draft notes later.
+  - The allowlist draft is shelved.
+- Images: Zig PICKED canon-asker-r2a for the in-article image; the header is still under his review.
+- The estate canon was handed to studio. It is now quest dotfiles-q9b4n, channel #quest-q9b4n.
+- pinki: PRs #18-#25 merged as steward under Zig's standing grant (2026-10-17, recorded in the pinki-steward skill and in memory). The merges cover supersede, export fields, tree/waiters, --ts provenance, a2a state + provenance, correct, and lapsed/refused. Seven behaviour changes since v0.4.0.
+- aaif tools landed: the handoff scrub gate (bin/hooks), bin/submission-init, bin/tutorial-rig, bin/image-round (plus its usage.cost fix).
+- The first /aaif-weekly ran 2026-10-17 15:00 PT: W42, 6 closed. aaif-ub9x closed.
 
 ## Friction
-- The demesne pre-commit hook waits a long time for heavy job slots (10-25 min under load 12-20). One run died with rc 143 (SIGTERM) under the harness's background task. The fix was to run the commit detached (`nohup setsid`) with a Monitor watching it. → one-off (the workaround is known)
-- My first Monitor filter used `refus`, which matched passing test names ("refuses the shared default"). Match the sentinel lines exactly. → one-off
-- `journalctl --user -u pulse-*.service` returned "No entries" even for known fires, so it was useless as evidence. pulse-injections.jsonl was the working source. → one-off for aaif (journald is consul's)
-- zsh quirks:
-  - `echo =====` errors, because zsh expands `=cmd`.
-  - A no-match glob in `ls` aborts the whole command line.
-  - Assigning `G="git -C …"` and then calling `$G` fails.
-  Use plain bash idioms. → one-off
+- A stale review page nearly went to Zig twice. Restage the draft after every text change before a review, and verify it with a must-be-absent phrase. → one-off (verify step now habit)
+- I posted bead comments claiming an edit landed before checking the command output (the NOTES Holt count, the alt text). Both were corrected on the bead. Read the output first, then record. → one-off
+- Codex image-round lost a paid render on a cost-field mismatch. → fixed, aaif-ambassador-program-18o.54 (closed)
+- The release-gate suites are slow; 47 suites x 2 binaries do not fit in one 2 h Codex run. → second pass owed under pr-aaif-4
 
 ## Decisions made this session (autonomous decide-and-proceed calls)
-- `aaif-lcsl`: pinki release for #16 is v0.4.0, not v0.3.1 (a caller-visible exit-code change) _(closed this session)_
+- None filed as `-t decision` beads. The calls are recorded as bead comments:
+  - the 18o.32 localhost-rig scope
+  - the hm7x resolver-only correct rule
+  - the 18o.28 aesthetic names kept out of the body
+  - aaif beads kept in aaif's store (the desk confirmed it)
 
 ## Proposed practices — where each one landed (Step 2.6)
-- README and docs drift as a standing duty → written into `.claude/skills/pinki-steward/SKILL.md` Step 1b (5fc5c07)
-- The release gate derives its suite list and checks the gate-window pin → written into the pinki-steward SKILL.md Step 5 (9fb8e18)
-- Weekly close-the-loop pass, per the estate ruling → written into `.claude/skills/aaif-weekly/SKILL.md` (b813113, dcfb990)
+- pinki PRs are the steward's own call → written into .claude/skills/pinki-steward/SKILL.md Step 2 and memory feedback_pinki_steward_merges.md
+- Weekly four-part desk mail → .claude/skills/aaif-weekly/SKILL.md Step 6 (b101d65)
 
 ## What's next
-- The one live commitment is pr-aaif-3, already declared, so no new promise is made here. After the first timer-fired /aaif-weekly run (Sat 2026-10-17 15:00 PT), confirm its aaif-weekly ledger row, then resolve pr-aaif-3 with that row as `--evidence`.
-- If the Sat run did not fire or failed, run `/aaif-weekly` by hand in ~/aaif, then resolve pr-aaif-3.
-- Next /pinki-steward weekly is Tue 2026-10-20 13:07 PT (the timer runs it). Run `br show aaif-ub9x` before closing it: its acceptance criteria are met only after the first run.
+- NEXT: wire Kite Strings into the October draft at stop 1 after az3's 21:30 PT merge and restage the preview with it working (aaif-ambassador-program-18o.28) BY 2026-10-18T05:30:00Z
+- Kite Strings: import `import KiteStrings from '@components/KiteStrings';`, add the `MDX` tag, then restage via the camp-publish preview loop. az3 mails the merge sha (bd-3pi6).
+- Read the pinki gate's REPORT.md when drain-tap mails it. Record the partial table on aaif-rsi, then dispatch a second pass for the remaining suites before Tue (pr-aaif-4).
+- When studio posts the character-creator parts list (q9b4n), build the Envoy from it: the trail guide; a B-style visor with screen eyes; a poncho; the quill hat; the spool. Then re-render under aaif-ambassador-program-18o.56 (pr-aaif-26).
+- EstateScene arrives from studio by Sun 14:00 PT (pnk_addc4c). Wire it at the bottom marker after az3's merge (pr-az3-12), under 18o.55 (pr-aaif-25).
 
 ## Warnings / watch-outs
-- aaif-omn is the only in_progress bead (since 2026-08-15). The first /aaif-weekly pass will judge it as a zombie claim; let the pass do that.
-- If lab asks for the bead-to-promise-horizon join, the parser is bin/pinki-audit.py. The ledger schema is `type` in promise/resolve/amend/assess, with `meta.ref`. Leave out rows whose meta.dir is under /tmp.
+- NEVER publish the October MDX into camp before every imported component is on andrewzigler3 main; the 20:00 nightly fails. Rules are in the submission's NOTES.md "Publish requirements".
+- The piece is NOT submitted to AAIF. The submit gate stays Zig's.
+- Image spend is under studio's canon budget now ($7.00 ceiling). aaif's own re-renders go through the desk with a cost estimate first.
