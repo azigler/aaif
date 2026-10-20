@@ -25,7 +25,7 @@ from datetime import UTC, datetime
 
 DEFAULT_LEDGER = os.path.expanduser("~/.local/state/harness/pinki-ledger.jsonl")
 DONE_RE = re.compile(r"\b(done|landed|shipped|kept|complete|returned)\b", re.I)
-OUTCOMES = ("satisfied", "cancelled", "released")
+OUTCOMES = ("satisfied", "cancelled", "released", "lapsed", "refused")
 
 
 def parse_ts(s):
@@ -105,10 +105,18 @@ def audit(rows, now, since):
     for i, p in live.items():
         meta = p.get("meta") or {}
         evs = by_id.get(i, [])
-        resolves = [e for e in evs if e.get("type") == "resolve"]
+        resolves = [(n, e) for n, e in enumerate(evs) if e.get("type") == "resolve"]
         amends = [e for e in evs if e.get("type") == "amend"]
-        assess = [e for e in evs if e.get("type") == "assess"]
-        res = resolves[-1] if resolves else None
+        assess = [(n, e) for n, e in enumerate(evs) if e.get("type") == "assess"]
+        # The first resolve wins. Only its author can correct its outcome, and
+        # only corrections later in the log apply.
+        res_index, res = resolves[0] if resolves else (None, None)
+        corrections = [
+            e for n, e in enumerate(evs)
+            if res is not None and n > res_index and e.get("type") == "correct"
+            and e.get("by") == res.get("by")
+        ]
+        outcome_event = corrections[-1] if corrections else res
         ts = parse_ts(p.get("ts"))
         until = parse_ts(p.get("until"))
         # pinki's fold: the LAST amend in log order wins, unconditionally. An
@@ -122,6 +130,8 @@ def audit(rows, now, since):
             "p": p,
             "meta": meta,
             "res": res,
+            "res_index": res_index,
+            "outcome_event": outcome_event,
             "amends": amends,
             "assess": assess,
             "ts": ts,
@@ -130,7 +140,7 @@ def audit(rows, now, since):
             "current_until_text": current_until_text,
             "writer": meta.get("writer") or "unknown",
             "seat": p.get("by") or "unknown",
-            "outcome": (res.get("as") if res else None)
+            "outcome": (outcome_event.get("as") if outcome_event else None)
             or ("OPEN" if not res else "unknown"),
         }
 
@@ -143,7 +153,7 @@ def audit(rows, now, since):
             t[v[key]][v["outcome"]] += 1
             t[v[key]]["total"] += 1
         return {
-            k: dict(c)
+            k: {"total": c["total"], **{o: c[o] for o in OUTCOMES}, "OPEN": c["OPEN"]}
             for k, c in sorted(t.items(), key=lambda kv: -kv[1]["total"])
         }
 
@@ -156,7 +166,7 @@ def audit(rows, now, since):
     done_reason = [
         v
         for v in cancelled
-        if DONE_RE.search(str(v["res"].get("reason") or ""))
+        if DONE_RE.search(str(v["outcome_event"].get("reason") or ""))
     ]
 
     # 5. violated assessments
@@ -164,14 +174,27 @@ def audit(rows, now, since):
     violated_ids = set()
     violated_then_satisfied = set()
     for i, v in info.items():
-        for a in v["assess"]:
+        # pinki's superseded_by relation: a later assessment can replace the
+        # first still-unsuperseded earlier one with the same observer and ts.
+        superseded = set()
+        for pos, (_, a) in enumerate(v["assess"]):
+            if a.get("supersedes") is None:
+                continue
+            for prior, (_, old) in enumerate(v["assess"][:pos]):
+                if (prior not in superseded
+                        and old.get("observer") == a.get("observer")
+                        and old.get("ts") == a["supersedes"]):
+                    superseded.add(prior)
+                    break
+        for pos, (event_index, a) in enumerate(v["assess"]):
+            if pos in superseded:
+                continue
             if a.get("state") == "violated":
                 violated_rows += 1
                 violated_ids.add(i)
-                if v["outcome"] == "satisfied":
-                    at, rt = parse_ts(a.get("ts")), parse_ts(v["res"].get("ts"))
-                    if at is None or rt is None or rt >= at:
-                        violated_then_satisfied.add(i)
+                if (v["outcome"] == "satisfied" and v["res_index"] is not None
+                        and event_index < v["res_index"]):
+                    violated_then_satisfied.add(i)
 
     # 6. open
     opens = []
@@ -311,14 +334,13 @@ def render(snap, prev):
     def table(title, tbl):
         w("")
         w(title)
-        w(
-            f"  {'name':<20}{'total':>6}{'satisf':>8}{'cancel':>8}{'releas':>8}{'OPEN':>6}"
-        )
+        columns = (("total", 6), ("satisfied", 10), ("cancelled", 10),
+                   ("released", 9), ("lapsed", 8), ("refused", 8), ("OPEN", 6))
+        w(f"  {'name':<20}" + "".join(f"{key:>{width}}" for key, width in columns))
         for k, c in tbl.items():
-            w(
-                f"  {k[:20]:<20}{c.get('total', 0):>6}{c.get('satisfied', 0):>8}"
-                f"{c.get('cancelled', 0):>8}{c.get('released', 0):>8}{c.get('OPEN', 0):>6}"
-            )
+            w(f"  {k[:20]:<20}" + "".join(
+                f"{c[key]:>{width}}" for key, width in columns
+            ))
 
     table("by writer (meta.writer)", snap["by_writer"])
     table("by seat (by)", snap["by_seat"])

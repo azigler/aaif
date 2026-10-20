@@ -33,15 +33,21 @@ rc=$?
 if [ "$rc" -eq 0 ]; then ok "full run exit 0"; else bad "full run exit" "rc=$rc $OUT"; fi
 
 # 1 totals + fixtures excluded
-check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 14
+check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 17
 check "m1 fixture_promises" "$SNAP" "s['scalars']['fixture_promises']" 1
-check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 13
-# 2 writer/seat outcomes (all four outcome kinds nonzero)
+check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 16
+# 2 writer/seat outcomes (all five resolved outcomes and OPEN are nonzero)
 check "m2 writer promise-gap cancelled" "$SNAP" "s['by_writer']['promise-gap']['cancelled']" 2
 check "m2 writer offboard satisfied" "$SNAP" "s['by_writer']['offboard']['satisfied']" 2
 check "m2 writer manual released" "$SNAP" "s['by_writer']['manual']['released']" 1
 check "m2 writer offboard OPEN" "$SNAP" "s['by_writer']['offboard']['OPEN']" 2
 check "m2 seat alpha total" "$SNAP" "s['by_seat']['alpha']['total']" 4
+check "m2 corrected outcome uses latest authorized correction" "$SNAP" "s['by_writer']['fold-test']['satisfied']" 1
+check "m2 writer lapsed" "$SNAP" "s['by_writer']['fold-test']['lapsed']" 1
+check "m2 writer refused" "$SNAP" "s['by_writer']['fold-test']['refused']" 1
+check "m2 seat lapsed" "$SNAP" "s['by_seat']['epsilon']['lapsed']" 1
+check "m2 seat refused" "$SNAP" "s['by_seat']['epsilon']['refused']" 1
+check "m2 JSON has every outcome column" "$SNAP" "all(all(outcome in row for outcome in ('satisfied','cancelled','released','lapsed','refused','OPEN')) for table in ('by_writer','by_seat') for row in s[table].values())" True
 # 3 molt cancelled (fixture molt row must not count)
 check "m3 molt_cancelled" "$SNAP" "s['scalars']['molt_cancelled']" 2
 check "m3 cancelled_total" "$SNAP" "s['scalars']['cancelled_total']" 3
@@ -51,6 +57,7 @@ check "m4 cancelled_reads_done" "$SNAP" "s['scalars']['cancelled_reads_done']" 1
 # 5 violated assessments
 check "m5 violated_assessments" "$SNAP" "s['scalars']['violated_assessments']" 2
 check "m5 violated_then_satisfied" "$SNAP" "s['scalars']['violated_then_satisfied']" 1
+check "m5 superseded violation excluded" "$SNAP" "'pr-correct' not in s['violated_promise_ids'] and 'pr-correct' not in s['violated_then_satisfied_ids']" True
 # 6 open + overdue + age
 check "m6 open" "$SNAP" "s['scalars']['open']" 7
 check "m6 amended_open" "$SNAP" "s['scalars']['amended_open']" 4
@@ -72,7 +79,7 @@ check "m7 duplicate groups" "$SNAP" "s['scalars']['duplicate_open_groups']" 1
 check "m7 duplicate count" "$SNAP" "s['duplicate_open_texts'][0]['count']" 2
 # 8 refs (fixture ref must not count)
 check "m8 with_ref" "$SNAP" "s['scalars']['with_ref']" 1
-check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0769
+check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0625
 # 9 nudged (fixture nudge must not count)
 check "m9 nudged" "$SNAP" "s['scalars']['nudged']" 1
 # 10 medians
@@ -89,15 +96,20 @@ check "snapshot keys" "$SNAP" "all(k in s for k in ('generated_at','ledger','win
 for m in molt_cancelled amended_open open_overdue violated_then_satisfied; do
   if printf '%s' "$OUT" | grep -q "$m"; then ok "table shows $m"; else bad "table shows $m" "missing"; fi
 done
+if printf '%s' "$OUT" | grep -qE '^  name +total +satisfied +cancelled +released +lapsed +refused +OPEN$'; then
+  ok "text tables show lapsed and refused columns"
+else
+  bad "text tables show lapsed and refused columns" "missing"
+fi
 
 # --since window
 WIN="$TMP/win.json"
 python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --since 2026-10-01T00:00:00Z --json "$WIN" > /dev/null
-check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 13
+check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 16
 
 # --prev delta
 DOUT=$(python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --prev "$WIN" 2>&1)
-if printf '%s' "$DOUT" | grep -qE '^promises_total +14 +\+1$'; then
+if printf '%s' "$DOUT" | grep -qE '^promises_total +17 +\+1$'; then
   ok "prev delta column (+1)"
 else
   bad "prev delta column" "$(printf '%s' "$DOUT" | head -8)"
