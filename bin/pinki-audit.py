@@ -138,7 +138,9 @@ def audit(rows, now, since):
             "until": until,
             "current_until": current_until,
             "current_until_text": current_until_text,
-            "writer": meta.get("writer") or "unknown",
+            "writer": meta.get("writer") or (
+                "pinki-cli" if i.startswith("pnk_") else "unknown"
+            ),
             "seat": p.get("by") or "unknown",
             "outcome": (outcome_event.get("as") if outcome_event else None)
             or ("OPEN" if not res else "unknown"),
@@ -147,17 +149,19 @@ def audit(rows, now, since):
     total_live = len(live)
 
     # 2. outcomes per writer / seat
-    def outcome_table(key):
+    def outcome_table(key, required=()):
         t = collections.defaultdict(lambda: collections.Counter())
         for v in info.values():
             t[v[key]][v["outcome"]] += 1
             t[v[key]]["total"] += 1
+        for name in required:
+            t[name]
         return {
             k: {"total": c["total"], **{o: c[o] for o in OUTCOMES}, "OPEN": c["OPEN"]}
             for k, c in sorted(t.items(), key=lambda kv: -kv[1]["total"])
         }
 
-    by_writer = outcome_table("writer")
+    by_writer = outcome_table("writer", ("pinki-cli", "unknown"))
     by_seat = outcome_table("seat")
 
     # 3 + 4. cancelled
@@ -259,7 +263,7 @@ def audit(rows, now, since):
             "horizon_min": med_minutes(horizon.get(w, [])),
             "latency_min": med_minutes(latency.get(w, [])),
         }
-        for w in sorted(set(horizon) | set(latency) | set(by_writer))
+        for w in sorted(set(horizon) | set(latency) | {v["writer"] for v in info.values()})
     }
 
     # 11. id lengths
@@ -270,6 +274,9 @@ def audit(rows, now, since):
         "promises_total": len(promises),
         "fixture_promises": len(fixture_ids),
         "promises_live": total_live,
+        "direct_cli_promises": sum(
+            1 for v in info.values() if v["writer"] == "pinki-cli"
+        ),
         "cancelled_total": cancelled_total,
         "molt_cancelled": len(molt_cancelled),
         "molt_cancelled_share": share(len(molt_cancelled), cancelled_total),

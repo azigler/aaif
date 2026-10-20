@@ -42,3 +42,7 @@
 {"ts":"2026-10-12T11:00:00Z","type":"resolve","promise":"pr-lapsed","as":"lapsed","by":"epsilon"}
 {"ts":"2026-10-12T10:00:00Z","type":"promise","id":"pr-refused","promise":"decline the work","by":"epsilon","to":"self","until":"2026-10-12T13:00:00Z","meta":{"writer":"fold-test","dir":"/home/ubuntu/work"}}
 {"ts":"2026-10-12T10:10:00Z","type":"resolve","promise":"pr-refused","as":"refused","by":"epsilon","reason":"cannot take this on"}
+{"ts":"2026-10-12T09:00:00Z","type":"promise","id":"pnk_ab12cd","promise":"declare directly through pinki","by":"zeta","to":"self","until":"2026-10-12T11:00:00Z"}
+{"ts":"2026-10-12T10:00:00Z","type":"resolve","promise":"pnk_ab12cd","as":"satisfied","by":"zeta","evidence":["sha:def456"]}
+{"ts":"2026-10-12T09:00:00Z","type":"promise","id":"pr-no-writer","promise":"declare without writer metadata","by":"zeta","to":"self","until":"2026-10-12T11:00:00Z","meta":{"dir":"/home/ubuntu/work"}}
+{"ts":"2026-10-12T10:00:00Z","type":"resolve","promise":"pr-no-writer","as":"satisfied","by":"zeta","evidence":["sha:789abc"]}

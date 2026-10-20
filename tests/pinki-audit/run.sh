@@ -33,9 +33,10 @@ rc=$?
 if [ "$rc" -eq 0 ]; then ok "full run exit 0"; else bad "full run exit" "rc=$rc $OUT"; fi
 
 # 1 totals + fixtures excluded
-check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 17
+check "m1 promises_total" "$SNAP" "s['scalars']['promises_total']" 19
 check "m1 fixture_promises" "$SNAP" "s['scalars']['fixture_promises']" 1
-check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 16
+check "m1 live excludes fixtures" "$SNAP" "s['scalars']['promises_live']" 18
+check "m1 direct_cli_promises" "$SNAP" "s['scalars']['direct_cli_promises']" 1
 # 2 writer/seat outcomes (all five resolved outcomes and OPEN are nonzero)
 check "m2 writer promise-gap cancelled" "$SNAP" "s['by_writer']['promise-gap']['cancelled']" 2
 check "m2 writer offboard satisfied" "$SNAP" "s['by_writer']['offboard']['satisfied']" 2
@@ -48,6 +49,8 @@ check "m2 writer refused" "$SNAP" "s['by_writer']['fold-test']['refused']" 1
 check "m2 seat lapsed" "$SNAP" "s['by_seat']['epsilon']['lapsed']" 1
 check "m2 seat refused" "$SNAP" "s['by_seat']['epsilon']['refused']" 1
 check "m2 JSON has every outcome column" "$SNAP" "all(all(outcome in row for outcome in ('satisfied','cancelled','released','lapsed','refused','OPEN')) for table in ('by_writer','by_seat') for row in s[table].values())" True
+check "m2 pnk id without writer is pinki-cli" "$SNAP" "s['by_writer']['pinki-cli']['satisfied']" 1
+check "m2 other id without writer is unknown" "$SNAP" "s['by_writer']['unknown']['satisfied']" 1
 # 3 molt cancelled (fixture molt row must not count)
 check "m3 molt_cancelled" "$SNAP" "s['scalars']['molt_cancelled']" 2
 check "m3 cancelled_total" "$SNAP" "s['scalars']['cancelled_total']" 3
@@ -79,7 +82,7 @@ check "m7 duplicate groups" "$SNAP" "s['scalars']['duplicate_open_groups']" 1
 check "m7 duplicate count" "$SNAP" "s['duplicate_open_texts'][0]['count']" 2
 # 8 refs (fixture ref must not count)
 check "m8 with_ref" "$SNAP" "s['scalars']['with_ref']" 1
-check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0625
+check "m8 with_ref_share" "$SNAP" "s['scalars']['with_ref_share']" 0.0556
 # 9 nudged (fixture nudge must not count)
 check "m9 nudged" "$SNAP" "s['scalars']['nudged']" 1
 # 10 medians
@@ -93,7 +96,7 @@ check "m11 id length buckets" "$SNAP" "len(s['id_length_distribution']) > 1" Tru
 check "snapshot keys" "$SNAP" "all(k in s for k in ('generated_at','ledger','window','scalars'))" True
 
 # human table mentions the headline metrics
-for m in molt_cancelled amended_open open_overdue violated_then_satisfied; do
+for m in molt_cancelled amended_open open_overdue violated_then_satisfied direct_cli_promises; do
   if printf '%s' "$OUT" | grep -q "$m"; then ok "table shows $m"; else bad "table shows $m" "missing"; fi
 done
 if printf '%s' "$OUT" | grep -qE '^  name +total +satisfied +cancelled +released +lapsed +refused +OPEN$'; then
@@ -101,15 +104,20 @@ if printf '%s' "$OUT" | grep -qE '^  name +total +satisfied +cancelled +released
 else
   bad "text tables show lapsed and refused columns" "missing"
 fi
+if printf '%s' "$OUT" | grep -qE '^  pinki-cli +1 +1 ' && printf '%s' "$OUT" | grep -qE '^  unknown +1 +1 '; then
+  ok "text writer table shows pinki-cli and unknown"
+else
+  bad "text writer table shows pinki-cli and unknown" "missing"
+fi
 
 # --since window
 WIN="$TMP/win.json"
 python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --since 2026-10-01T00:00:00Z --json "$WIN" > /dev/null
-check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 16
+check "since drops the old promise" "$WIN" "s['scalars']['promises_total']" 18
 
 # --prev delta
 DOUT=$(python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --prev "$WIN" 2>&1)
-if printf '%s' "$DOUT" | grep -qE '^promises_total +17 +\+1$'; then
+if printf '%s' "$DOUT" | grep -qE '^promises_total +19 +\+1$'; then
   ok "prev delta column (+1)"
 else
   bad "prev delta column" "$(printf '%s' "$DOUT" | head -8)"
@@ -118,6 +126,11 @@ if printf '%s' "$DOUT" | grep -qE '^amended_open +4 +\+0$'; then
   ok "amended_open delta column (+0)"
 else
   bad "amended_open delta column" "$(printf '%s' "$DOUT" | grep amended_open)"
+fi
+if printf '%s' "$DOUT" | grep -qE '^direct_cli_promises +1 +\+0$'; then
+  ok "direct_cli_promises delta column (+0)"
+else
+  bad "direct_cli_promises delta column" "$(printf '%s' "$DOUT" | grep direct_cli_promises)"
 fi
 if printf '%s' "$OUT" | grep -qE '^metric +value +delta$'; then bad "no delta without --prev" "delta header present"; else ok "no delta without --prev"; fi
 
