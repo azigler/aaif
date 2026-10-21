@@ -14,6 +14,7 @@ The substantial pieces: blogs, tutorials, videos, talks, project PRs.
 
 | Month | Title | Format | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
+| 2026-10 | My agents would rather read a graph than a README | blog | A2A | https://www.andrewzigler.com/feed/my-agents-would-rather-read-a-graph-than-a-readme/ | submitted — https://github.com/aaif/ambassadors/issues/1420 | pending (predicted 15, `blog_post`) |
 | 2026-09 | I taught my agents how to keep a promise | blog | A2A | https://www.andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise | approved — https://github.com/aaif/ambassadors/issues/1030 | 15 (approved 2026-09-15, `blog_post`, high confidence) |
 | 2026-08 | Every task my fleet completes now carries its cost | blog | agentgateway | https://www.andrewzigler.com/feed/every-task-my-fleet-completes-now-carries-its-cost | approved — https://github.com/aaif/ambassadors/issues/709 | 15 (approved 2026-08, `blog_post`, high confidence) |
 | 2026-08 | Agent, skill, or MCP? Which to use and when — with Clare Liguori (AWS, core MCP maintainer) | podcast episode | MCP | https://linearb.io/dev-interrupted/podcast/aws-clare-liguori-agent-skill-mcp-architecture | approved — https://github.com/aaif/ambassadors/issues/703 | 20 (approved 2026-08-22, `podcast_guest`, high confidence — recognition month 2026-08) |
