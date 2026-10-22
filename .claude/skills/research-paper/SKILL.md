@@ -1,6 +1,6 @@
 ---
 name: research-paper
-description: The venue-neutral research-paper / whitepaper production loop (bootstrap → verbatim refs → angle-lock → per-section beads → read-only critic loop → REVIEW-NOTES human-gate → gated publish); the heavy long-form build branch of /submission (the paper-lane equivalent of /cfp+/talk). Every claim gets a grep-able test case; the loop STOPS at the Zig submit-gate. The optional academic layer (Zenodo/arXiv/ORCID/EasyChair) points to the global /cfp arc. Deep cookbook: refs/research-paper-pipeline.md.
+description: "The venue-neutral research-paper / whitepaper production loop (bootstrap → verbatim refs → angle-lock → per-section beads → read-only critic loop → REVIEW-NOTES human-gate → gated publish); the heavy long-form build branch of /submission (the paper-lane equivalent of /cfp+/talk). Every claim gets a grep-able test case; the loop STOPS at the Zig submit-gate. The optional academic layer (Zenodo/arXiv/ORCID/EasyChair) points to the global /cfp arc. Deep cookbook: refs/research-paper-pipeline.md."
 metadata:
   author: Andrew Zigler
   organization: independent (AAIF Ambassador)
