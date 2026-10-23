@@ -39,6 +39,10 @@ joined later, newest last:
 | **agentgateway** | (proposed/added) | Unified high-performance gateway for agentic AI, MCP, LLM, and service traffic. |
 | **A2A** | Google → LF (joined AAIF 2026-08-17) | Open standard for agent-to-agent discovery, delegation, and result-sharing. Brief: `refs/projects/a2a.md`. |
 | **Agent Router** | Bloomberg + Tetrate, in the Envoy community (joined AAIF **2026-09-09**, as the rename of Envoy AI Gateway) | Control plane for AI/agent traffic with Envoy as the data plane: one OpenAI-compatible API across providers plus MCP routing. Brief: `refs/projects/agent-router.md`. |
+| **Agent Skills** | Anthropic (joined AAIF **2026-10-22**, at MCPCon NA) | Open file format (`SKILL.md`) for packaging procedural knowledge an agent loads by progressive disclosure. Source: aaif/project-proposals#47 ("Anthropic developed the format"); https://agentskills.io/specification |
+| **Open Responses** | OpenAI (joined AAIF **2026-10-22**) | Shared specification for model-inference requests and responses, based on OpenAI's Responses API. Source: aaif/project-proposals#41; https://aaif.io/blog/what-open-responses-changes-for-ai-developers |
+| **OpenEnv** | Hugging Face + Meta (Meta-PyTorch) (joined AAIF **2026-10-22**) | Interface library and environment spec for RL post-training and evaluation of agents. Source: aaif/project-proposals#50 ("a joint project between Hugging Face and Meta"). |
+| **OpenSandbox** | Alibaba Group (joined AAIF **2026-10-22**) | Open agent isolation platform: a lifecycle API, a Docker or Kubernetes runtime, and execd inside each sandbox. Source: aaif/project-proposals#26 ("initiated and open-sourced by Alibaba Group"). Brief: `refs/projects/opensandbox.md`. |
 
 Which of these the submission form offers as checkboxes is its own live fact —
 read the current template (and `/aaif-review`) rather than this table; a hosted
