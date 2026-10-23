@@ -1,4 +1,5 @@
 ---
+name: aaif-line-art
 description: The AAIF line-art visual lane — flat vector illustration and hand-built SVG diagrams in the AAIF brand system (thick black outlines, white ground, orange #FF702D + lavender #B6B0D0 accents only), for headers/OG images and inline figures on AAIF-related posts. Style approved by Zig 2026-08-16; carries the verified nano-banana style-transfer recipe, the OG-crop step, and the hard process rules (never frontload image generation; never ship the obvious literalization; /randomize the concept, not just the layout).
 when_to_use: An AAIF-related post/tutorial/talk asset needs a header, OG image, or inline diagram in AAIF branding (the "looks legit" lane) rather than the pastoral storybook-goose lane (/storybook-header). Fire ONLY after the piece's text is locked — this skill's first rule is that imagery never frontloads. Also load before hand-building any brand-palette SVG diagram.
 ---
