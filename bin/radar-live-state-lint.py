@@ -48,11 +48,13 @@ ID_RE = re.compile(
 # (skill directory names, ref filenames). Extend as new ones collide.
 DENYLIST = {"aaif-line-art"}
 
-TAG_RE = re.compile(r"^\s?\[(OPEN|IN_PROGRESS|CLOSED|TOMBSTONE)\]")
+TAG_RE = re.compile(r"^\s?\[(OPEN|IN_PROGRESS|BLOCKED|DEFERRED|CLOSED|TOMBSTONE)\]")
 
 STATUS_TO_TAG = {
     "open": "OPEN",
     "in_progress": "IN_PROGRESS",
+    "blocked": "BLOCKED",
+    "deferred": "DEFERRED",
     "closed": "CLOSED",
     "tombstone": "TOMBSTONE",
 }

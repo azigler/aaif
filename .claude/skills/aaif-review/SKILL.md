@@ -94,8 +94,8 @@ A blog post is not automatically 15, and **this is not a blog-post rule.** The t
 | Project tie | Outcome |
 |---|---|
 | Names a specific AAIF project **and** carries concrete technical detail (protocol specifics, code, implementation guidance) | **full rung** (e.g. `blog_post` 15) |
-| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ `organizing_meetup` 25 vs 35 is **not** this dock (W36/W37: the split is unexplained — see the type table) |
-| Names a **hosted AAIF project that has no template checkbox** (any new Sandbox project) — tick *Other AAIF Project* and name it in Notes | **full rung** (W37: a Korean Agent Router guide tagged `mcp+other` scored `blog_post` **15**, rationale *"the AAIF-hosted Agent Router project"*). `other` is a dock only when there is no specific project. **Agent Router has its own checkbox since 2026-09-26** (W39: tag `agent-router`; the four earlier `other` cards were retagged at unchanged points) |
+| Mentions AAIF / the program generally, but no specific project — scorecard resolves `projects: ["other"]` | **docked rung** (e.g. `blog_post` 5). ⚠️ `organizing_meetup` 25 vs 35 is **not** this dock (W36/W37: the split is unexplained — see the type table). **Exception since the W42 audit: the `General AAIF community` route** (an AAIF chapter event, its recap, or a piece about AAIF itself) also resolves to `other` but scores the **full rung** (W43: 10 October cards — `organizing_meetup` 25, `meetup_talk` 20, `blog_post` 15, `short_technical_video` 15, `social_thread` 5). W43: no `other`-only card on main carries a docked base any more, so treat the dock as unconfirmed, and treat a piece that is neither project-tied nor an AAIF community contribution as a rejection risk |
+| Names a **hosted AAIF project that has no template checkbox** (any new Sandbox project) — tick *Other AAIF Project* and name it in Notes | **full rung** (W37: a Korean Agent Router guide tagged `mcp+other` scored `blog_post` **15**, rationale *"the AAIF-hosted Agent Router project"*). `other` is a dock only when there is no specific project. **Agent Router has its own checkbox since 2026-09-26** (W39: tag `agent-router`; the four earlier `other` cards were retagged at unchanged points). **Agent Skills, Open Responses, OpenEnv and OpenSandbox** (joined 2026-10-22) have their own checkboxes, and the scorecard IDs are `agent-skills`, `open-responses`, `openenv` and `opensandbox` (W43: the first five cards credit them at the full rung, `blog_post` 15, `tutorial` 20) |
 | No AAIF project reference at all | **rejected** — see rejection risks |
 
 W32 confirmed the generalization empirically: an `organizing_meetup` scored **25 instead of
@@ -343,6 +343,10 @@ Check all that apply:
 - [ ] agentgateway
 - [ ] A2A
 - [ ] Agent Router
+- [ ] Agent Skills
+- [ ] Open Responses
+- [ ] OpenEnv
+- [ ] OpenSandbox
 - [ ] Other AAIF Project
 
 ## Notes

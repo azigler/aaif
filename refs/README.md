@@ -27,6 +27,7 @@ Active reference material the harness loads to do the work. The deliverable of
 | [`projects/mcp.md`](projects/mcp.md) | MCP — the protocol. |
 | [`projects/a2a.md`](projects/a2a.md) | A2A — agent-to-agent interoperability (joined AAIF 2026-08-17). |
 | [`projects/agent-router.md`](projects/agent-router.md) | Agent Router — the renamed Envoy AI Gateway, AAIF's second gateway (joined 2026-09-09). |
+| [`projects/opensandbox.md`](projects/opensandbox.md) | OpenSandbox — open agent isolation platform from Alibaba (joined 2026-10-22). |
 | **`brand/`** | Logos, the Credly badge, the announcement header. |
 
 ## Provenance
