@@ -168,3 +168,28 @@ dry. These rules add to the ten; none of them cancels one.
     do not walk the reader through rooms.
 15. **Read more references than you cite.** A draft that read only its own facts file sounds like
     one. Read his earlier essays and the writers he names, and match the register he points at.
+
+## Reference voice: Felix Rieseberg, "How to be more ambitious" (2026-10-13)
+
+Zig named this piece as voice inspiration for aaif ("great voice inspo for aaif's project too"),
+and routed it here on 2026-10-25 from the lab's ad hoc reading walk.
+Source: https://felixrieseberg.com/how-to-be-more-ambitious-a-tutorial-for-humans-with-models/
+
+The moves to borrow:
+
+1. **One familiar example, extended step by step.** He takes an ordinary quarterly business
+   review and moves it from filling in a template, to finding the decisions, to redesigning the
+   review itself. Each step has a clear reason to exist. This is rule 12 (concepts over
+   mechanics) done well: the reader rebuilds the idea on their own work.
+2. **Headings that state the turn, in everyday words.** Specimens: "We have been here before",
+   "Not reading the code", "The view outside", "Some closing thoughts". No labels, no puns.
+3. **Terms, then a sample prompt, then his own project.** He defines a word, shows the prompt a
+   reader could paste, then grounds it in work he did. Advice and evidence alternate.
+4. **A strong claim travels with its boundary.** He says where his advice fits less well and
+   that outside validation is still needed. Give the reader room to disagree.
+
+A pre-draft check, from his four directions (speed, altitude, depth, range). Before a piece
+starts, write down: the artifact asked for; the outcome the reader should reach (altitude); the
+raw sources, the expert method and the check that could disprove the main claim (depth); and
+which other field has a method that sharpens the explanation (range). A bigger piece is not a
+deeper one. Depth needs a stronger method and an independent check, not more scope.
