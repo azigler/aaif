@@ -119,13 +119,13 @@ His LinkedIn post on Steve Yegge's "The Counting House", written by Zig with no 
 https://lnkd.in/p/g3jTzcaM . Three seats read the same ~9,300-word essay that morning and each
 posted four technical learnings. Zig picked one frame and two mappings. The post, verbatim:
 
-> Your favorite agent's favorite builder Yegge just dropped his latest essay!! 👀
+> Your favorite agent’s favorite builder Yegge just dropped his latest essay!! 👀
 >
 > It's called The Counting House, and it's the mirror image of his Wheelhouse factory. Wheelhouse is open, agents w/ seats and memories. The Counting House locks everything down: one stateless clerk per case, millions of cases a year.
 >
-> Why does this comparison excite me so much? IT'S ALL ABOUT CLASSROOMS!
+> Why does this comparison excite me so much? IT’S ALL ABOUT CLASSROOMS!
 >
-> Turns out when I took the stage at LeadDev's LDX3 NYC to talk about how Ms. Frizzle would run her agents (spoiler: field trips!), I wasn't alone in thinking that we need to treat our factories more like universities: a place for discovery.
+> Turns out when I took the stage at LeadDev’s LDX3 NYC to talk about how Ms. Frizzle would run her agents (spoiler: field trips!), I wasn't alone in thinking that we need to treat our factories more like universities: a place for discovery.
 >
 > Yegge started with exams, which are just evals: a gold set that humans scored first (two of them, blind, plus a third to break ties). Anyone who's taught knows that move: before we graded a single kid's essay, the whole department sat in one room and graded the SAME stack together until we agreed on what an A looks like. 📚
 >
