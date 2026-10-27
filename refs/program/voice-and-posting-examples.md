@@ -113,6 +113,49 @@ against ours.
 6. **The CTA names the reader's transformation** ("from building to discovery") and absorbs the peer question.
 7. **His register is louder than the skill's defaults.** He uses ALL CAPS on 7 words (KNOW, SOFTWARE FACTORY, FOUND, HAD, ARE, BEING, HAVE), streamer slang ("chat,"), an underscore-italic (_really_), and a spaced hyphen as a dash. Don't "correct" these in his own text. Its typos ("excavation your own") are his to keep or fix.
 
+## Exemplar 4 — the reshare he wrote himself, same day as the essay (2026-10-27)
+
+His LinkedIn post on Steve Yegge's "The Counting House", written by Zig with no agent draft:
+https://lnkd.in/p/g3jTzcaM . Three seats read the same ~9,300-word essay that morning and each
+posted four technical learnings. Zig picked one frame and two mappings. The post, verbatim:
+
+> Your favorite agent's favorite builder Yegge just dropped his latest essay!! 👀
+>
+> It's called The Counting House, and it's the mirror image of his Wheelhouse factory. Wheelhouse is open, agents w/ seats and memories. The Counting House locks everything down: one stateless clerk per case, millions of cases a year.
+>
+> Why does this comparison excite me so much? IT'S ALL ABOUT CLASSROOMS!
+>
+> Turns out when I took the stage at LeadDev's LDX3 NYC to talk about how Ms. Frizzle would run her agents (spoiler: field trips!), I wasn't alone in thinking that we need to treat our factories more like universities: a place for discovery.
+>
+> Yegge started with exams, which are just evals: a gold set that humans scored first (two of them, blind, plus a third to break ties). Anyone who's taught knows that move: before we graded a single kid's essay, the whole department sat in one room and graded the SAME stack together until we agreed on what an A looks like. 📚
+>
+> And his autonomy ladder (shadow, assist, contain, transact) is student teaching!! You watch a real teacher, then you help, then you run the lesson while they sit in the back, and only then do you get a room of ur own. 🪜
+>
+> Put it next to Wheelhouse, where agents w/ names and memories go off to discover things nobody knows yet, and he's building both halves of a university: the campus and the exam hall. On the LDX3 stage I said the best eval systems are environments we build around the work, and now Yegge is building them side by side.
+>
+> Pay attention folks. 🍎✨
+>
+> It's "two Yegges" long but worth every yeg:
+
+The moves:
+
+1. **Pick one frame and cut the rest.** He left out the saga engine, the PII gateway, the
+   confusion matrix and the welfare list. Two mappings carry the whole post.
+2. **Each mapping lands on a lived teacher memory**, not an analogy in the abstract: the
+   department norming one stack of essays; student teaching, from watching to "a room of ur own".
+3. **The frame is his own earlier work** (the LDX3 talk, Ms. Frizzle, field trips), so the post
+   extends his thesis instead of summarizing someone else's.
+4. **One crystallizing line**: "both halves of a university: the campus and the exam hall."
+5. **Register**: the news and the builder up front, "!!", ALL CAPS on one phrase plus SAME,
+   "w/" and "ur", one emoji per beat, and a pun close ("worth every yeg").
+6. **One link only.** The desk relayed his rule: when an agent shares it, link the post, never
+   the essay too.
+
+Calibration note: /zig-voice lists "teacher metaphor made structurally load-bearing" as an
+anti-pattern for long-form, with a budget of one flash per piece. In this short post the teacher
+frame IS the structure, and he shipped it. Read that budget as a long-form rule for
+agent drafts, not a ban on his own frame in a short post.
+
 ## Long-form rules — Zig's review of an agent-drafted essay (2026-10-17)
 
 An agent drafted the October essay as a guided tour of the agent system it runs in. Zig rejected it
