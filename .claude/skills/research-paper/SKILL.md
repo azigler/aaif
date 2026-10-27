@@ -48,9 +48,10 @@ lead of the same thesis is a separate lighter track.
 ## The loop (7 phases — depth in the cookbook)
 
 Each phase hands the next a durable artifact. **Set effort per phase consciously**
-(the dial column) — a bare `Agent` dispatch inherits the session's effort, so when a
-step needs *more* intelligence than the session is set to (the novel-spine brainstorm
-especially), dispatch through a **Workflow `agent({effort})`**, not a plain Agent.
+(the dial column). An `Agent` dispatch with no `effort` inherits the session's effort, so
+when a step needs *more* intelligence than the session is set to (the novel-spine brainstorm
+especially), pass **`effort` on the `Agent` call** (since dotfiles-pnywg, 2026-10-26) or use a
+**Workflow `agent({effort})`**.
 
 | Phase | What it produces | Effort dial |
 |---|---|---|
@@ -100,8 +101,8 @@ test line checked before "done." Full test-case catalog + examples in the cookbo
   secrets stay in `.local/`; committed paper content is vendor-neutral and public.
 - **Skipping the effort dial.** Riding the session default through the P0 novel-spine
   brainstorm settles for baseline intelligence on the one phase that most rewards
-  `max`. Name the effort and why; use a Workflow agent when a step needs more than the
-  session is set to.
+  `max`. Name the effort and why; pass `effort` on the `Agent` call (or use a Workflow
+  agent) when a step needs more than the session is set to.
 - **Treating the academic layer as required.** Zenodo / arXiv / ORCID / EasyChair are
   a **detachable optional appendix** — fire them only for a peer-reviewed venue. An LF
   whitepaper needs none of it.
