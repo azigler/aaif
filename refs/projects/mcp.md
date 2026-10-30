@@ -662,3 +662,11 @@ Final after the RC text locked (2026-05-21) and is not in the 7-28 changelog.
 - Extensions framework (SEP-2133): https://modelcontextprotocol.io/docs/extensions/overview
 - MCP Apps (SEP-1865): https://modelcontextprotocol.io/community/seps/1865-mcp-apps-interactive-user-interfaces-for-mcp · https://github.com/modelcontextprotocol/ext-apps
 - SEP PRs (numbers/text): #2567, #2575, #2322, #2243, #2549, #414, #2663, #2106, #2133, #1865, #2577, #2596, #2484, #1850, #2858 at github.com/modelcontextprotocol/modelcontextprotocol
+
+## October 2026 updates (verified on GitHub 2026-10-30)
+
+- **Governance Working Group chartered** 2026-10-11: https://github.com/modelcontextprotocol/modelcontextprotocol/pull/3423 (charter PR, merged).
+- **Python SDK merged the `Skills` extension** 2026-10-11: https://github.com/modelcontextprotocol/python-sdk/pull/3485 (MCP + Agent Skills meet in an official SDK).
+- **Java SDK** `v2.1.0` (Latest) and `v2.2.0-M1` (pre-release) both 2026-10-16: https://github.com/modelcontextprotocol/java-sdk/releases
+- **Inspector** 2.11.0 shipped 2026-10-14; 2.12.0 2026-10-21; 2.13.0 (Latest) 2026-10-28: https://github.com/modelcontextprotocol/inspector/releases
+- Unverified leads (check the primary page before citing): a Progressive Disclosure WG formed from the Primitive Grouping IG (~10-13); Java `2.1.0` dropping protocol version `2024-11-05`; `2.2.0-M1` previewing a stateless server.

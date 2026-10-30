@@ -106,3 +106,7 @@ https://github.com/aaif-goose/goose/blob/main/CONTRIBUTING.md · GOVERNANCE
 - https://goose-docs.ai/docs/guides/recipes/ · https://goose-docs.ai/docs/getting-started/providers
 - https://goose-docs.ai/recipes · https://github.com/aaif-goose/goose/discussions/6973
 - https://aaif.io/projects/goose/ · https://aaif.io/ambassadors/
+
+## October 2026 updates (verified on GitHub 2026-10-30)
+
+- **goose v1.55.0** (2026-10-16) propagates W3C trace context from ACP prompts into MCP tool calls (https://github.com/aaif-goose/goose/pull/12697; release https://github.com/aaif-goose/goose/releases/tag/v1.55.0). One trace now spans prompt to tool call, which ties goose to gateway-side tracing.

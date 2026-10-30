@@ -44,3 +44,9 @@ connects agents to tools; A2A connects agents to agents).
 ## Watch-outs
 - Very new to AAIF: check aaif.io + the repo for current status before claiming facts.
 - Task lifecycle/discovery facts above are v1.0; the spec moves — re-verify at use.
+
+## October 2026 spec changes (verified on GitHub 2026-10-30)
+
+- **Terminal vs interrupted task states clarified**, merged 2026-10-13: https://github.com/a2aproject/A2A/pull/2270. Tasks waiting for input or authorization are not terminal; a server may keep working and change their state without a new client message.
+- **`SubscribeToTask` over HTTP is now GET** (was POST), merged 2026-10-13: https://github.com/a2aproject/A2A/pull/2068.
+- Relevance: the estate's A2A P1 bridge (aaif served) and pinki's A2A extension both read task state; check them against #2270.
