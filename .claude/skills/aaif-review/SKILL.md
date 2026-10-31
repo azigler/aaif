@@ -51,7 +51,7 @@ never by underselling a piece that genuinely is the higher type.
 | `organizing_meetup` | **25 / 35** | organizing an event — **two live rungs and the split is UNEXPLAINED** (W40: n=9 at 25, n=10 at 35, but September-recognized cards ran 8 at 25 to 1 at 35, so 25 is now the working default; W37: n=4 at 25, n=9 at 35; project tie, event scale/substance, and organize-plus-talk-bundled each have counterexamples — a 116-registrant, three-talk, five-project chapter event scored 25 for each of two co-hosts). **Predict 25**; treat 35 as upside. Co-organizers of one event are each credited |
 | `workshop` | 35 | a hands-on, multi-part guided session |
 | `course` | 50 | a full multi-lesson course |
-| `project_contribution` | 5 / 10 / 15 / 20 / 25 / 40 | code/artifact contribution — **scope ladder below** |
+| `project_contribution` | 5 / 10 / 15 / 20 / 25 / 40 / 50 | code/artifact contribution — **scope ladder below** (50 observed W44) |
 
 > ⚠️ **Calibration hygiene (W31).** Scorecards are **retroactively re-based**: W30 recorded
 > `meetup_talk = 20` as CONFIRMED at n=2/high-confidence, and those same two scorecards now
@@ -131,9 +131,14 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
   40 when it is architecture-scale and merged via PR with every layer visible (guardrails,
   deployment assets, tests, CI, docs, AGENTS.md, gateway config) — the reviewer reads
   *structure*, never runs code.
-- **50** — a presumed higher ceiling for this type, **still not observed** on a
-  `project_contribution` scorecard — treat as provisional. (Note 50 *is* now confirmed
-  as the base for `course`, so the overall ladder does reach it.)
+- **50** — **observed (W44, n=7 of 196 `project_contribution` cards).** Two shapes: a
+  maintainer's **release-scale** body of upstream work, one card per tagged release (the
+  release notes attribute most of its merged PRs to the submitter, and the card cites the
+  release URL plus specific merged PRs; n=6), and one staff-confirmed *"course-equivalent"*
+  award for certification-exam development (n=1). The gate is the same as 40: upstream
+  maintainer confirmation, but at **release scope** rather than one cross-cutting PR. Do not
+  predict 50 for a single PR, however broad; predict 40 and treat 50 as upside only when
+  you authored most of a tagged release.
 - **Article + apparatus are credited SEPARATELY (W38, n=3).** A measured article scores
   `blog_post` 15 and the **pinned public harness behind it** (harness code + raw results +
   reproduction docs, authored by you, submitted as its **own** issue) scores a separate
