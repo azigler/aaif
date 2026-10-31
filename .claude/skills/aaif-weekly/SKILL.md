@@ -52,7 +52,7 @@ population. Where this file and `/triage` differ, this file wins.
    bead, a comment, a commit or the ledger. Nothing from `.local/` goes into a tracked
    file. Close reasons and comments cite bead ids, shas and URLs only.
 3. Close with evidence: a merge sha, a live URL that Zig already approved, a closed
-   child, or a ledger row. Or close it as STALE (Step 2, item 8), with a `Reopen if:`
+   child, or a ledger row. Or close it as STALE (Step 2, item 8), with a `REOPEN-IF:`
    line. A `:card_file_box:` / `beads: file` commit is NEVER evidence,
    even though `/triage` says to "usually just close" an orphan. "Probably done" stays
    open, with a comment that names the missing evidence.
@@ -69,7 +69,7 @@ population. Where this file and `/triage` differ, this file wins.
 |---|---|
 | Close a bead whose work landed (evidence in the close reason) | aaif acts |
 | Fold an exact duplicate into the older bead (`-r "duplicate of <id>"`) | aaif acts |
-| Close a stale bead with a `Reopen if: <condition>` line (Step 2, item 8) | aaif acts |
+| Close a stale bead with a `REOPEN-IF: <condition>` line (Step 2, item 8) | aaif acts |
 | Dispatch a buildable bead to a builder, at most 2 a run (Step 4b) | aaif acts; aaif merges after a different-model SHIP |
 | Release a stale `in_progress` claim back to `open` | aaif acts |
 | Add a `waits-for` edge, or `br defer --until <date>` on a dated trigger | aaif acts |
@@ -144,8 +144,9 @@ week's first items. In this order:
    `waits-for` edge, or a blocker of any open bead (`br dep tree <id>`); or a bead that
    quotes a Zig ruling (test: `br show <id> | command grep -E 'Zig[ ,(]+20[0-9]{2}-'`; a hit
    excludes it). An `idea:` bead may close as
-   stale: the ruling covers it, and the `Reopen if:` line keeps it findable. The close:
-   `br close <id> -r "stale: no activity since <date>. Reopen if: <the condition that makes it live again>"`.
+   stale: the ruling covers it, and the `REOPEN-IF:` line keeps it findable. The close:
+   `br close <id> -r "$(printf 'stale: no activity since <date>.\nREOPEN-IF: <the condition that makes it live again>')"`
+   (the bead-close-reopen hook reads the `REOPEN-IF:` line, on its own line, exactly once).
    Write a real condition, not "if needed". Stale closes are capped at 10 a run, oldest first.
 
 ### Step 3. The monthly floor
