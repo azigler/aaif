@@ -167,7 +167,9 @@ it files one, goes in Step 6's desk mail. If Part 1 failed, run radar's floor bl
   that this seat created. Leave any other seat's work alone.
 - `git ls-files .local | wc -l` must print 0. Nonzero is a leak: stop, and report it as
   `blocked:housekeeping:local-tracked`.
-- `refs/session-handoff.md` older than 14 days while beads moved: note it in REPORT.
+- Any `refs/session-handoff--<window>.md` older than 14 days while beads moved: note it in REPORT.
+  aaif is per-window (`refs/.handoff-per-window`, aaif-1i4t): `--aaif` is the main seat's note,
+  `--aaif-weekly` is this window's. This window's `/offboard` writes only its own note.
 - Units live: for each schedules row in aaif's roster entry,
   `systemctl --user is-enabled <unit>.timer` must print `enabled`, and `systemctl --user
   list-timers <unit>.timer` must show a NEXT time. A row with no live timer, or a live

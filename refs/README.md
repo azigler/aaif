@@ -11,7 +11,7 @@ Active reference material the harness loads to do the work. The deliverable of
 | [`gateway-request-log-cookbook.md`](gateway-request-log-cookbook.md) | The verified DuckDB-over-SQLite query cookbook (schema, gotchas, tested queries) the `/agentgateway` skill's four components share. |
 | [`research-paper-pipeline.md`](research-paper-pipeline.md) | The venue-neutral research-paper / whitepaper cookbook — the deep reference behind the `/research-paper` skill. |
 | [`pulse-ledger.jsonl`](pulse-ledger.jsonl) | Append-only JSONL record of autonomous loop ticks (e.g. `aaif-radar`) and their outcomes/proof — so nothing runs unaccounted for. |
-| [`session-handoff.md`](session-handoff.md) | The rotating handoff note written by `/offboard` — the state at the end of the last working session (open beads, what to do first next). |
+| `session-handoff--<window>.md` | The rotating handoff notes written by `/offboard`, one per tmux window (`refs/.handoff-per-window` opts in): [`session-handoff--aaif.md`](session-handoff--aaif.md) for the main seat, `session-handoff--aaif-weekly.md` for the weekly window. Each holds the state at the end of that window's last session (open beads, what to do first next). |
 | [`draft-review-surface.md`](draft-review-surface.md) | Zig's standing weekly draft-review process (ruled 2026-08-28): every draft ships to a hosted review page, never to the terminal. |
 | [`interview-first-drafting.md`](interview-first-drafting.md) | The interview-first drafting process for long-form pieces under Zig's name (ratified 2026-08-28): quarry the draft from his own words, then edit. |
 | **`program/`** | The Ambassador Program itself. |

@@ -40,7 +40,9 @@ drift=0
 while IFS= read -r f; do
   rel=${f#refs/}
   grep -qF "$rel" refs/README.md || { echo "DRIFT: refs/$rel on disk, missing from refs/README.md"; drift=1; }
-done < <(find refs -type f \( -name '*.md' -o -name '*.jsonl' \) ! -name README.md)
+done < <(find refs -type f \( -name '*.md' -o -name '*.jsonl' \) ! -name README.md ! -name 'session-handoff--*.md')
+# Per-window handoff notes (refs/.handoff-per-window, aaif-1i4t) are one README row,
+# session-handoff--<window>.md, so the loop skips them by name.
 
 # 2. .claude/skills/ vs CLAUDE.md AND README.md (both are hand-maintained indexes
 #    of the same on-disk set; checking only one is how README.md silently drifted)
