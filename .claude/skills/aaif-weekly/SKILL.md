@@ -238,6 +238,29 @@ week does not send it twice. No `.local/` text goes in the brief. A Claude agent
 in a later run or by hand. A builder never closes the bead: this seat closes it with the
 merge sha. Anything on an AAIF surface is never a `build`.
 
+### Step 4c. The weekly self-cut — every run
+
+Run `~/.agents/agents/skills/pulse/reference/weekly.md`, "The weekly self-cut", over
+aaif's OWN surfaces: its memory index, its `CLAUDE.md`, and its skill descriptions. Zig
+ruled it into each seat's weekly pulse on 2026-11-06 (`dotfiles-h97ah`, `dotfiles-cs3bl`).
+The desk wired it here on 2026-11-07 (`dotfiles-kzicl`).
+
+1. **Before.** Read the seat card: `cat ~/.local/state/harness/seat-card/aaif.txt`. If
+   it is missing or older than 48 h, measure by hand (weekly.md (a)), with
+   `MEM=/home/ubuntu/.claude/projects/-home-ubuntu-aaif/memory/MEMORY.md`.
+2. **Cut**, by the ladder: retire true duplicates
+   (`python3 ~/.agents/agents/doclint/memory-retirement.py scan --path "$MEM"`, with
+   evidence for each retirement), merge index lines for one subject only when nothing is
+   lost, and move `CLAUDE.md` detail into reference files with a pointer. A merge that
+   drops content is a PROPOSAL for the desk mail (Step 6). Never apply it, and never delete
+   a correct lesson. Memory files are not tracked; `CLAUDE.md` and reference moves go in
+   Step 7's commit by explicit path.
+3. **After.** Measure the same numbers again. Keep a `SELF_CUT` JSON object for Step 7:
+   `{"before":{...},"after":{...},"proposals":[...]}`, with the keys `mem_chars`,
+   `mem_lines`, `claude_md_lines`, `skill_desc_bytes`, `stale_mem_files`. A number you
+   could not measure is the string `"COULD-NOT-EVALUATE"`, never 0.
+4. Put the before and after numbers, and each proposal, in the RAN part of the desk mail.
+
 ### Step 5. Leak check before any commit
 
 Run it after the ledger row is appended (Step 7), against what is already pushed, so it
@@ -260,7 +283,8 @@ Every run ends with ONE desk mail, even a quiet run. Zig, at the desk, 2026-10-1
 things to do. Whenever these pulses run they should always report that or mail that to
 the desk." A run with no desk mail is incomplete. The body has four parts, in this order:
 
-1. **RAN:** what the run did and how it went. Name anything skipped or broken.
+1. **RAN:** what the run did and how it went. Name anything skipped or broken. Give the
+   self-cut before and after numbers and each waiting merge proposal (Step 4c).
 2. **SUGGESTIONS:** things to do next.
 3. **QUESTIONS FOR ZIG:** each decision only Zig can make, with a recommendation and a
    default; or "none".
@@ -296,8 +320,9 @@ Believe only a `POST_SEND_RESULT=` line.
   NOTE="aaif-weekly $W — radar: <n new subs, trend; participant-free>; beads: open <a>-><b>, ready <c>-><d>; <n> closed, <n> folded, <n> released, <n> re-ranked; lint <clean|fixed>; <n> desk items"
   OUTCOME=done   # or quiet, or partial (radar failed)
   BEADS_FILED=<n>   # Step 6's count; 0 when no later action remains
-  jq -nc --arg ts "$(date -u +%FT%TZ)" --arg w "$W" --arg note "$NOTE" --arg outcome "$OUTCOME" --argjson bf "$BEADS_FILED" \
-    '{ts:$ts,row:"aaif-weekly",outcome:$outcome,beads_filed:$bf,proof:{kind:"cmd",cmd:("grep -q \"^before:\" .local/aaif-weekly/"+$w+".md && grep -q \"^after:\" .local/aaif-weekly/"+$w+".md")},note:$note}' \
+  SELF_CUT='<Step 4c object: {"before":{...},"after":{...},"proposals":[...]}>'
+  jq -nc --arg ts "$(date -u +%FT%TZ)" --arg w "$W" --arg note "$NOTE" --arg outcome "$OUTCOME" --argjson bf "$BEADS_FILED" --argjson sc "$SELF_CUT" \
+    '{ts:$ts,row:"aaif-weekly",outcome:$outcome,beads_filed:$bf,self_cut:$sc,proof:{kind:"cmd",cmd:("grep -q \"^before:\" .local/aaif-weekly/"+$w+".md && grep -q \"^after:\" .local/aaif-weekly/"+$w+".md")},note:$note}' \
     >> refs/pulse-ledger.jsonl
   tail -1 refs/pulse-ledger.jsonl | jq -e . >/dev/null && echo "ledger row: valid JSON"
   ```
