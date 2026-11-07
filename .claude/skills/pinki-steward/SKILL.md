@@ -22,6 +22,15 @@ Timer-lane rules:
 The tool for the audit is `bin/pinki-audit.py`. It is deterministic, stdlib only, and
 read-only on the ledger. Its tests are `bash tests/pinki-audit/run.sh`.
 
+## Step 0 — put the tick on a bead
+
+Cost attribution (aaif-7zy1): before any other work, touch the pinki epic so the tick's first
+model calls carry a bead. A non-zero exit is a defect for the desk mail, not a stop.
+
+```bash
+bash /home/ubuntu/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" aaif-rsi pinki-steward-tick
+```
+
 ## Step 1 — AUDIT
 
 ```bash

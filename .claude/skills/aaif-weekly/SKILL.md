@@ -102,9 +102,16 @@ population. Where this file and `/triage` differ, this file wins.
 ## Step 0 — before Part 1
 
 ```bash
+# Cost attribution (aaif-7zy1): put the tick on a bead BEFORE any other work, so its first
+# model calls are not unattributed. 18o.4 is the cadence bead this pass checks.
+bash /home/ubuntu/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" \
+  aaif-ambassador-program-18o.4 aaif-weekly-tick
 REPO=/home/ubuntu/aaif; W=$(date +%G-W%V); mkdir -p "$REPO/.local/aaif-weekly"; cd "$REPO" || exit 1
 git status --short | tee "$REPO/.local/aaif-weekly/$W-dirty-before.txt"
 ```
+
+A non-zero exit from the touch line is a defect to report in the desk mail, not a reason to
+stop the pass.
 
 Files listed there were dirty BEFORE this pass. They are not this pass's to commit, except
 `.beads/issues.jsonl`, the shared bead store, which every bead commit carries.
