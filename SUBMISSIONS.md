@@ -14,7 +14,7 @@ The substantial pieces: blogs, tutorials, videos, talks, project PRs.
 
 | Month | Title | Format | Project(s) | Public URL | Status | Points |
 |---|---|---|---|---|---|---|
-| 2026-11 | The software factory isn't a prompt | blog (AGNTCon + MCPCon recap, Dev Interrupted) | Other AAIF (General AAIF community: AAIF's own event) | https://devinterrupted.substack.com/p/the-software-factory-isnt-a-prompt | submitted — https://github.com/aaif/ambassadors/issues/1640 | 15 predicted (`blog_post`; pending review) |
+| 2026-11 | The software factory isn't a prompt | blog (AGNTCon + MCPCon recap, Dev Interrupted) | Other AAIF (General AAIF community: AAIF's own event) | https://devinterrupted.substack.com/p/the-software-factory-isnt-a-prompt | approved 2026-11-07 — https://github.com/aaif/ambassadors/issues/1640 (scorecard PR #1644) | 15 (approved 2026-11-07, `blog_post`, high confidence, recognized 2026-11) |
 | 2026-10 | My agents would rather read a graph than a README | blog | A2A | https://www.andrewzigler.com/feed/my-agents-would-rather-read-a-graph-than-a-readme/ | approved — https://github.com/aaif/ambassadors/issues/1420 | 15 (approved 2026-10, `blog_post`, high confidence) |
 | 2026-09 | I taught my agents how to keep a promise | blog | A2A | https://www.andrewzigler.com/feed/i-taught-my-agents-how-to-keep-a-promise | approved — https://github.com/aaif/ambassadors/issues/1030 | 15 (approved 2026-09-15, `blog_post`, high confidence) |
 | 2026-08 | Every task my fleet completes now carries its cost | blog | agentgateway | https://www.andrewzigler.com/feed/every-task-my-fleet-completes-now-carries-its-cost | approved — https://github.com/aaif/ambassadors/issues/709 | 15 (approved 2026-08, `blog_post`, high confidence) |
@@ -55,9 +55,9 @@ Row template (copy when a standalone thread / community-help interaction ships):
 | Contributions shipped (ledger) | 6 |
 | Pulse contributions logged | 1 |
 | Months with ≥1 contribution | 5 |
-| Approved points — ledger | 85 |
+| Approved points — ledger | 100 |
 | Approved points — pulse | 5 |
-| Approved points (scorecard total) | 90 |
+| Approved points (scorecard total) | 105 |
 
 _Updated as submissions are approved. The AAIF scoreboard is the source of truth
 for official points; this table mirrors it for the portfolio._
