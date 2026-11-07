@@ -78,7 +78,9 @@ Run `bin/submission-init <YYYY-MM> <slug> [--title "<title>"]` to create
 
 ### 5. Publish
 Push the public artifact and capture its URL (blog post, GitHub PR, YouTube,
-talk page, slide deck, tutorial repo…).
+talk page, slide deck, tutorial repo…). Pieces that ship on **andrewzigler.com** go
+through **`/camp-publish`** (lexicon frontmatter + MDX body transform → build-validate →
+land in the camp vault before the daily 8pm-PT build).
 
 ### 6. Submit
 ⛔ **GATE — never open the submission issue without alerting Zig and reviewing it
@@ -106,7 +108,9 @@ Fire **`/amplify`** (`.claude/skills/amplify/`): it drafts the announcement in
 **@AgenticAIFdn**, use **#AAIFAmbassador**, post the badge), records it in the
 submission's **`AMPLIFY.md`** (convention +  template:
 `.claude/skills/submission/reference/AMPLIFY-template.md`), and answers *"does this
-stand alone as its own 5-pt pulse contribution?"* — then **STOPS**. A useful
+stand alone as its own 5-pt pulse contribution?"* (the verdict defaults to NO: a
+thread earns its own 5 pts only when it carries a self-contained technical payload; a
+promo-only post is rejected, not scored) — then **STOPS**. A useful
 developer-value thread that stands alone earns its own row in the **pulse-contributions
 table** in `SUBMISSIONS.md` and its own gated submission. **Posting is Zig's, never
 automated** — the skill drafts; Zig posts and fills in the live URL + engagement.

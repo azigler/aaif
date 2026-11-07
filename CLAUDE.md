@@ -83,43 +83,20 @@ Contributions must tie directly to one of these. Deep dive: `refs/aaif-overview.
 
 ## The submission pipeline (the core loop)
 
-Every contribution flows through these steps. One submission = one `submission:`
-bead = one folder under `submissions/`.
+One submission = one `submission:` bead = one folder under `submissions/`. Eight steps;
+the detail of each lives in **`/submission`** (`.claude/skills/submission/SKILL.md`):
 
-1. **Pick** — choose the next contribution from the idea backlog (`br list`,
-   `idea:` beads) balancing project / format / leverage. Use `/randomize` to resist
-   collapsing to the modal choice. Heuristics: `refs/program/strategy-top-ambassador.md`.
-2. **Research** — ground it in `refs/projects/<project>.md`; verify current facts
-   against the live repos (they move fast). Fold new findings back into refs.
-3. **Build** — produce the artifact in `submissions/<YYYY-MM>-<slug>/`:
-   - written (blog/tutorial/thread) → draft, then `/zig-voice` for Andrew's voice
-   - talk/conference → `/cfp` (proposal) → `/talk` (deck+script)
-   - code/recipe/skill PR → build it; for public-agents use the `SKILL.md`
-     Agent-Skills format (matches Andrew's existing skills — copy-adapt)
-   - any web/UI deliverable → `/impeccable`
-4. **Verify (the anti-slop gate)** — run/test it; `/scrutinize` substantial work;
-   run **`/aaif-review`** to score-check (highest legitimate type + verifiability →
-   clean automated approval); confirm the prime-directive checklist. Andrew signs off.
-5. **Publish** — push the public artifact (blog URL, PR, video, talk page…). Pieces that ship on
-   **andrewzigler.com** go through **`/camp-publish`** (lexicon frontmatter + MDX body transform →
-   build-validate → land in the camp vault before the daily 8pm-PT build).
-6. **Submit** — ⛔ **STOP: never submit without alerting Zig and reviewing it
-   together first** (see the Hard rule above — no accidental spam / premature
-   spotlight). *After his explicit go-ahead,* open an issue in the **AAIF
-   Ambassador submissions repository** using the "Ambassador Contribution
-   Submission" template: GitHub handle `azigler` · contribution URL · related
-   AAIF project(s) · notes. (**`/aaif-review`** drafts the exact issue body and
-   stops here at the gate.) (Submit early in the month — monthly leaderboards
-   aren't recalculated for late entries.)
-7. **Log** — record it in `SUBMISSIONS.md` (the public portfolio index), and note
-   it on the `cadence:` bead (`aaif-ambassador-program-18o.4`), which the weekly
-   `/aaif-weekly` pass checks. The Asana recurring task is retired (Zig 2026-10-16,
-   sep26-rkw); its history stays in the Asana archive. Close the bead. Capture the
-   scorecard/points when AAIF approves it.
-8. **Amplify** — announce per `refs/program/brand-and-social.md` (tag
-   **@AgenticAIFdn**, **#AAIFAmbassador**, badge). A thread earns its own 5 pts
-   only when it carries a self-contained technical payload — **`/amplify`** runs
-   that verdict (it defaults to NO); a promo-only post is rejected, not scored.
+1. **Pick** (idea backlog, `/randomize`) → 2. **Research** (`refs/projects/*`, re-verify live)
+→ 3. **Build** (`submissions/<YYYY-MM>-<slug>/`) → 4. **Verify**, the anti-slop gate
+(`/scrutinize`, `/aaif-review`; Andrew signs off) → 5. **Publish** (`/camp-publish` for
+andrewzigler.com) → 6. **Submit** → 7. **Log** (`SUBMISSIONS.md` + the `cadence:` bead
+`aaif-ambassador-program-18o.4`) → 8. **Amplify** (`/amplify`, drafts only).
+
+Step 6 is a hard gate: ⛔ **STOP: never submit without alerting Zig and reviewing it
+together first** (the Hard rule above). After his explicit go-ahead, open the issue in the
+AAIF Ambassador submissions repository with the "Ambassador Contribution Submission"
+template; `/aaif-review` drafts the body and stops at the gate. Submit early in the month:
+monthly leaderboards are not recalculated for late entries.
 
 ## Cadence (portfolio, not heroics)
 
@@ -179,41 +156,15 @@ subagents only reference IDs in commits. Title-prefix taxonomy (greppable):
 
 ```
 aaif/
-├── CLAUDE.md              ← this file (the harness)
-├── README.md             ← public-facing: what this is, learning in the open
-├── SUBMISSIONS.md        ← the public portfolio index (every shipped contribution)
-├── .beads/               ← task tracking (prefix aaif)
-├── .claude/
-│   ├── practices.md      ← the ambassador practice spec
-│   └── skills/
-│       ├── submission     ← the end-to-end submission pipeline
-│       ├── research-paper  ← the heavy long-form build branch of /submission (venue-neutral paper/whitepaper loop; deep cookbook in refs/research-paper-pipeline.md)
-│       ├── aaif-review    ← score-check + conformance gate (type/points/checklist/issue drafter)
-│       ├── camp-publish   ← land a finished piece into the andrewzigler.com publish pipeline (lexicon frontmatter + MDX transform, build-validate, land in the vault)
-│       ├── amplify        ← the Amplify step (8): social + community-help copy in Zig's voice, tag/badge rules, AMPLIFY.md record, standalone-5pt verdict (DRAFTS ONLY — never posts)
-│       ├── storybook-header ← post header / OG image in the pastoral-goose series (illustration lane only; outputs the OG crop + the `image:` frontmatter line)
-│       ├── aaif-line-art  ← the AAIF-brand line-art lane: style-transfer headers (badge style ref, 4-color palette) + hand-built SVG diagrams; hard rules: never frontload, never the obvious literalization, /randomize the concept
-│       ├── aaif-radar     ← weekly outward scan of the submissions landscape (trends/opportunities/grading sync; read-only; private report + participant-free note bead)
-│       ├── pinki-steward  ← weekly pinki-steward pulse: ledger audit (bin/pinki-audit.py) + README/docs drift → listen → triage → issues via pigeon (grant-capped) → build → suite-gated release → pulse-ledger row + note bead
-│       ├── aaif-weekly    ← the weekly pass (Sat): /aaif-radar, then close the loop on aaif's own beads + repo: triage → close with evidence → fold duplicates → re-rank → monthly-floor check → housekeeping lint → pulse-ledger row; desk mail only for decisions
-│       ├── aaif-blog-guidelines  ← aaif.io blog editorial + intake guidelines for AAIF blog content (authored by AAIF)
-│       ├── aaif-brand-guidelines ← the AAIF brand system for any branded visual/asset (authored by AAIF)
-│       ├── agentgateway   ← one read-only skill, four components: audit (what the fleet did) · cost (tokens + cache economics + $ only when priced) · trace (one request/session + privacy-gated payloads) · harden (observed behavior → least-privilege CEL; human-gated)
-│       │       (its four components share refs/gateway-request-log-cookbook.md)
-│       └── housekeeping    ← project-local mechanical hygiene (the index-vs-disk drift lint); supplements the global /housekeeping
-├── refs/                 ← reference material (the research archive)
-│   ├── aaif-overview.md
-│   ├── gateway-request-log-cookbook.md  ← verified DuckDB query foundation for the /agentgateway skill
-│   ├── research-paper-pipeline.md  ← the venue-neutral research-paper/whitepaper cookbook (the /research-paper skill's deep reference)
-│   ├── pulse-ledger.jsonl  ← append-only record of autonomous loop ticks (e.g. aaif-radar) + their proof
-│   ├── session-handoff--<window>.md  ← one handoff note per window, written by /offboard (refs/.handoff-per-window opts in)
-│   ├── program/          ← program mechanics, strategy, brand/social, ship gates, voice (distilled; source PDFs stay in .local/)
-│   ├── projects/         ← per-project contribution-surface briefs
-│   └── brand/            ← badge kit + Credly badge + header
-│   (deeper research accrues as `study`-typed beads, not a refs/research/ dir)
-├── submissions/          ← one folder per contribution: <YYYY-MM>-<slug>/
-└── .local/               ← PRIVATE reference (gitignored): source PDFs, Asana hub
-                              IDs, notes — read like refs/, never published
+├── CLAUDE.md · README.md (public face) · SUBMISSIONS.md (public portfolio index)
+├── .beads/                  ← task tracking (prefix aaif)
+├── .claude/practices.md     ← the ambassador practice spec
+├── .claude/skills/<name>/   ← one Routing row each (above); housekeeping = the index-vs-disk lint
+├── refs/                    ← reference material; refs/README.md indexes every file
+│                               (deeper research accrues as `study` beads, not a refs/research/ dir)
+├── submissions/             ← one folder per contribution: <YYYY-MM>-<slug>/
+└── .local/                  ← PRIVATE (gitignored): source PDFs, Asana hub IDs, notes;
+                                read like refs/, never published
 ```
 
 ## Conventions (global `~/.claude/CLAUDE.md` + this file)
