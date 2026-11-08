@@ -40,7 +40,7 @@ verdict are this skill's law.
    generation, committed alongside the images (RANDOMIZE.md in the submission's
    images/ dir). Candidate list must span at least 5 concepts across different
    metaphor DOMAINS (not five arrangements of one domain).
-4. **One image at a time, cost-confirmed** (~$0.07/1K via /openrouter). Two
+4. **One image at a time, cost-confirmed** (~\$0.07/1K via /openrouter). Two
    candidates max per round; iterate on feedback rather than fanning out.
 
 ## Generation recipe (verified 2026-08-16)

@@ -152,7 +152,7 @@ Generation is **nano-banana 2** via the `/openrouter` skill's image helper:
   --size 1K
 ```
 
-- **Cost-aware**: roughly **~$0.07 per 1K image**. State the cost in your
+- **Cost-aware**: roughly **~\$0.07 per 1K image**. State the cost in your
   acknowledgment; generate deliberately. Do **not** fan out speculative variants —
   align on the concept first (see Hard Rule 3), then generate the batch you agreed
   to.

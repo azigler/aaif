@@ -7,8 +7,8 @@ description: aaif's weekly pass. Part 1 is the /aaif-radar scan of the submissio
 
 Bead `aaif-ub9x` is the spec of record. Zig's words (desk, 2026-10-14): a weekly "close
 the loop" pass that cleans up the work in this repo, and "Yeah aaif-radar should become
-aaif-weekly and have the triage/housekeeping step". `pulse-aaif-weekly` replaces
-`pulse-aaif-radar`, on the same Sat 15:00 PT calendar.
+aaif-weekly and have the triage/housekeeping step". `pulse-aaif-weekly` replaced the
+retired radar timer on 2026-10-15, on the same Sat 15:00 PT calendar.
 
 Goal: `br ready` stays a list Zig and this seat can trust, and the repo carries no drift.
 
@@ -219,9 +219,7 @@ it files one, goes in Step 6's desk mail. If Part 1 failed, run radar's floor bl
 - Units live: for each schedules row in aaif's roster entry,
   `systemctl --user is-enabled <unit>.timer` must print `enabled`, and `systemctl --user
   list-timers <unit>.timer` must show a NEXT time. A row with no live timer, or a live
-  aaif timer that no row names, goes to consul as one mail. Until consul's cutover
-  (demesne branch `aaif/aaif-weekly`) the roster still names `pulse-aaif-radar`, and
-  `pulse-aaif-weekly` is not installed. That is expected: note it in REPORT, mail nobody.
+  aaif timer that no row names, goes to consul as one mail.
 
 ### Step 4b. Knock it out (the garden's dispositions)
 

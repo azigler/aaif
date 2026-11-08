@@ -31,7 +31,7 @@ zero "better than X". If a learning can't be stated without naming a peer, it st
 
 - **Interactive** (Zig types `/aaif-radar`): may surface highlights via AskUserQuestion.
 - **Autonomous** (timer-fired as Part 1 of `/aaif-weekly`, unit `pulse-aaif-weekly`, which
-  replaced `pulse-aaif-radar` on 2026-10-15, aaif-ub9x): **never blocks.** Writes the report +
+  replaced the retired radar timer on 2026-10-15, aaif-ub9x): **never blocks.** Writes the report +
   the note bead, files a P1 `human:` bead + push **only if notable**, then ends. (Inside
   `/aaif-weekly` there is no push: that pass's one desk mail carries it, and it makes the commit.) (Global rule:
   scheduled runs never escalate to AskUserQuestion.)

@@ -1,6 +1,6 @@
 ---
 name: housekeeping
-description: Project-local mechanical hygiene for the aaif repo. Currently carries the index-vs-disk drift lint — flags when refs/README.md or CLAUDE.md's skill list fall out of sync with the actual files on disk. Run during a housekeeping pass or before a release. Supplements the global /housekeeping ritual with aaif-specific checks.
+description: Project-local mechanical hygiene for the aaif repo. Carries the index-vs-disk drift lint — flags when refs/README.md or CLAUDE.md's skill list fall out of sync with the actual files on disk. Run during a housekeeping pass or before a release. Supplements the global /housekeeping ritual with aaif-specific checks.
 ---
 
 # housekeeping (aaif-local)
