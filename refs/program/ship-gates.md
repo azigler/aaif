@@ -16,7 +16,7 @@ the gates are keyed to the surface, not to the repo.
 
 | Surface | Vendor policy in one line | Decided in |
 |---|---|---|
-| **Whitepaper** (LF long-form) | LinearB is the **intentionally-named** benchmark source + byline affiliation; its customers stay out; competitor engineering-intelligence products stay out (DORA-only). | `submissions/2026-mcp-governance-whitepaper/REVIEW-NOTES.md` (round-4c) |
+| **Whitepaper** (LF long-form) | LinearB is the **intentionally-named** benchmark source + byline affiliation; its customers stay out; competitor engineering-intelligence products stay out (DORA-only). | `submissions/_archive/2026-mcp-governance-whitepaper/REVIEW-NOTES.md` (round-4c) |
 | **andrewzigler.com blog** (the accessible lead) | **Strictly vendor-neutral** — no LinearB at all, no product/proof point; point at the category/tooling only. | bead `aaif-uf3` |
 | **AAIF submission** (Ambassador issue + aaif.io blog intake) | Vendor-neutral; member-company posts carry a vendor tie only as **one or two closing sentences with a single external link.** | `.claude/skills/aaif-blog-guidelines/SKILL.md` |
 
@@ -28,7 +28,7 @@ is the reason this contract exists.
 
 ## Surface 1 — The whitepaper (LF long-form)
 
-Path: `submissions/2026-mcp-governance-whitepaper/`. Format: LaTeX (`article`
+Path: `submissions/_archive/2026-mcp-governance-whitepaper/`. Format: LaTeX (`article`
 class), single artifact `paper/main.pdf`.
 
 ### Vendor policy (decided — round-4c, REVIEW-NOTES)
@@ -55,7 +55,7 @@ class), single artifact `paper/main.pdf`.
 
 ### Mechanical gates — mechanized in `gates.sh`
 
-Run `submissions/2026-mcp-governance-whitepaper/gates.sh`. It prints PASS/FAIL
+Run `submissions/_archive/2026-mcp-governance-whitepaper/gates.sh`. It prints PASS/FAIL
 per gate and exits nonzero on any failure.
 
 | Gate | Rule | Source |
@@ -78,7 +78,7 @@ per gate and exits nonzero on any failure.
 
 The accuracy gates and the two honesty valves are judgment, not grep. Do not try
 to mechanize them; the authoritative ledger is
-`submissions/2026-mcp-governance-whitepaper/REVIEW-NOTES.md`:
+`submissions/_archive/2026-mcp-governance-whitepaper/REVIEW-NOTES.md`:
 
 - Accuracy: "the 2026-07-28 spec" (date-versioned, RC until 7-28, Final is
   2025-11-25 — re-verify every normative MUST/SHOULD at Final); the
@@ -197,7 +197,7 @@ check `gates.sh` can run. → Zig's call.
 
 ## Source ledger (where each rule was transcribed from)
 
-- `submissions/2026-mcp-governance-whitepaper/REVIEW-NOTES.md` — the whitepaper's
+- `submissions/_archive/2026-mcp-governance-whitepaper/REVIEW-NOTES.md` — the whitepaper's
   decisions log (round-4c LinearB naming, DORA-only, customers-out, byline,
   lexicon, 8pp, the honesty valves, the standing optics gate, OPEN-B/OPEN-C
   dependencies).

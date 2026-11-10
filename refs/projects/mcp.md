@@ -612,7 +612,7 @@ in his profile, and stays in the academic + engineering lanes.
 ## Verified claims annex (2026-07-28 Final)
 
 Re-verified **2026-09-26** against primary sources, graduating the claim
-inventory from `submissions/2026-mcp-governance-whitepaper/research/p0-verified-findings.md` §1.
+inventory from `submissions/_archive/2026-mcp-governance-whitepaper/research/p0-verified-findings.md` §1.
 Status is three-valued: CONFIRMED / CHANGED (what changed) / COULD-NOT-VERIFY (why).
 `CL` = https://modelcontextprotocol.io/specification/2026-07-28/changelog.
 
