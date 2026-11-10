@@ -10,6 +10,11 @@ Usage:
 
 Exit codes: 0 ok, 2 ledger missing or unreadable (never an empty result).
 
+A promise with `on` follows pinki's fold: an antecedent that ended cancelled,
+released, lapsed, refused or expired makes the dependent "expired" (terminal,
+not open, not overdue, own `expired` column); only an owed promise can be
+overdue. See dependent_states().
+
 Fixture rows (meta.dir starts with /tmp) are counted, then dropped from every
 other metric, including their amend/resolve/assess rows.
 """
@@ -77,6 +82,85 @@ def load_rows(path):
     return rows, bad
 
 
+FAILED_ENDS = ("cancelled", "released", "lapsed", "refused")
+
+
+def resolution_of(evs):
+    """The first resolve wins; a later `correct` by the same author overrides
+    its outcome. Returns (resolve index, resolve row, outcome row)."""
+    resolves = [(n, e) for n, e in enumerate(evs) if e.get("type") == "resolve"]
+    res_index, res = resolves[0] if resolves else (None, None)
+    corrections = [
+        e for n, e in enumerate(evs)
+        if res is not None and n > res_index and e.get("type") == "correct"
+        and e.get("by") == res.get("by")
+    ]
+    return res_index, res, (corrections[-1] if corrections else res)
+
+
+def dependent_states(promises, by_id):
+    """pinki's on-graph fold (state.rs Solver::solve), for UNRESOLVED promises.
+
+    Returns {id: "owed" | "conditional" | "expired"}. Resolved promises are not
+    listed: rule 1, a resolution ends the promise whatever its antecedent says.
+    Rules, from ~/pinki/src/state.rs:
+      - no `on`                          -> owed (561-567)
+      - `on` names an id never declared  -> conditional (574-578)
+      - cycle                            -> conditional (589-592)
+      - antecedent satisfied             -> owed (597)
+      - antecedent cancelled/released/lapsed/refused/expired -> expired,
+        transitively (601-605)
+      - antecedent still open (conditional/owed/overdue), or resolved with an
+        outcome pinki cannot read -> conditional (610)
+    Antecedents are looked up over EVERY declared promise, so a fixture or an
+    out-of-window antecedent still decides its dependent, as it does in pinki.
+    """
+    resolved = {}
+    for i in promises:
+        _, res, out = resolution_of(by_id.get(i, []))
+        if res is not None:
+            resolved[i] = out.get("as")
+    memo = {}
+    for start in promises:
+        stack = [start]
+        while stack:
+            cur = stack[-1]
+            if cur in memo and memo[cur] != "in-progress":
+                stack.pop()
+                continue
+            memo[cur] = "in-progress"
+            if cur in resolved:
+                memo[cur] = "resolved:" + str(resolved[cur])
+                stack.pop()
+                continue
+            ante = promises[cur].get("on")
+            if not ante:
+                memo[cur] = "owed"
+                stack.pop()
+                continue
+            if ante not in promises:
+                memo[cur] = "conditional"
+                stack.pop()
+                continue
+            a = memo.get(ante)
+            if a is None:
+                stack.append(ante)
+            elif a == "in-progress":
+                memo[cur] = "conditional"
+                stack.pop()
+            else:
+                if a == "resolved:satisfied":
+                    memo[cur] = "owed"
+                elif a == "expired" or (
+                    a.startswith("resolved:") and a[9:] in FAILED_ENDS
+                ):
+                    memo[cur] = "expired"
+                else:
+                    memo[cur] = "conditional"
+                stack.pop()
+    return {i: m for i, m in memo.items() if not m.startswith("resolved:")}
+
+
 def audit(rows, now, since):
     promises = {}
     by_id = collections.defaultdict(list)
@@ -86,6 +170,8 @@ def audit(rows, now, since):
                 promises[r["id"]] = r
         elif r.get("promise"):
             by_id[r["promise"]].append(r)
+
+    dep_state = dependent_states(promises, by_id)
 
     # window
     if since:
@@ -105,18 +191,9 @@ def audit(rows, now, since):
     for i, p in live.items():
         meta = p.get("meta") or {}
         evs = by_id.get(i, [])
-        resolves = [(n, e) for n, e in enumerate(evs) if e.get("type") == "resolve"]
         amends = [e for e in evs if e.get("type") == "amend"]
         assess = [(n, e) for n, e in enumerate(evs) if e.get("type") == "assess"]
-        # The first resolve wins. Only its author can correct its outcome, and
-        # only corrections later in the log apply.
-        res_index, res = resolves[0] if resolves else (None, None)
-        corrections = [
-            e for n, e in enumerate(evs)
-            if res is not None and n > res_index and e.get("type") == "correct"
-            and e.get("by") == res.get("by")
-        ]
-        outcome_event = corrections[-1] if corrections else res
+        res_index, res, outcome_event = resolution_of(evs)
         ts = parse_ts(p.get("ts"))
         until = parse_ts(p.get("until"))
         # pinki's fold: the LAST amend in log order wins, unconditionally. An
@@ -142,8 +219,13 @@ def audit(rows, now, since):
                 "pinki-cli" if i.startswith("pnk_") else "unknown"
             ),
             "seat": p.get("by") or "unknown",
+            "state": dep_state.get(i),
             "outcome": (outcome_event.get("as") if outcome_event else None)
-            or ("OPEN" if not res else "unknown"),
+            or (
+                "unknown" if res
+                else "expired" if dep_state.get(i) == "expired"
+                else "OPEN"
+            ),
         }
 
     total_live = len(live)
@@ -157,7 +239,8 @@ def audit(rows, now, since):
         for name in required:
             t[name]
         return {
-            k: {"total": c["total"], **{o: c[o] for o in OUTCOMES}, "OPEN": c["OPEN"]}
+            k: {"total": c["total"], **{o: c[o] for o in OUTCOMES}, "OPEN": c["OPEN"],
+                "expired": c["expired"]}
             for k, c in sorted(t.items(), key=lambda kv: -kv[1]["total"])
         }
 
@@ -202,10 +285,19 @@ def audit(rows, now, since):
 
     # 6. open
     opens = []
+    expired = [
+        i for i, v in info.items() if v["res"] is None and v["state"] == "expired"
+    ]
     for i, v in info.items():
-        if v["res"] is None:
+        # pinki: an expired promise is terminal, so it is not open.
+        if v["res"] is None and v["state"] != "expired":
             age = (now - v["ts"]).total_seconds() / 3600 if v["ts"] else None
-            overdue = bool(v["current_until"] and v["current_until"] < now)
+            # pinki rule 4: only an owed promise can be late. A conditional
+            # one (antecedent still open or unknown) is never overdue.
+            overdue = bool(
+                v["state"] == "owed"
+                and v["current_until"] and v["current_until"] < now
+            )
             opens.append(
                 {
                     "id": i,
@@ -284,8 +376,10 @@ def audit(rows, now, since):
         "violated_assessments": violated_rows,
         "violated_then_satisfied": len(violated_then_satisfied),
         "open": len(opens),
+        "expired": len(expired),
         "amended_open": sum(
-            1 for v in info.values() if v["res"] is None and v["amends"]
+            1 for v in info.values()
+            if v["res"] is None and v["state"] != "expired" and v["amends"]
         ),
         "open_overdue": len(overdue),
         "open_overdue_max_age_h": max(
@@ -342,7 +436,8 @@ def render(snap, prev):
         w("")
         w(title)
         columns = (("total", 6), ("satisfied", 10), ("cancelled", 10),
-                   ("released", 9), ("lapsed", 8), ("refused", 8), ("OPEN", 6))
+                   ("released", 9), ("lapsed", 8), ("refused", 8), ("OPEN", 6),
+                   ("expired", 9))
         w(f"  {'name':<20}" + "".join(f"{key:>{width}}" for key, width in columns))
         for k, c in tbl.items():
             w(f"  {k[:20]:<20}" + "".join(

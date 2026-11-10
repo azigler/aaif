@@ -99,7 +99,7 @@ check "snapshot keys" "$SNAP" "all(k in s for k in ('generated_at','ledger','win
 for m in molt_cancelled amended_open open_overdue violated_then_satisfied direct_cli_promises; do
   if printf '%s' "$OUT" | grep -q "$m"; then ok "table shows $m"; else bad "table shows $m" "missing"; fi
 done
-if printf '%s' "$OUT" | grep -qE '^  name +total +satisfied +cancelled +released +lapsed +refused +OPEN$'; then
+if printf '%s' "$OUT" | grep -qE '^  name +total +satisfied +cancelled +released +lapsed +refused +OPEN +expired$'; then
   ok "text tables show lapsed and refused columns"
 else
   bad "text tables show lapsed and refused columns" "missing"
@@ -133,6 +133,33 @@ else
   bad "direct_cli_promises delta column" "$(printf '%s' "$DOUT" | grep direct_cli_promises)"
 fi
 if printf '%s' "$OUT" | grep -qE '^metric +value +delta$'; then bad "no delta without --prev" "delta header present"; else ok "no delta without --prev"; fi
+
+# `on` antecedents (aaif-rsi.26): pinki computes a promise whose antecedent ended
+# unsatisfied as "expired" (terminal), so it is neither open nor overdue. A
+# satisfied antecedent leaves the dependent owed (open, and overdue once late).
+# Only an owed promise can be late: a conditional one never is. The fixture
+# ledger-on.jsonl is checked against ~/pinki/src/state.rs, not against a guess.
+ONSNAP="$TMP/on.json"
+python3 "$AUDIT" --ledger "$HERE/ledger-on.jsonl" --now "$NOW" --json "$ONSNAP" > "$TMP/on.txt" 2>&1
+check "on open excludes expired" "$ONSNAP" "s['scalars']['open']" 6
+check "on open_overdue excludes expired" "$ONSNAP" "s['scalars']['open_overdue']" 2
+check "on expired count" "$ONSNAP" "s['scalars']['expired']" 3
+check "on cancelled antecedent expires its dependent" "$ONSNAP" "'on-dep-cancel' not in [o['id'] for o in s['open_promises']]" True
+check "on expiry is transitive" "$ONSNAP" "'on-dep-chain' not in [o['id'] for o in s['open_promises']]" True
+check "on fixture antecedent still expires its dependent" "$ONSNAP" "'on-dep-fixture' not in [o['id'] for o in s['open_promises']]" True
+check "on resolved dependent stays resolved" "$ONSNAP" "'on-dep-resolved' not in [o['id'] for o in s['open_promises']] and s['by_writer']['on-test']['satisfied'] == 2" True
+check "on satisfied antecedent leaves dependent open" "$ONSNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'on-dep-ok')" True
+check "on unresolved antecedent: dependent open, not overdue" "$ONSNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'on-dep-wait')" False
+check "on unknown antecedent: dependent open, not overdue" "$ONSNAP" "next(o['overdue'] for o in s['open_promises'] if o['id'] == 'on-dep-unknown')" False
+check "on cycle: both conditional, open, not overdue" "$ONSNAP" "[o['overdue'] for o in s['open_promises'] if o['id'].startswith('on-cycle')]" "[False, False]"
+check "on overdue ids" "$ONSNAP" "sorted(o['id'] for o in s['open_promises'] if o['overdue'])" "['on-ante-open', 'on-dep-ok']"
+check "on max overdue age ignores expired" "$ONSNAP" "s['scalars']['open_overdue_max_age_h']" 59.2
+check "on writer OPEN column excludes expired" "$ONSNAP" "s['by_writer']['on-test']['OPEN']" 6
+check "on writer expired column" "$ONSNAP" "s['by_writer']['on-test']['expired']" 3
+check "on seat theta total keeps expired rows" "$ONSNAP" "s['by_seat']['theta']['total']" 9
+# --since drops the antecedent from the window but pinki still sees it
+python3 "$AUDIT" --ledger "$HERE/ledger-on.jsonl" --now "$NOW" --since 2026-10-10T00:05:00Z --json "$TMP/on-win.json" > /dev/null
+check "on out-of-window antecedent still expires dependent" "$TMP/on-win.json" "s['scalars']['expired']" 3
 
 # missing ledger: exit 2 and names the path
 MOUT=$(python3 "$AUDIT" --ledger "$TMP/nope.jsonl" 2>&1)
