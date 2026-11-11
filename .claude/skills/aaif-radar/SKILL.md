@@ -161,6 +161,9 @@ br create -t note -p 3 "radar: <YYYY-Www> AAIF landscape learnings" \
 br close <id>
 git add .beads/issues.jsonl && git commit -m ":card_file_box: beads: radar note <YYYY-Www> (AAIF landscape learnings)"
 ```
+Close the note as the last bead step. If more work follows, touch an open bead first
+(`bash ~/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" <open-id> radar`):
+the cost report credits no row to a closed bead (harnessd-6xqv1).
 This is the durable, committed memory of what each week taught us — safe because it carries
 only the model, never the people.
 

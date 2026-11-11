@@ -178,7 +178,10 @@ tag as NEWS, not as a gate. The canary tick the next day checks the estate on it
    Replace every `<YYYY-Www>`. Add the row with `git add refs/pulse-ledger.jsonl`, then
    commit and push. A quiet week still logs a row with `"outcome":"quiet"` (no proof needed).
 2. A closed `note` bead with participant-free headline numbers. No promise texts, no seat
-   names tied to a finding.
+   names tied to a finding. Close it LAST in the tick. After the close, touch the open
+   epic (`bash ~/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" aaif-rsi
+   pinki-steward`): the cost report credits no row to a closed bead, so later work on a
+   closed note falls to unattributed (harnessd-6xqv1: 42 rows on 2026-11-10).
 3. One short digest on #pinki-incorporation (`post.sh publish pinki-incorporation`).
 
 Desk mail only when a decision is needed, for a PR gate, or as news of a cut release.
