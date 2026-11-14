@@ -3,32 +3,34 @@ seat: aaif
 session: zig-computer
 window: aaif-weekly
 ---
-# Session handoff — 2026-11-07 W45 weekly pass
+# Session handoff — 2026-11-14 W46 weekly pass
 
 ## State at offboard
 - Current branch: main
-- Run outcome: AAIF_WEEKLY_RESULT=ok:acted:19:0
-- Open beads: 25; in-progress: 1; ready: 22 (read 2026-11-07T23:08Z)
-- In-flight subagents: none
+- Run outcome: AAIF_WEEKLY_RESULT=ok:acted:22:0
+- Open beads: 16; in-progress: 1 (aaif-rsi.14); ready: 14 (read 2026-11-14T23:08Z)
+- In-flight subagents: the aaif-rsi.14 Sonnet builder (pinki branch feat/release-tooling), if not yet reported
 - Dirty files: none outside this run's commit
-- Desk mail: ref aaif-weekly-2026-11-07 (spooled 23:08:30Z). Consul mail: ref aaif-weekly-2026-11-07-disk.
+- Desk mail: ref aaif-weekly-2026-11-14 (spooled 23:08:33Z). Consul mail: ref aaif-weekly-2026-11-14-disk.
 
 ## What happened this run
-- Radar W45: 23 new submissions, +35 scorecards, 1 known-rule rejection, no grading drift. Note bead aaif-gs6g.
-- November floor met (#1640, approved, 15). Own record 7 cards, 105 points = SUBMISSIONS.md.
-- Stale-closed 18o.21 (REOPEN-IF line verified by reopen-scan). Dated keep comments on 15 beads.
-- aaif-rsi.14 not dispatched: load1 14.8 to 17.3, cap 12. Promise pr-aaif-weekly-1 resolved.
-- Self-cut: CLAUDE.md 264 -> 215 lines (File layout tree compressed; submission-pipeline detail moved into /submission after the desk cleared aaif-fvsg (a)).
+- Radar W46: 34 new submissions, +31 scorecards, 1 known-rule rejection, no grading drift. Note bead aaif-me24.
+- November floor met (#1640). Own record 7 cards, 105 points = SUBMISSIONS.md. December held by Zig's 11-10 ruling.
+- Fixed 4 nonconforming REOPEN lines (aaif-oycw, 18o.57, 18o.20, 18o.31); reopen-scan now 0 nonconforming.
+- Dated walk comments on 13 beads. aaif-rsi.14 dispatched (load1 5.36).
+- Self-cut: CLAUDE.md 215 -> 200 lines, nothing lost, lint clean.
+- Filed aaif-npht (reap 16 merged worktrees) and aaif-xsss (builder-rule memory). Promise pr-aaif-weekly-2 resolved; pr-aaif-weekly-3 declared.
 
 ## Open items and next owner
-- aaif-rsi.14: aaif (main window or next pinki-steward tick) when load1 is 12 or less.
-- aaif-oylh.6: consul. Disk is 11% free and its promise is gone; consul was mailed.
-- aaif-fvsg: (a) done this run; (b) (explore-era memory lines) waits on the desk batch for Zig.
-- aaif-ambassador-program-18o.57: waits on Zig (aaif-4jj5).
+- aaif-rsi.14: builder (running) -> Opus review -> aaif merges as steward on SHIP, closes with the merge sha.
+- aaif-oylh.6: consul. Disk 12% free; pr-consul-394 gone; consul mailed.
+- aaif-npht, aaif-xsss: the aaif main window.
+- 18o.58 / 18o.7 / vjl3 / OpenSandbox re-cut: wait on Zig (11-10 ruling); never re-raise.
 
 ## What's next
-- NEXT: run the W46 weekly pass, walking first the 10 ready beads not walked in W45 (listed in the private report) BY 2026-11-15T00:00:00Z
+- NEXT: run the W47 weekly pass, walking first 18o.7 and rsi.24 (not walked in W46), and review the rsi.14 build if it has landed BY 2026-11-22T00:00:00Z
 
 ## Warnings / watch-outs
 - aaif is per-window: this note is `refs/session-handoff--aaif-weekly.md`. Never touch `refs/session-handoff--aaif.md` (the main seat's).
-- The repo leak grep matches whole bead lines, old comments included. Check only the text this run added (filter comments by created_at).
+- Use absolute paths in every Bash call; the cd-relative guard warns on a timer lane.
+- promise-gap resolve needs `--by <seat> --promise-id <id> --evidence ...` (no positional id).

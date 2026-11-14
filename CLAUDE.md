@@ -77,9 +77,8 @@ standards/projects of agentic AI: **MCP** (Anthropic), **goose** (Block),
 in the Envoy community; the renamed Envoy AI Gateway, joined 2026-09-09 —
 aaif.io/blog/agent-router-joins-aaif), and, from 2026-10-22 (MCPCon NA),
 **Agent Skills** (Anthropic), **Open Responses** (OpenAI), **OpenEnv** (Hugging Face +
-Meta) and **OpenSandbox** (Alibaba), plus 7 working groups. Sources per project:
-`refs/aaif-overview.md`.
-Contributions must tie directly to one of these. Deep dive: `refs/aaif-overview.md`.
+Meta) and **OpenSandbox** (Alibaba), plus 7 working groups. Contributions must tie
+directly to one of these. Sources per project and deep dive: `refs/aaif-overview.md`.
 
 ## The submission pipeline (the core loop)
 
@@ -140,32 +139,22 @@ guards the floor.
 ## Beads
 
 Prefix **`aaif`**. Orchestrator owns the lifecycle (create/claim/close);
-subagents only reference IDs in commits. Title-prefix taxonomy (greppable):
-
-- `epic:` — the program + per-lane groupings
-- `submission:` — one shippable contribution (the unit of work)
-- `idea:` — backlog of candidate contributions (promote to `submission:` when started)
-- `research:` — deepen a project's contribution-surface knowledge
-- `setup:` — harness/repo scaffolding
-- `wg:` — working-group participation
-- `cadence:` — the recurring monthly-floor guard
+subagents only reference IDs in commits. Title-prefix taxonomy (greppable): `epic:` (the
+program + per-lane groupings) · `submission:` (one shippable contribution, the unit of work)
+· `idea:` (candidate contributions; promote to `submission:` when started) · `research:`
+(a project's contribution surface) · `setup:` (harness/repo scaffolding) · `wg:`
+(working-group participation) · `cadence:` (the recurring monthly-floor guard).
 
 `br ready` is the "what's next" source of truth. Keep it honest (`/triage`).
 
 ## File layout
 
-```
-aaif/
-├── CLAUDE.md · README.md (public face) · SUBMISSIONS.md (public portfolio index)
-├── .beads/                  ← task tracking (prefix aaif)
-├── .claude/practices.md     ← the ambassador practice spec
-├── .claude/skills/<name>/   ← one Routing row each (above); housekeeping = the index-vs-disk lint
-├── refs/                    ← reference material; refs/README.md indexes every file
-│                               (deeper research accrues as `study` beads, not a refs/research/ dir)
-├── submissions/             ← one folder per contribution: <YYYY-MM>-<slug>/
-└── .local/                  ← PRIVATE (gitignored): source PDFs, Asana hub IDs, notes;
-                                read like refs/, never published
-```
+Root: `CLAUDE.md`, `README.md` (public face), `SUBMISSIONS.md` (public portfolio index).
+`.beads/` = tasks (prefix aaif). `.claude/practices.md` = the ambassador practice spec.
+`.claude/skills/<name>/` = one Routing row each; housekeeping = the index-vs-disk lint.
+`refs/` = reference material, indexed by `refs/README.md` (deeper research accrues as
+`study` beads, not a refs/research/ dir). `submissions/<YYYY-MM>-<slug>/` = one folder per
+contribution. `.local/` = PRIVATE (gitignored): source PDFs, Asana hub IDs, notes.
 
 ## Conventions (global `~/.claude/CLAUDE.md` + this file)
 
@@ -174,10 +163,8 @@ aaif/
 - Public-facing writing under Andrew's name → **`/zig-voice`**; keep AAIF framing
   **vendor-neutral** (LinearB tie = one closing link max).
 - Reference material lives in `refs/` at root (not `.claude/refs/`).
-- This is a **top-level home project** at `~/aaif` (remote `azigler/aaif`, public) —
-  **graduated out of the `~/explore` umbrella on 2026-07-03** (`/graduate`). It reads only
-  the global `~/.claude/CLAUDE.md` plus this file — no longer the explore umbrella's
-  `CLAUDE.md`/beads/monorepo. Own git, own `.beads`, own life.
+- **Top-level home project** at `~/aaif` (remote `azigler/aaif`, public; graduated out of
+  `~/explore` 2026-07-03): reads only the global `~/.claude/CLAUDE.md` plus this file.
 - **`.local/` is a private reference folder — READ it like `refs/`, never publish
   from it.** It is gitignored (never committed) yet **first-class context**: it
   holds the **authoritative source docs** (the AAIF Ambassador Handbook + social
@@ -208,8 +195,6 @@ aaif/
 
 ## Learning in the open
 
-This repo is itself part of the ambassador story: the harness, the backlog, and
-the mistakes are public so others can learn from how an agentic-AI practitioner
-actually does the work. That transparency is a feature — and occasionally a
-contribution in its own right (e.g. "here's the system I built to be a better
-ambassador"). Keep it presentable.
+The harness, the backlog, and the mistakes are public so others can learn how an
+agentic-AI practitioner actually does the work; occasionally that is a contribution in its
+own right ("here's the system I built to be a better ambassador"). Keep it presentable.
