@@ -9,7 +9,7 @@ window: aaif-weekly
 - Current branch: main
 - Run outcome: AAIF_WEEKLY_RESULT=ok:acted:22:0
 - Open beads: 16; in-progress: 1 (aaif-rsi.14); ready: 14 (read 2026-11-14T23:08Z)
-- In-flight subagents: the aaif-rsi.14 Sonnet builder (pinki branch feat/release-tooling), if not yet reported
+- In-flight subagents: none (the rsi.14 builder finished; its empty ~/aaif worktree was reaped)
 - Dirty files: none outside this run's commit
 - Desk mail: ref aaif-weekly-2026-11-14 (spooled 23:08:33Z). Consul mail: ref aaif-weekly-2026-11-14-disk.
 
@@ -22,9 +22,10 @@ window: aaif-weekly
 - Filed aaif-npht (reap 16 merged worktrees) and aaif-xsss (builder-rule memory). Promise pr-aaif-weekly-2 resolved; pr-aaif-weekly-3 declared.
 
 ## Open items and next owner
-- aaif-rsi.14: builder (running) -> Opus review -> aaif merges as steward on SHIP, closes with the merge sha.
-- aaif-oylh.6: consul. Disk 12% free; pr-consul-394 gone; consul mailed.
-- aaif-npht, aaif-xsss: the aaif main window.
+- aaif-rsi.14: builder pushed pinki feat/release-tooling d90bbed. Next: different-model review -> aaif merges as steward on SHIP, closes with the merge sha. Worktree ~/pinki/.claude/worktrees/release-tooling stays until SHIP.
+- aaif-rsi.27 (new): 52 uncovered pinki lines beyond the documented eleven block release-prep's gate; the next pinki release waits on it.
+- aaif-oylh.6: consul. Disk 12% free; consul re-promised pr-consul-529 (disk map + relief plan BY 2026-11-16T20:00Z).
+- aaif-npht: the aaif main window. aaif-xsss CLOSED (desk answered: Codex-first, /dispatch is the source of truth; memory fixed).
 - 18o.58 / 18o.7 / vjl3 / OpenSandbox re-cut: wait on Zig (11-10 ruling); never re-raise.
 
 ## What's next
