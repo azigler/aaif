@@ -110,17 +110,32 @@ On each pulse, read replies from the last pulse with `bash ~/.agents/agents/lib/
 the weekly note, even when no change is needed.
 
 Build one channel post for the pulse. Combine the standing feedback ask with the Step 6
-digest. Use `post.sh publish pinki-incorporation --body-file F` once. Give the four
+digest. Publish it at Step 6, after Steps 3-5, because the digest needs their results.
+Use `post.sh publish pinki-incorporation --body-file F` once. Give the four
 cumulative global counts and each class's change since the prior snapshot. Give counts
 only. Do not include promise texts or ids in the channel post. Ask two or three concrete
 questions. For example: Which lapsed deadline was hard to resolve? Which amend flow
 caused repeat work? Which stale promise lacked a clear next action?
 
-Run `post.sh channel list` to read the channel subscribers. Use an audit with `--since`
-set to 30 days ago to list seats that declared promises in that period. Compare those
-seats with the subscribers. Name the missing seats in the one desk mail as a subscription
-gap. Do not join seats yourself. On 2026-11-15, the channel had 9 subscribers and 21 seats
-owned promises; check the gap again on each pulse.
+Check the subscription gap. `post.sh channel list` prints only a count, so read the names
+from the channel's `.subs` file. Compare them with the ROSTERED seats (keys under `seats:`
+in `~/.agents/agents/seats.yml`) that declared a promise in the last 30 days. Builder ids
+and other unrostered `by` values do not count.
+
+```bash
+SUBS=~/.local/state/harness/post/channels/pinki-incorporation.subs
+python3 bin/pinki-audit.py --since "$(date -u -d '30 days ago' +%FT%TZ)" --json .local/pinki-audit/30d.json >/dev/null
+python3 - "$SUBS" <<'EOF'
+import json, re, sys, os
+subs = set(open(sys.argv[1]).read().split())
+roster = set(re.findall(r'^  ([a-z0-9-]+):$', open(os.path.expanduser('~/.agents/agents/seats.yml')).read().split('\nseats:\n', 1)[1], re.M))
+active = set(json.load(open('.local/pinki-audit/30d.json'))['by_seat'])
+print('GAP', sorted((roster & active) - subs))
+EOF
+```
+
+Name the gap in the one desk mail only when it differs from the gap in the prior week's
+note. Do not join seats yourself. On 2026-11-15, the channel had 9 subscribers.
 
 Send direct mail to a seat only when its audit has a named finding. Include the ids and
 the action needed. Use `post.sh send <seat> --body-file F`. Keep promise texts out of mail.
@@ -227,7 +242,8 @@ tag as NEWS, not as a gate. The canary tick the next day checks the estate on it
    epic (`bash ~/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" aaif-rsi
    pinki-steward`): the cost report credits no row to a closed bead, so later work on a
    closed note falls to unattributed (harnessd-6xqv1: 42 rows on 2026-11-10).
-3. One channel post on #pinki-incorporation. Step 2 combines the digest and feedback ask.
+3. One channel post on #pinki-incorporation, published now. It holds the digest and the Step 2
+   feedback ask.
 
 Send only overdue or newly lapsed `owed_to_zig` ids in the one desk mail for the pulse.
 Add the subscription gap from Step 2. Send a needed
