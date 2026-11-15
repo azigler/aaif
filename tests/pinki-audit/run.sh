@@ -4,12 +4,14 @@
 # the real ledger means something. Also: missing ledger -> exit 2, --prev delta,
 # --since window, and the ledger is never modified.
 set -u
+export PYTHONDONTWRITEBYTECODE=1
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AUDIT="$HERE/../../bin/pinki-audit.py"
+AUDIT="${PINKI_AUDIT_BIN:-$HERE/../../bin/pinki-audit.py}"
 LEDGER="$HERE/ledger.jsonl"
 NOW="2026-10-12T12:00:00Z"
-TMP="$(mktemp -d "$HERE/.scratch.XXXXXXXX")"
+mkdir -p "$HERE/../../.local"
+TMP="$(mktemp -d "$HERE/../../.local/pinki-audit-test.XXXXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 pass=0
@@ -110,6 +112,11 @@ if printf '%s' "$OUT" | grep -qE '^  pinki-cli +1 +1 ' && printf '%s' "$OUT" | g
 else
   bad "text writer table shows pinki-cli and unknown" "missing"
 fi
+if printf '%s' "$OUT" | grep -qF 'move a past deadline forward'; then
+  bad "render omits promise text" "open promise text found"
+else
+  ok "render omits promise text"
+fi
 
 # --since window
 WIN="$TMP/win.json"
@@ -166,22 +173,26 @@ check "on out-of-window antecedent still expires dependent" "$TMP/on-win.json" "
 GLOBAL="$TMP/global.json"
 GOUT=$(python3 "$AUDIT" --ledger "$HERE/ledger-global.jsonl" --now "$NOW" --json "$GLOBAL" 2>&1)
 if [ "$?" -eq 0 ]; then ok "global run exit 0"; else bad "global run exit" "$GOUT"; fi
-check "global lapsed count" "$GLOBAL" "s['scalars']['global_lapsed']" 1
-check "global lapsed id" "$GLOBAL" "[r['id'] for r in s['global']['lapsed']['rows']]" "['g-lapsed']"
-check "global lapsed resolve ts" "$GLOBAL" "s['global']['lapsed']['rows'][0]['resolve_ts']" 2026-10-09T10:00:00Z
+check "global lapsed count" "$GLOBAL" "s['scalars']['global_lapsed']" 3
+check "global lapsed ids" "$GLOBAL" "sorted(r['id'] for r in s['global']['lapsed']['rows'])" "['g-lapsed', 'g-watchdog-lapsed', 'g-watchdog-resolved']"
+check "global resolve lapse fields" "$GLOBAL" "[(r['lapse_ts'],r['lapse_source'],r['later_outcome']) for r in s['global']['lapsed']['rows'] if r['id']=='g-lapsed']" "[('2026-10-09T10:00:00Z', 'resolve', None)]"
+check "global watchdog lapse stays open" "$GLOBAL" "[(r['lapse_ts'],r['lapse_source'],r['later_outcome'],r['outcome_or_state']) for r in s['global']['lapsed']['rows'] if r['id']=='g-watchdog-lapsed']" "[('2026-10-11T00:00:00Z', 'watchdog', None, 'owed')]"
+check "global watchdog lapse later outcome" "$GLOBAL" "[(r['lapse_source'],r['later_outcome']) for r in s['global']['lapsed']['rows'] if r['id']=='g-watchdog-resolved']" "[('watchdog', 'satisfied')]"
+check "global superseded watchdog lapse excluded" "$GLOBAL" "'g-watchdog-superseded' not in [r['id'] for r in s['global']['lapsed']['rows']] and 'g-watchdog-lapsed' in [r['id'] for r in s['global']['lapsed']['rows']]" True
 check "global chronic count" "$GLOBAL" "s['scalars']['global_chronically_extended']" 1
-check "global chronic id and fields" "$GLOBAL" "[(r['id'],r['amend_count'],r['slip_hours'],r['open_or_terminal']) for r in s['global']['chronically_extended']['rows']]" "[('g-chronic', 3, 300.0, 'open')]"
+check "global chronic id and fields" "$GLOBAL" "[(r['id'],r['amends_total'],r['amends_watchdog'],r['slip_hours'],r['open_or_terminal']) for r in s['global']['chronically_extended']['rows']]" "[('g-chronic', 3, 0, 300.0, 'open')]"
+check "global chronic ignores watchdog amend" "$GLOBAL" "'g-mixed-amends' not in [r['id'] for r in s['global']['chronically_extended']['rows']]" True
 check "global two amends excluded" "$GLOBAL" "'g-two-amends' not in [r['id'] for r in s['global']['chronically_extended']['rows']]" True
-check "global unresolvable count" "$GLOBAL" "s['scalars']['global_unresolvable']" 1
-check "global unresolvable id" "$GLOBAL" "[r['id'] for r in s['global']['unresolvable']['rows']]" "['g-stale']"
+check "global unresolvable count" "$GLOBAL" "s['scalars']['global_unresolvable']" 2
+check "global unresolvable ids" "$GLOBAL" "sorted(r['id'] for r in s['global']['unresolvable']['rows'])" "['g-stale', 'g-watchdog-lapsed']"
 check "global 71h excluded" "$GLOBAL" "'g-near71' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
+check "global exactly 72h excluded" "$GLOBAL" "'g-exact72' not in [r['id'] for r in s['global']['unresolvable']['rows']] and 'g-watchdog-lapsed' in [r['id'] for r in s['global']['unresolvable']['rows']]" True
+check "global seat assess excludes unresolvable" "$GLOBAL" "'g-seat-assess' not in [r['id'] for r in s['global']['unresolvable']['rows']] and 'g-watchdog-lapsed' in [r['id'] for r in s['global']['unresolvable']['rows']]" True
 check "global post-until amend excluded" "$GLOBAL" "'g-after-amend' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
 check "global owed zig count" "$GLOBAL" "s['scalars']['global_owed_to_zig']" 3
 check "global owed zig ids" "$GLOBAL" "sorted(r['id'] for r in s['global']['owed_to_zig']['rows'])" "['g-lapsed', 'g-zig-done', 'g-zig-open']"
 check "global human adam excluded" "$GLOBAL" "'g-adam' not in [r['id'] for r in s['global']['owed_to_zig']['rows']]" True
-check "global zig open outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['OPEN']" 1
-check "global zig lapsed outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['lapsed']" 1
-check "global zig satisfied outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['satisfied']" 1
+check "global zig outcome counts removed" "$GLOBAL" "'outcome_counts' not in s['global']['owed_to_zig']" True
 check "global zig open count" "$GLOBAL" "s['global']['owed_to_zig']['open_count']" 1
 check "global zig resolved by outcome" "$GLOBAL" "s['global']['owed_to_zig']['resolved_by_outcome']['lapsed'] == 1 and s['global']['owed_to_zig']['resolved_by_outcome']['satisfied'] == 1" True
 check "global per-seat counts" "$GLOBAL" "s['global']['owed_to_zig']['by_seat']" "{'alpha': 2, 'delta': 1}"
@@ -190,10 +201,29 @@ for class in lapsed chronically_extended unresolvable owed_to_zig; do
   if printf '%s' "$GOUT" | grep -q "global $class"; then ok "global text table $class"; else bad "global text table $class" "missing"; fi
 done
 
+# Previous snapshot from a time cut of the same fixture ledger. The late
+# watchdog assessment creates a new lapse; later declarations add Zig rows.
+python3 -B - "$HERE/ledger-global.jsonl" "$TMP/global-prev-ledger.jsonl" <<'PY'
+import json, sys
+from datetime import datetime
+cut = datetime.fromisoformat('2026-10-10T12:00:00+00:00')
+with open(sys.argv[1], encoding='utf-8') as source, open(sys.argv[2], 'w', encoding='utf-8') as target:
+    for line in source:
+        row = json.loads(line)
+        if datetime.fromisoformat(row['ts'].replace('Z', '+00:00')) <= cut:
+            target.write(line)
+PY
+python3 -B "$AUDIT" --ledger "$TMP/global-prev-ledger.jsonl" --now 2026-10-10T12:00:00Z --json "$TMP/global-prev.json" > "$TMP/global-prev.txt" 2>&1
+python3 -B "$AUDIT" --ledger "$HERE/ledger-global.jsonl" --now "$NOW" --prev "$TMP/global-prev.json" --json "$TMP/global-delta.json" > "$TMP/global-delta.txt" 2>&1
+check "global new lapse since prev" "$TMP/global-delta.json" "s['global']['lapsed']['new_since_prev']" "['g-watchdog-lapsed']"
+check "global new zig ids since prev" "$TMP/global-delta.json" "sorted(s['global']['owed_to_zig']['new_since_prev'])" "['g-zig-done', 'g-zig-open']"
+check "global prior count and delta render" "$TMP/global-delta.json" "(s['global']['lapsed']['count'],s['global']['lapsed']['prev_count'])" "(3, 2)"
+if grep -qE '^global lapsed +now=3 +prev=2 +new=g-watchdog-lapsed' "$TMP/global-delta.txt"; then ok "global delta render"; else bad "global delta render" "missing"; fi
+
 CUSTOM="$TMP/custom.json"
 python3 "$AUDIT" --ledger "$HERE/ledger-global.jsonl" --now "$NOW" --chronic-amends 2 --stale-hours 70 --json "$CUSTOM" > "$TMP/custom.txt" 2>&1
-check "global chronic flag threshold" "$CUSTOM" "s['scalars']['global_chronically_extended']" 2
-check "global stale flag threshold" "$CUSTOM" "s['scalars']['global_unresolvable']" 2
+check "global chronic flag threshold" "$CUSTOM" "s['scalars']['global_chronically_extended']" 3
+check "global stale flag threshold" "$CUSTOM" "s['scalars']['global_unresolvable']" 4
 check "global stale flag still excludes post-until amend" "$CUSTOM" "'g-after-amend' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
 
 # missing ledger: exit 2 and names the path
