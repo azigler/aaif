@@ -1,0 +1,22 @@
+{"ts":"2026-10-08T09:00:00Z","type":"promise","id":"g-lapsed","promise":"fixture lapsed","by":"alpha","to":"human:zig","until":"2026-10-08T10:00:00Z"}
+{"ts":"2026-10-09T10:00:00Z","type":"resolve","promise":"g-lapsed","as":"lapsed","by":"alpha"}
+{"ts":"2026-10-01T00:00:00Z","type":"promise","id":"g-chronic","promise":"fixture chronic","by":"beta","to":"self","until":"2026-10-01T00:00:00Z"}
+{"ts":"2026-10-02T00:00:00Z","type":"amend","promise":"g-chronic","by":"beta","until":"2026-10-05T00:00:00Z"}
+{"ts":"2026-10-05T00:00:00Z","type":"amend","promise":"g-chronic","by":"beta","until":"2026-10-09T00:00:00Z"}
+{"ts":"2026-10-09T00:00:00Z","type":"amend","promise":"g-chronic","by":"beta","until":"2026-10-13T12:00:00Z"}
+{"ts":"2026-10-08T10:00:00Z","type":"promise","id":"g-stale","promise":"fixture stale","by":"gamma","to":"self","until":"2026-10-08T11:00:00Z"}
+{"ts":"2026-10-09T12:00:00Z","type":"promise","id":"g-near71","promise":"fixture 71 hours","by":"gamma","to":"self","until":"2026-10-09T13:00:00Z"}
+{"ts":"2026-10-08T10:00:00Z","type":"promise","id":"g-after-amend","promise":"fixture action after deadline","by":"gamma","to":"self","until":"2026-10-08T11:00:00Z"}
+{"ts":"2026-10-08T12:00:00Z","type":"amend","promise":"g-after-amend","by":"gamma","until":"2026-10-08T11:00:00Z"}
+{"ts":"2026-10-10T10:00:00Z","type":"promise","id":"g-two-amends","promise":"fixture two amends","by":"beta","to":"self","until":"2026-10-10T11:00:00Z"}
+{"ts":"2026-10-10T12:00:00Z","type":"amend","promise":"g-two-amends","by":"beta","until":"2026-10-11T11:00:00Z"}
+{"ts":"2026-10-11T12:00:00Z","type":"amend","promise":"g-two-amends","by":"beta","until":"2026-10-13T11:00:00Z"}
+{"ts":"2026-10-11T00:00:00Z","type":"promise","id":"g-zig-open","promise":"fixture open zig","by":"alpha","to":"ZiG","until":"2026-10-11T12:00:00Z"}
+{"ts":"2026-10-11T00:00:00Z","type":"promise","id":"g-zig-done","promise":"fixture done zig","by":"delta","to":"human:zig","until":"2026-10-11T12:00:00Z"}
+{"ts":"2026-10-11T10:00:00Z","type":"resolve","promise":"g-zig-done","as":"satisfied","by":"delta"}
+{"ts":"2026-10-11T00:00:00Z","type":"promise","id":"g-adam","promise":"fixture owed adam","by":"delta","to":"human:adam","until":"2026-10-13T12:00:00Z"}
+{"ts":"2026-10-01T00:00:00Z","type":"promise","id":"g-fixture","promise":"excluded fixture","by":"epsilon","to":"human:zig","until":"2026-10-01T01:00:00Z","meta":{"dir":"/tmp/test-seat"}}
+{"ts":"2026-10-02T00:00:00Z","type":"amend","promise":"g-fixture","by":"epsilon","until":"2026-10-03T01:00:00Z"}
+{"ts":"2026-10-04T00:00:00Z","type":"amend","promise":"g-fixture","by":"epsilon","until":"2026-10-05T01:00:00Z"}
+{"ts":"2026-10-06T00:00:00Z","type":"amend","promise":"g-fixture","by":"epsilon","until":"2026-10-06T01:00:00Z"}
+{"ts":"2026-10-07T00:00:00Z","type":"resolve","promise":"g-fixture","as":"lapsed","by":"epsilon"}

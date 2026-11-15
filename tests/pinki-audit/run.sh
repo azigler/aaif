@@ -9,7 +9,7 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 AUDIT="$HERE/../../bin/pinki-audit.py"
 LEDGER="$HERE/ledger.jsonl"
 NOW="2026-10-12T12:00:00Z"
-TMP="$(mktemp -d)"
+TMP="$(mktemp -d "$HERE/.scratch.XXXXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 pass=0
@@ -26,6 +26,7 @@ check() { # name file expr want
 }
 
 before=$(sha256sum "$LEDGER" | cut -d' ' -f1)
+global_before=$(sha256sum "$HERE/ledger-global.jsonl" | cut -d' ' -f1)
 
 SNAP="$TMP/full.json"
 OUT=$(python3 "$AUDIT" --ledger "$LEDGER" --now "$NOW" --json "$SNAP" 2>&1)
@@ -161,6 +162,40 @@ check "on seat theta total keeps expired rows" "$ONSNAP" "s['by_seat']['theta'][
 python3 "$AUDIT" --ledger "$HERE/ledger-on.jsonl" --now "$NOW" --since 2026-10-10T00:05:00Z --json "$TMP/on-win.json" > /dev/null
 check "on out-of-window antecedent still expires dependent" "$TMP/on-win.json" "s['scalars']['expired']" 3
 
+# Global lists use a separate fixture so all earlier metric totals stay fixed.
+GLOBAL="$TMP/global.json"
+GOUT=$(python3 "$AUDIT" --ledger "$HERE/ledger-global.jsonl" --now "$NOW" --json "$GLOBAL" 2>&1)
+if [ "$?" -eq 0 ]; then ok "global run exit 0"; else bad "global run exit" "$GOUT"; fi
+check "global lapsed count" "$GLOBAL" "s['scalars']['global_lapsed']" 1
+check "global lapsed id" "$GLOBAL" "[r['id'] for r in s['global']['lapsed']['rows']]" "['g-lapsed']"
+check "global lapsed resolve ts" "$GLOBAL" "s['global']['lapsed']['rows'][0]['resolve_ts']" 2026-10-09T10:00:00Z
+check "global chronic count" "$GLOBAL" "s['scalars']['global_chronically_extended']" 1
+check "global chronic id and fields" "$GLOBAL" "[(r['id'],r['amend_count'],r['slip_hours'],r['open_or_terminal']) for r in s['global']['chronically_extended']['rows']]" "[('g-chronic', 3, 300.0, 'open')]"
+check "global two amends excluded" "$GLOBAL" "'g-two-amends' not in [r['id'] for r in s['global']['chronically_extended']['rows']]" True
+check "global unresolvable count" "$GLOBAL" "s['scalars']['global_unresolvable']" 1
+check "global unresolvable id" "$GLOBAL" "[r['id'] for r in s['global']['unresolvable']['rows']]" "['g-stale']"
+check "global 71h excluded" "$GLOBAL" "'g-near71' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
+check "global post-until amend excluded" "$GLOBAL" "'g-after-amend' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
+check "global owed zig count" "$GLOBAL" "s['scalars']['global_owed_to_zig']" 3
+check "global owed zig ids" "$GLOBAL" "sorted(r['id'] for r in s['global']['owed_to_zig']['rows'])" "['g-lapsed', 'g-zig-done', 'g-zig-open']"
+check "global human adam excluded" "$GLOBAL" "'g-adam' not in [r['id'] for r in s['global']['owed_to_zig']['rows']]" True
+check "global zig open outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['OPEN']" 1
+check "global zig lapsed outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['lapsed']" 1
+check "global zig satisfied outcome split" "$GLOBAL" "s['global']['owed_to_zig']['outcome_counts']['satisfied']" 1
+check "global zig open count" "$GLOBAL" "s['global']['owed_to_zig']['open_count']" 1
+check "global zig resolved by outcome" "$GLOBAL" "s['global']['owed_to_zig']['resolved_by_outcome']['lapsed'] == 1 and s['global']['owed_to_zig']['resolved_by_outcome']['satisfied'] == 1" True
+check "global per-seat counts" "$GLOBAL" "s['global']['owed_to_zig']['by_seat']" "{'alpha': 2, 'delta': 1}"
+check "global no promise texts" "$GLOBAL" "all('text' not in r and 'promise' not in r for c in s['global'].values() for r in c['rows'])" True
+for class in lapsed chronically_extended unresolvable owed_to_zig; do
+  if printf '%s' "$GOUT" | grep -q "global $class"; then ok "global text table $class"; else bad "global text table $class" "missing"; fi
+done
+
+CUSTOM="$TMP/custom.json"
+python3 "$AUDIT" --ledger "$HERE/ledger-global.jsonl" --now "$NOW" --chronic-amends 2 --stale-hours 70 --json "$CUSTOM" > "$TMP/custom.txt" 2>&1
+check "global chronic flag threshold" "$CUSTOM" "s['scalars']['global_chronically_extended']" 2
+check "global stale flag threshold" "$CUSTOM" "s['scalars']['global_unresolvable']" 2
+check "global stale flag still excludes post-until amend" "$CUSTOM" "'g-after-amend' not in [r['id'] for r in s['global']['unresolvable']['rows']]" True
+
 # missing ledger: exit 2 and names the path
 MOUT=$(python3 "$AUDIT" --ledger "$TMP/nope.jsonl" 2>&1)
 mrc=$?
@@ -173,6 +208,8 @@ fi
 # read-only
 after=$(sha256sum "$LEDGER" | cut -d' ' -f1)
 if [ "$before" = "$after" ]; then ok "ledger unmodified"; else bad "ledger unmodified" "hash changed"; fi
+global_after=$(sha256sum "$HERE/ledger-global.jsonl" | cut -d' ' -f1)
+if [ "$global_before" = "$global_after" ]; then ok "global ledger unmodified"; else bad "global ledger unmodified" "hash changed"; fi
 
 echo "=== $pass passed, $fail failed ==="
 if [ "$fail" -ne 0 ]; then

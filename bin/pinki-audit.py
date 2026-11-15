@@ -6,7 +6,8 @@ every week, so week-over-week deltas mean something. Stdlib only. It never
 writes the ledger; the only file it writes is the --json snapshot.
 
 Usage:
-  pinki-audit.py [--ledger PATH] [--since ISO] [--now ISO] [--json PATH] [--prev PATH]
+  pinki-audit.py [--ledger PATH] [--since ISO] [--now ISO] [--json PATH]
+                 [--prev PATH] [--chronic-amends N] [--stale-hours N]
 
 Exit codes: 0 ok, 2 ledger missing or unreadable (never an empty result).
 
@@ -17,6 +18,11 @@ overdue. See dependent_states().
 
 Fixture rows (meta.dir starts with /tmp) are counted, then dropped from every
 other metric, including their amend/resolve/assess rows.
+
+Global unresolvable means an owed, nonterminal promise is overdue by more than
+--stale-hours (default 72), with no amend or assess event after its current
+until. Nobody is acting on it, so it can only lapse unless someone intervenes.
+The chronic threshold is --chronic-amends (default 3).
 """
 
 import argparse
@@ -161,7 +167,92 @@ def dependent_states(promises, by_id):
     return {i: m for i, m in memo.items() if not m.startswith("resolved:")}
 
 
-def audit(rows, now, since):
+def global_lists(info, now, chronic_amends, stale_hours):
+    """Build text-free, severity-sorted action lists from live window rows."""
+    classes = {name: [] for name in (
+        "lapsed", "chronically_extended", "unresolvable", "owed_to_zig"
+    )}
+    for i, v in info.items():
+        p = v["p"]
+        until = v["current_until"]
+        open_promise = v["res"] is None and v["state"] != "expired"
+        overdue_h = (
+            max(0.0, (now - until).total_seconds() / 3600)
+            if open_promise and v["state"] == "owed" and until else 0.0
+        )
+        base = {
+            "id": i, "by": v["seat"], "to": p.get("to"),
+            "outcome_or_state": v["outcome"] if not open_promise else v["state"],
+        }
+        if v["outcome"] == "lapsed":
+            resolve_ts = v["res"].get("ts") if v["res"] else None
+            classes["lapsed"].append({
+                **base, "until": v["current_until_text"], "resolve_ts": resolve_ts,
+            })
+        if len(v["amends"]) >= chronic_amends:
+            first_until = v["until"]
+            slip_h = (
+                round((until - first_until).total_seconds() / 3600, 1)
+                if until and first_until else None
+            )
+            classes["chronically_extended"].append({
+                **base, "amend_count": len(v["amends"]),
+                "slip_hours": slip_h,
+                "open_or_terminal": "open" if open_promise else "terminal",
+            })
+        if open_promise and overdue_h > stale_hours and not any(
+            parse_ts(e.get("ts")) and parse_ts(e.get("ts")) > until
+            for e in (*v["amends"], *(a for _, a in v["assess"]))
+        ):
+            classes["unresolvable"].append({
+                **base, "until": v["current_until_text"],
+                "overdue_hours": round(overdue_h, 1),
+            })
+        if str(p.get("to") or "").casefold() in ("human:zig", "zig"):
+            classes["owed_to_zig"].append({
+                **base, "until": v["current_until_text"],
+                "overdue_hours": round(overdue_h, 1) if open_promise else None,
+            })
+
+    classes["lapsed"].sort(key=lambda r: (
+        -(max(0.0, ((parse_ts(r["resolve_ts"]) or now)
+                    - (parse_ts(r["until"]) or now)).total_seconds() / 3600)),
+        r["id"],
+    ))
+    classes["chronically_extended"].sort(key=lambda r: (
+        -r["amend_count"], -(r["slip_hours"] or 0), r["id"],
+    ))
+    classes["unresolvable"].sort(key=lambda r: (-r["overdue_hours"], r["id"]))
+    classes["owed_to_zig"].sort(key=lambda r: (
+        0 if r["outcome_or_state"] in ("owed", "conditional") else
+        1 if r["outcome_or_state"] == "lapsed" else 2,
+        -(r["overdue_hours"] or 0), r["id"],
+    ))
+    result = {}
+    for name, rows in classes.items():
+        result[name] = {
+            "rows": rows,
+            "by_seat": dict(sorted(collections.Counter(r["by"] for r in rows).items())),
+        }
+        if name == "owed_to_zig":
+            result[name]["open_count"] = sum(
+                r["outcome_or_state"] in ("owed", "conditional") for r in rows
+            )
+            result[name]["resolved_by_outcome"] = {
+                outcome: sum(r["outcome_or_state"] == outcome for r in rows)
+                for outcome in OUTCOMES
+            }
+            result[name]["outcome_counts"] = {
+                outcome: sum(1 for r in rows if (
+                    "OPEN" if r["outcome_or_state"] in ("owed", "conditional")
+                    else r["outcome_or_state"]
+                ) == outcome)
+                for outcome in ("OPEN", *OUTCOMES, "expired", "unknown")
+            }
+    return result
+
+
+def audit(rows, now, since, chronic_amends=3, stale_hours=72):
     promises = {}
     by_id = collections.defaultdict(list)
     for r in rows:
@@ -361,6 +452,8 @@ def audit(rows, now, since):
     # 11. id lengths
     id_len = collections.Counter(len(i) for i in info)
 
+    global_audit = global_lists(info, now, chronic_amends, stale_hours)
+
     cancelled_total = len(cancelled)
     scalars = {
         "promises_total": len(promises),
@@ -389,11 +482,13 @@ def audit(rows, now, since):
         "with_ref": len(with_ref),
         "with_ref_share": share(len(with_ref), total_live),
         "nudged": len(nudged),
+        **{f"global_{name}": len(group["rows"]) for name, group in global_audit.items()},
     }
     return {
         "scalars": scalars,
         "by_writer": by_writer,
         "by_seat": by_seat,
+        "global": global_audit,
         "medians_by_writer": medians,
         "open_promises": opens,
         "duplicate_open_texts": dups,
@@ -446,6 +541,22 @@ def render(snap, prev):
 
     table("by writer (meta.writer)", snap["by_writer"])
     table("by seat (by)", snap["by_seat"])
+    for name, group in snap["global"].items():
+        rows = group["rows"]
+        w("")
+        w(f"global {name} ({len(rows)})")
+        w(f"  {'id':<25} {'by':<18} {'to':<18} {'state':<12} detail")
+        for row in rows[:10]:
+            detail = " ".join(
+                f"{key}={value}" for key, value in row.items()
+                if key not in ("id", "by", "to", "outcome_or_state")
+            )
+            w(f"  {row['id']:<25} {row['by']:<18} {str(row['to']):<18} "
+              f"{row['outcome_or_state']:<12} {detail}")
+        if not rows:
+            w("  (none)")
+        if len(rows) > 10:
+            w(f"  and {len(rows) - 10} more")
     w("")
     w(
         "median minutes by writer (horizon = until-ts, latency = declare-to-resolve)"
@@ -495,11 +606,18 @@ def main(argv=None):
         "--since", help="ISO time; only promises declared at or after it"
     )
     ap.add_argument("--now", help="ISO time; override the clock (tests)")
+    ap.add_argument("--chronic-amends", type=int, default=3,
+                    help="minimum amend count for chronic list (default: 3)")
+    ap.add_argument("--stale-hours", type=float, default=72,
+                    help="minimum overdue hours for unresolvable list (default: 72)")
     ap.add_argument("--json", metavar="PATH", help="write the snapshot here")
     ap.add_argument(
         "--prev", metavar="PATH", help="earlier snapshot, for a delta column"
     )
     a = ap.parse_args(argv)
+
+    if a.chronic_amends < 1 or a.stale_hours < 0:
+        ap.error("--chronic-amends must be >= 1 and --stale-hours must be >= 0")
 
     if not os.path.isfile(a.ledger):
         print(f"pinki-audit: ledger not found: {a.ledger}", file=sys.stderr)
@@ -535,7 +653,7 @@ def main(argv=None):
         "window": {"since": iso(since) if since else None, "now": iso(now)},
         "bad_lines": bad,
     }
-    snap.update(audit(rows, now, since))
+    snap.update(audit(rows, now, since, a.chronic_amends, a.stale_hours))
     print(render(snap, prev))
     if a.json:
         with open(a.json, "w", encoding="utf-8") as fh:
