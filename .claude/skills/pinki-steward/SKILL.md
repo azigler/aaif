@@ -31,7 +31,7 @@ model calls carry a bead. A non-zero exit is a defect for the desk mail, not a s
 bash /home/ubuntu/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" aaif-rsi pinki-steward-tick
 ```
 
-## Step 1 — AUDIT
+## Step 1 — GLOBAL PROMISE AUDIT
 
 ```bash
 W=$(date +%G-W%V)
@@ -45,6 +45,31 @@ That is a failure to report, never an empty week.
 
 Snapshots live in `.local/pinki-audit/`. That folder is gitignored and private, because
 promise texts name private infra. Never copy a promise text into a tracked file.
+Do not post promise texts to a channel.
+
+Read the `global` lists in the snapshot before you inspect one seat. Each row names an id,
+the declaring seat, the recipient, and an outcome or state. Each class has a count in
+`scalars` and counts by seat. The lists and counts are cumulative. With `--prev`, each
+class also shows `prev_count` and `new_since_prev` ids. The text render gives the current
+count, previous count, and new ids. On the first run, the new ids are unknown.
+
+- `lapsed`: the final outcome is lapsed, or an unsuperseded watchdog assessment marks it
+  terminal-lapsed. Read `lapse_ts`, `lapse_source` (`resolve` or `watchdog`), and
+  `later_outcome`. A watchdog-lapsed promise still counts as open and overdue in pinki.
+- `chronically_extended`: at least `--chronic-amends` non-watchdog amends (default 3).
+  Read `amends_total`, `amends_watchdog`, the shift in deadline, and whether it is open.
+- `unresolvable`: an owed promise is still open, is overdue by more than `--stale-hours`
+  (default 72), and has no seat amend or non-watchdog assess after its current until.
+  Watchdog nudge amends and terminal assessments do not count as seat action.
+- `owed_to_zig`: the recipient is `human:zig` or `zig`, without case sensitivity. Read
+  the open and resolved counts by outcome. An open row has overdue hours.
+
+Feed open rows and ids new since `--prev` into Step 3 triage. A core defect becomes an
+issue and bead. A wrapper defect goes to consul. A usage pattern goes in the note.
+Route a seat-specific pattern to that seat in Step 2. In the one desk mail, put only
+`owed_to_zig` ids that are overdue (`overdue_hours > 0`) or newly lapsed since `--prev`.
+Do not include a not-yet-due id or the whole cumulative list.
+Do not send them to Zig directly.
 
 Then check repo state:
 - `gh issue list -R azigler/pinki`
@@ -52,8 +77,11 @@ Then check repo state:
 - `git -C ~/pinki tag --sort=-v:refname | head -1`, against `pinki --version`. A gap means
   the installed binary is behind the latest tag.
 
-Reading a zero: the test fixture makes every metric nonzero at least once, so a zero in the
-audit is a real zero. If a metric looks wrong, re-run `tests/pinki-audit/run.sh` first.
+Reading a zero: the fixture proves that the code can report a positive count. It does
+not prove that a live zero is correct. For global classes, check a live positive control:
+the ledger cut at 2026-10-05 lists two unresolvable ids, and the full ledger lists 34
+lapsed ids as of 2026-11-15. If a count looks wrong, re-run `tests/pinki-audit/run.sh`
+and the live control before reporting a zero.
 
 ## Step 1b — README + DOCS, every run
 
@@ -75,17 +103,34 @@ grep -n -E 'v?0\.[0-9]+\.[0-9]+' ~/pinki/README.md ~/pinki/docs/*.md   # version
   every pinki PR, they are the steward's own call (Step 2's merge rule). A PR that changes
   what pinki claims to be, or its scope, still goes through the desk.
 
-## Step 2 — LISTEN
+## Step 2 — ASK THE ESTATE
 
-Read the channel: `bash ~/.agents/agents/lib/post.sh read` (channel `#pinki-incorporation`).
+On each pulse, read replies from the last pulse with `bash ~/.agents/agents/lib/post.sh read`
+(channel `#pinki-incorporation`). Feed each reply into Step 3. Record its disposition in
+the weekly note, even when no change is needed.
 
-Post ONE ask there only when the audit shows a seat-specific anomaly. Name the seat and the
-instance ids. Use `post.sh publish pinki-incorporation --body-file F`. Do not send blanket
-"any feedback?" asks.
+Build one channel post for the pulse. Combine the standing feedback ask with the Step 6
+digest. Use `post.sh publish pinki-incorporation --body-file F` once. Give the four
+cumulative global counts and each class's change since the prior snapshot. Give counts
+only. Do not include promise texts or ids in the channel post. Ask two or three concrete
+questions. For example: Which lapsed deadline was hard to resolve? Which amend flow
+caused repeat work? Which stale promise lacked a clear next action?
+
+Run `post.sh channel list` to read the channel subscribers. Use an audit with `--since`
+set to 30 days ago to list seats that declared promises in that period. Compare those
+seats with the subscribers. Name the missing seats in the one desk mail as a subscription
+gap. Do not join seats yourself. On 2026-11-15, the channel had 9 subscribers and 21 seats
+owned promises; check the gap again on each pulse.
+
+Send direct mail to a seat only when its audit has a named finding. Include the ids and
+the action needed. Use `post.sh send <seat> --body-file F`. Keep promise texts out of mail.
+The shared `steward` skill (dotfiles-kuucv, lab drafts) owns the generic feedback loop.
+Keep pinki's questions and routing here.
 
 ## Step 3 — TRIAGE
 
-Each finding becomes one of three things.
+Each open global row, each id new since `--prev`, each reply, and each repo finding gets
+one disposition. Do not triage every cumulative row again.
 
 - (a) A core pinki defect: write an issue draft, and file a bead under epic aaif-rsi.
 - (b) An estate wrapper or watchdog defect. Examples: `~/.agents/agents/lib/promise-gap.sh`
@@ -182,9 +227,11 @@ tag as NEWS, not as a gate. The canary tick the next day checks the estate on it
    epic (`bash ~/.agents/agents/lib/bead-claim.sh touch "$CLAUDE_CODE_SESSION_ID" aaif-rsi
    pinki-steward`): the cost report credits no row to a closed bead, so later work on a
    closed note falls to unattributed (harnessd-6xqv1: 42 rows on 2026-11-10).
-3. One short digest on #pinki-incorporation (`post.sh publish pinki-incorporation`).
+3. One channel post on #pinki-incorporation. Step 2 combines the digest and feedback ask.
 
-Desk mail only when a decision is needed, for a PR gate, or as news of a cut release.
+Send only overdue or newly lapsed `owed_to_zig` ids in the one desk mail for the pulse.
+Add the subscription gap from Step 2. Send a needed
+decision, a PR gate, or news of a cut release in that same mail when they apply.
 
 ## Success measures (week over week)
 
