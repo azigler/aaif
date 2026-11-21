@@ -41,7 +41,7 @@ never by underselling a piece that genuinely is the higher type.
 |---|---|---|
 | `social_thread` | 5 | a substantive thread/post with developer value W38: a post with a short embedded screen recording of a concrete first-use workflow clears the *more-than-promotion* bar. |
 | `community_help` | 5–15 | answering/supporting in community channels (scope-scaled). **W40: first observed, n=1 at 10** (a public GitHub Discussions thread on a third-party agent framework about its AAIF interoperability, tagged with 5 projects, high confidence). Treat 10 as the observed mid-rung; 5 and 15 are unobserved |
-| `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below**. Also the landing type for a **whitepaper** (W37: an aaif.io authz whitepaper scored 15 — *"explanatory rather than step-by-step"*) and for a **newsletter issue** with one substantive project section (W37: 15 per issue, scored on the AAIF section only) |
+| `blog_post` | **5 / 15** | a written explainer / case study / opinion piece — **the rung depends on project tie, see below**. Also the landing type for a **whitepaper** (W37: an aaif.io authz whitepaper scored 15 — *"explanatory rather than step-by-step"*) and for a **newsletter issue** with one substantive project section (W37: 15 per issue, scored on the AAIF section only). Also the landing type for a **research paper** (W47: a DOI preprint with a measured finding scored base 15; staff lifted it to 30 as a one-off, saying the categories do not cover research papers and the base stays 15). **Predict 15**; never predict the lift |
 | `short_technical_video` | 15 | a short focused technical video |
 | `tutorial` | 20 | a **step-by-step, reproducible** how-to (the key upgrade over blog) |
 | `podcast_guest` | 20 | a podcast appearance **W38: the HOST of an interview with a project maintainer also scores 20** (n=1, high confidence) — the host-vs-guest risk did not bite. |
@@ -138,7 +138,11 @@ The only variable type. Points track **how substantial + how "upstream"** the wo
   award for certification-exam development (n=1). The gate is the same as 40: upstream
   maintainer confirmation, but at **release scope** rather than one cross-cutting PR. Do not
   predict 50 for a single PR, however broad; predict 40 and treat 50 as upside only when
-  you authored most of a tagged release.
+  you authored most of a tagged release. **A release that bundles several distinct fixes
+  can decompose instead (W47, n=1):** staff held it for human review, then credited each
+  independent fix as its own 20-point card (four fixes, 80 in total); a backport of a fix
+  already credited earned nothing. For a multi-fix release, predict one 20 card per
+  distinct fix, not one 50.
 - **Article + apparatus are credited SEPARATELY (W38, n=3).** A measured article scores
   `blog_post` 15 and the **pinned public harness behind it** (harness code + raw results +
   reproduction docs, authored by you, submitted as its **own** issue) scores a separate
