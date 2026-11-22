@@ -47,14 +47,27 @@ https://github.com/aaif-goose/goose/blob/main/CONTRIBUTING.md · GOVERNANCE
 
 ## Contribution surface (concrete)
 
-1. **Recipe Cookbook PRs** (lowest-friction, rewarded). Add a `.yaml` under the
+> **Issue-first gate (verified 2026-11-22 from CONTRIBUTING.md, last changed 2026-11-03 in #13292).**
+> The issue is the main record of a contribution. Every issue moves across the public Goose Issues board
+> (https://github.com/orgs/aaif-goose/projects/1): Inbox → Needs info → Accepted / design → Ready → Done.
+> **Do not begin implementation or open a pull request until the issue has reached Ready.** Every external
+> PR must link its Ready issue, stay inside the agreed design and scope, say how the issue's verification plan
+> was carried out, and send design changes back to the issue. **PRs that do not implement a Ready issue are
+> closed** (exempt: dependency/release bots, urgent security fixes, core-team-directed work). Don't open many
+> PRs in quick succession. codex reviews every PR, and each AI comment needs a fix or a one-line answer.
+> "Please write the issue yourself": an agent may research, but the contributor must understand the issue.
+> Custom LLM provider issues are accepted only by exception; a documented, user-installable provider config
+> is the preferred path. CONTRIBUTING names the design discussion (Accepted / design → Ready) as "the best
+> place to contribute". So the items below start as an issue and a design comment, not a PR.
+
+1. **Recipe Cookbook PRs** (rewarded in past drives; now behind the issue-first gate above). Add a `.yaml` under the
    docs recipes data dir, open a PR. Past drives rewarded approved recipes with
    OpenRouter credits (verify still active). Cookbook: https://goose-docs.ai/recipes
 2. **Documentation** — first-class path in CONTRIBUTING; providers/local-model
    docs are an obvious gap to fill.
 3. **Code PRs** — Rust core via Hermit + `just` + `cargo`; desktop via
    `just run-ui`. Maintainers warn against "AI slop" big PRs — **start small**.
-   Conventional-commit PR titles required.
+   Conventional-commit PR titles required. Ready issue first (see the gate above).
 4. **Extensions / MCP servers** — author a goose extension and list it.
 5. **Skills Marketplace** — goose has a skills surface (authorable).
 6. **Good-first-issues / roadmap-aligned features** — local-model + subagent
