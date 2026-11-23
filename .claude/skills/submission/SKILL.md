@@ -95,7 +95,11 @@ recalculated for late entries. Respond in-thread if the review agent asks for
 more info.
 
 ### 7. Log
-Add a row to `SUBMISSIONS.md` (title, format, project, URL, status). **Also note it
+Add a row to `SUBMISSIONS.md` (title, format, project, URL, status), AND the same
+contribution as one line in `SUBMISSIONS.jsonl` (`shipped` = the public publish date,
+YYYY-MM-DD; update `status`/`approved`/`points` when AAIF scores it). The JSONL is the
+machine ledger: the estate's presence pillar reads its latest `shipped` (desk
+2026-11-23, dotfiles-eoxfr). `bash tests/submissions-ledger/run.sh` checks the two agree. **Also note it
 on the `cadence:` bead** (`aaif-ambassador-program-18o.4`), which the weekly
 `/aaif-weekly` pass reads for the monthly floor. The Asana recurring task is retired
 (Zig 2026-10-16, sep26-rkw); its history stays in the Asana archive.

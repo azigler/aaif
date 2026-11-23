@@ -5,6 +5,9 @@ to an AAIF project and was submitted through the AAIF Ambassador submissions
 repository. Points are AAIF's approved scorecard values (the review process
 assigns them — see `refs/program/ambassador-program.md`).
 
+> Machine-readable twin: `SUBMISSIONS.jsonl` (one row per contribution; `shipped` is the
+> public publish date). `tests/submissions-ledger/run.sh` keeps the two in agreement.
+
 > Cadence floor: **≥1 public, project-based contribution per month.** Aim:
 > exceed it (see `refs/program/strategy-top-ambassador.md`).
 
